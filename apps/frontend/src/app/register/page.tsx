@@ -1,13 +1,10 @@
+import SignIn from "../components/auth/register/signup";
 
-"use client"
-
-import { SignupForm } from "../components/auth/register/signup";
-
-export default function RegisterPage() {
+export default function Register() {
   return (
     <div>
       <h1>Register</h1>
-      <SignupForm />
+      <SignIn />
     </div>
-  );
+  )
 }

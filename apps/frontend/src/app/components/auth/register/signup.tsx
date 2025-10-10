@@ -1,60 +1,47 @@
-"use client";
-
-import { useFormState, useFormStatus } from 'react-dom';
-import Link from 'next/link';
-import { FormState } from '@/lib/validation';
-import { signup } from '../actions/auth';
-;
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button type="submit" disabled={pending}>
-      {pending ? 'Signing Up...' : 'Sign Up'}
-    </button>
-  );
-}
-
-export function SignupForm() {
-  const initialState: FormState = { errors: {} };
-  const [state, formAction] = useFormState(signup, initialState);
-
-  return (
-    <form action={formAction}>
-      <div>
-        <label htmlFor="name">Name</label>
-        <input id="name" name="name" placeholder="Name" />
-        {state?.errors?.name && <p style={{ color: 'red' }}>{state.errors.name.join(', ')}</p>}
+'use client'
+import { signIn } from 'next-auth/react'
+import { useState } from 'react'
+export default function SignIn() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+    
+    if (result?.error) {
+      setError(result.error)
+    }
+  }
+return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-[30px] shadow-custom-top border-0 p-8 space-y-8">
+        <h2 className="text-2xl font-normal">Sign In</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-2 rounded-[30px] border border-gray-300"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 rounded-[30px] border border-gray-300"
+          />
+          {error && <div className="text-red-500">{error}</div>}
+          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-[30px]">
+            Sign In
+          </button>
+        </form>
       </div>
-
-      <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" name="email" type="email" placeholder="Email" required />
-        {state?.errors?.email && <p style={{ color: 'red' }}>{state.errors.email.join(', ')}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="Password" required />
-        {state?.errors?.password && (
-          <div style={{ color: 'red' }}>
-            <p>Password must:</p>
-            <ul>
-              {state.errors.password.map((error) => (
-                <li key={error}>- {error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {state?.errors?._form && <p style={{ color: 'red' }}>{state.errors._form.join(', ')}</p>}
-
-      <SubmitButton />
-      <p>
-        Already have an account? <Link href="/login">Sign in</Link>
-      </p>
-    </form>
-  );
+    </div>
+  )
 }

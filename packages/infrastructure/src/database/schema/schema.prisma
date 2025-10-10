@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  VOID
+}
+
+model User {
+  id        String     @id @default(cuid()) // Cambiado a CUID para consistencia
+  name      String?
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  customer  Customer?
+}
+
+model Customer {
+  id        String    @id @default(cuid()) // Cambiado a CUID
+  name      String
+  email     String    @unique
+  phone     String?
+  address   String?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade) // <-- AÑADIDO onDelete
+  userId    String    @unique
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Invoice {
+  id            String        @id @default(cuid()) // Cambiado a CUID
+  invoiceNumber String        @unique
+  customerId    String
+  customer      Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade) // <-- AÑADIDO onDelete
+  issueDate     DateTime
+  dueDate       DateTime?
+  status        InvoiceStatus @default(DRAFT)
+  items         InvoiceItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade) // <-- AÑADIDO onDelete
+  description String
+  quantity    Int
+  unitPrice   Float
+  taxRate     Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '@repo/infrastructure'
 import { InvoicesModule } from './invoices/invoices.module';
 import { CustomersModule } from './customers/customers.module';
 import { AuthModule } from './auth/auth.module';
@@ -7,8 +6,7 @@ import { AuthModule } from './auth/auth.module';
 @Module({
   imports: 
   [
-    InvoicesModule, 
-    PrismaModule, 
+    InvoicesModule,  
     CustomersModule,  
     AuthModule, 
   ],

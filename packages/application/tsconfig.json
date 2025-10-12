@@ -1,9 +1,7 @@
 {
-    "extends": "@repo/typescript-config/base.json",
+    "extends": "@repo/typescript-config/nest.json",
     "compilerOptions": {
         "outDir": "dist",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true
     },
     "include": ["src"],
     "exclude": ["node_modules", "dist"]

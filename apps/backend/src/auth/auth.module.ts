@@ -2,15 +2,11 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
-import { 
-  CreateUserUseCase, 
-  ValidateUserUseCase 
-} from '@repo/application';
-import { USER_REPOSITORY } from '@repo/core';
-import { PrismaUserRepository } from '@repo/infrastructure';
+import { ApplicattionModule } from 'src/modules/application.module';
 
 @Module({
   imports: [
+    ApplicattionModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'una-clave-secreta-muy-segura-en-desarrollo',
@@ -18,14 +14,7 @@ import { PrismaUserRepository } from '@repo/infrastructure';
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    CreateUserUseCase,
-    ValidateUserUseCase,
-    {
-      provide: USER_REPOSITORY,
-      useClass: PrismaUserRepository,
-    },
-  ],
+  providers: [],
 })
 export class AuthModule {}
 

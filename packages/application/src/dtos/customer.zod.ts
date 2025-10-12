@@ -1,7 +1,6 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
-import { CustomerEntitySchema } from '@repo/core'; // Importamos el schema maestro
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { CustomerEntitySchema } from '../../../core/src/schemas/Customer.schema'; // Importamos el schema maestro
 
 // --- DTO para Crear un Cliente (Entrada) ---
 const CreateCustomerSchema = CustomerEntitySchema.omit({

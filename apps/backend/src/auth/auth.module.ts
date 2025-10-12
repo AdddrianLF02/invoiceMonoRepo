@@ -19,7 +19,8 @@ import { PrismaUserRepository } from '@repo/infrastructure';
   ],
   controllers: [AuthController],
   providers: [
-    
+    CreateUserUseCase,
+    ValidateUserUseCase,
     {
       provide: USER_REPOSITORY,
       useClass: PrismaUserRepository,

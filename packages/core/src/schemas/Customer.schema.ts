@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { AddressSchema, CustomerIdSchema, EmailSchema, TaxIdSchema } from '../value-objects/schemas';
+import { CustomerIdSchema } from '../value-objects/CustomerId';
+import { EmailSchema } from '../value-objects/Email';
+import { AddressSchema } from '../value-objects/Address';
+import { TaxIdSchema } from '../value-objects/TaxId';
+
 
 
 export const CustomerEntitySchema = z.object({

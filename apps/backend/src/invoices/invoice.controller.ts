@@ -13,9 +13,9 @@ import {
     GetCustomerInvoicesUseCase,
     CreateInvoiceUseCase,
     UpdateInvoiceDto,
-    InvoiceResponseDto,
     GenericResponseDto
 } from '@repo/application'
+import { InvoiceResponseSwaggerDto } from "src/dtos/invoice-swagger.dto";
 
 @ApiTags('Invoices') // Agrupa todos los endpoints en la UI de Swagger
 @Controller('api/v1/invoices')
@@ -42,7 +42,7 @@ export class InvoiceController {
     @Get(':id')
     @ApiOperation({ summary: 'Obtener una factura por su ID' })
     @ApiParam({ name: 'id', description: 'ID de la factura (UUID)' })
-    @ApiResponse({ status: 200, description: 'Factura encontrada', type: InvoiceResponseDto })
+    @ApiResponse({ status: 200, description: 'Factura encontrada', type: InvoiceResponseSwaggerDto })
     @ApiResponse({ status: 404, description: 'Factura no encontrada' })
     async findById(@Param('id', ParseUUIDPipe) id: string): Promise<Invoice> {
         return await this.getInvoiceUseCase.execute(id);
@@ -51,7 +51,7 @@ export class InvoiceController {
     @Get('customer/:customerId')
     @ApiOperation({ summary: 'Obtener todas las facturas de un cliente' })
     @ApiParam({ name: 'customerId', description: 'ID del cliente (UUID)' })
-    @ApiResponse({ status: 200, description: 'Lista de facturas del cliente', type: [InvoiceResponseDto] })
+    @ApiResponse({ status: 200, description: 'Lista de facturas del cliente', type: [InvoiceResponseSwaggerDto] })
     async findByCustomerId(@Param('customerId', ParseUUIDPipe) customerId: string): Promise<Invoice[]> {
         return await this.getCustomerInvoicesUseCase.execute(customerId);
     }

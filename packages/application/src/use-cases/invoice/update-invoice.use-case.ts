@@ -11,7 +11,7 @@ import {
 } from '@repo/core'
 import {
   UpdateInvoiceDto 
-} from '@repo/application'
+} from '../../dtos/invoice/invoice.zod'
 
 @Injectable()
 export class UpdateInvoiceUseCase {

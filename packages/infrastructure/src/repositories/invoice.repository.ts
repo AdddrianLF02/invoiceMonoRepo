@@ -9,7 +9,7 @@ import {
   InvoiceNumber,
   InvoiceStatus as DomainInvoiceStatus, // Renombramos para evitar colisión
 } from '@repo/core';
-import { PrismaService } from '@repo/infrastructure'; // Ruta relativa corregida
+import { PrismaService } from '../database/prisma.service'; // Ruta relativa corregida
 import { InvoiceStatus as PrismaInvoiceStatus } from '@prisma/client'; // Importación correcta
 
 @Injectable()

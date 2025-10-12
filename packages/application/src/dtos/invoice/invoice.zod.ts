@@ -25,3 +25,35 @@ export class CreateInvoiceDto extends createZodDto(CreateInvoiceSchema) {}
 const UpdateInvoiceSchema = CreateInvoiceSchema.partial();
 
 export class UpdateInvoiceDto extends createZodDto(UpdateInvoiceSchema) {}
+
+// --- Respuesta de Factura ---
+const InvoiceItemResponseSchema = z.object({
+  id: z.string().uuid(),
+  description: z.string(),
+  quantity: z.number(),
+  unitPrice: z.number(),
+  taxRate: z.number(),
+});
+
+const InvoiceResponseSchema = z.object({
+  id: z.string().uuid(),
+  customerId: z.string().uuid(),
+  invoiceNumber: z.string(),
+  status: z.string(),
+  issueDate: z.string().datetime(),
+  dueDate: z.string().datetime(),
+  items: z.array(InvoiceItemResponseSchema),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+export class InvoiceResponseDto extends createZodDto(InvoiceResponseSchema) {}
+
+// --- Exports opcionales si necesitas los schemas por separado ---
+export {
+  InvoiceItemSchema,
+  CreateInvoiceSchema,
+  UpdateInvoiceSchema,
+  InvoiceItemResponseSchema,
+  InvoiceResponseSchema,
+};

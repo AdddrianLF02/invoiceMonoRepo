@@ -1,3 +1,7 @@
+import { z } from "zod";
+
+export const TaxIdSchema = z.string().min(1, 'El Tax ID es requerido');
+
 export class TaxId {
     private readonly value: string;
     private readonly type: 'NIF' | 'CIF' | 'OTHER';

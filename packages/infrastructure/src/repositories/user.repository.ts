@@ -6,7 +6,7 @@ import {
 } from '@repo/core'
 import {
   PrismaService
-} from '@repo/infrastructure'
+} from '../database/prisma.service'
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {

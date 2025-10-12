@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
 import {
   Customer,

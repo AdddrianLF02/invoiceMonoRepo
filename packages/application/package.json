@@ -1,22 +1,20 @@
 {
-    "name": "@repo/application",
-    "version": "1.0.0",
-    "main": "./src/index.ts",
-    "types": "./src/index.ts",
-    "license": "MIT",
-    "dependencies": {
-        "@repo/core": "*",
-        "bcrypt": "^6.0.0",
-        "nestjs-zod": "^5.0.1",
-        "zod": "^4.1.11"
-    },
-    "devDependencies": {
-        "@types/bcrypt": "^6.0.0",
-        "typescript": "^5.7.3"
-    },
-    "peerDependencies": {
-        "@nestjs/common": "^11.0.1",
-        "@nestjs/swagger": "^11.2.0",
-        "rxjs": "^7.8.1"
-    }
+  "name": "@repo/application",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@repo/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "rimraf": "^6.0.1",
+    "nestjs-zod": "^1.0.0",
+    "zod": "^4.1.11"
+  }
 }

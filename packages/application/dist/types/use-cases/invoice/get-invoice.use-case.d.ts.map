@@ -1,0 +1,1 @@
+{"version":3,"file":"get-invoice.use-case.d.ts","sourceRoot":"","sources":["../../../../src/use-cases/invoice/get-invoice.use-case.ts"],"names":[],"mappings":"AACA,OAAO,EAEL,KAAK,iBAAiB,EACtB,OAAO,EAER,MAAM,YAAY,CAAA;AAEnB,qBACa,iBAAiB;IAG1B,OAAO,CAAC,QAAQ,CAAC,iBAAiB;gBAAjB,iBAAiB,EAAE,iBAAiB;IAGjD,OAAO,CAAC,EAAE,EAAE,MAAM,GAAG,OAAO,CAAC,OAAO,CAAC;CAS5C"}

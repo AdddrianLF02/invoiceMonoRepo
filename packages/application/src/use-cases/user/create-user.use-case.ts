@@ -1,4 +1,3 @@
-import 'reflect-metadata'
 import { Inject, Injectable } from '@nestjs/common';
 import {
   type UserRepository,
@@ -7,7 +6,7 @@ import {
 } from '@repo/core'
 import {
   CreateUserDto
-} from '@repo/application'
+} from '../../dtos/user.zod'
 
 @Injectable()
 export class CreateUserUseCase {

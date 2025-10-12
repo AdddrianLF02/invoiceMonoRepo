@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
+import z from 'zod';
 
+export const CustomerIdSchema = z.string().uuid();
 /**
  * Value Object para representar el ID de un cliente.
  * Encapsulamos la lógica de negocio relacionada con el ID del cliente.

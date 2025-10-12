@@ -7,7 +7,7 @@ import {
   type InvoiceRepository,
   INVOICE_REPOSITORY
 } from '@repo/core';
-import { CreateInvoiceDto } from '@repo/application';
+import { CreateInvoiceDto } from '../../dtos/invoice/invoice.zod';
 
 @Injectable()
 export class CreateInvoiceUseCase {

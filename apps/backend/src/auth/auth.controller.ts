@@ -1,7 +1,6 @@
 import { Controller, Post, Body, UsePipes, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod'
-import { z } from 'zod'
 import {
   CreateUserUseCase,
   ValidateUserUseCase,
@@ -9,6 +8,7 @@ import {
   LoginDto,
   LoginSchema
 } from '@repo/application';
+import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -16,6 +16,7 @@ export class AuthController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly validateUserUseCase: ValidateUserUseCase,
+    private readonly jwtService: JwtService
   ) {}
 
   @Post('register')
@@ -40,6 +41,11 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
-    return user;
+
+    const payload = { sub: user.id, email: user.email };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload)
+    }
   }
 }

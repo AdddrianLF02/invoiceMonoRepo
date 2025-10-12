@@ -19,5 +19,4 @@ export * from './value-objects/TaxId';
 export * from './value-objects/UserId';
 export * from './schemas/Customer.schema';
 export * from './schemas/Invoice.schema';
-export * from './schemas/Auth.schema';
 //# sourceMappingURL=index.d.ts.map

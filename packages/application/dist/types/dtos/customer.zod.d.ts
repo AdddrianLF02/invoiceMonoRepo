@@ -1,5 +1,5 @@
 import { z } from 'zod';
-declare const CreateCustomerDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
+declare const CreateCustomerDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     number: z.ZodString;
     name: z.ZodString;
     email: z.ZodEmail;
@@ -11,12 +11,10 @@ declare const CreateCustomerDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
     }, z.core.$strip>;
     taxId: z.ZodString;
     userId: z.ZodString;
-}, z.core.$strip>> & {
-    io: "input";
-};
+}, z.core.$strip>>;
 export declare class CreateCustomerDto extends CreateCustomerDto_base {
 }
-declare const UpdateCustomerDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
+declare const UpdateCustomerDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     number: z.ZodOptional<z.ZodString>;
     name: z.ZodOptional<z.ZodString>;
     email: z.ZodOptional<z.ZodEmail>;
@@ -28,12 +26,10 @@ declare const UpdateCustomerDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
     }, z.core.$strip>>;
     taxId: z.ZodOptional<z.ZodString>;
     userId: z.ZodOptional<z.ZodString>;
-}, z.core.$strip>> & {
-    io: "input";
-};
+}, z.core.$strip>>;
 export declare class UpdateCustomerDto extends UpdateCustomerDto_base {
 }
-declare const CustomerResponseDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
+declare const CustomerResponseDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     id: z.ZodString;
     name: z.ZodString;
     email: z.ZodEmail;
@@ -48,9 +44,7 @@ declare const CustomerResponseDto_base: import("nestjs-zod").ZodDto<z.ZodObject<
     active: z.ZodBoolean;
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
-}, z.core.$strip>> & {
-    io: "input";
-};
+}, z.core.$strip>>;
 export declare class CustomerResponseDto extends CustomerResponseDto_base {
 }
 export {};

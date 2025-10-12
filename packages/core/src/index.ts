@@ -28,4 +28,3 @@ export * from './value-objects/UserId';
 // Schemas
 export * from './schemas/Customer.schema';
 export * from './schemas/Invoice.schema';
-export * from './schemas/Auth.schema';

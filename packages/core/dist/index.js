@@ -40,5 +40,4 @@ __exportStar(require("./value-objects/UserId"), exports);
 // Schemas
 __exportStar(require("./schemas/Customer.schema"), exports);
 __exportStar(require("./schemas/Invoice.schema"), exports);
-__exportStar(require("./schemas/Auth.schema"), exports);
 //# sourceMappingURL=index.js.map

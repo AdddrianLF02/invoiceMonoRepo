@@ -3,18 +3,18 @@ import { z } from 'zod';
 
 // Schema que define los datos necesarios para crear un usuario.
 // Coincide con lo que espera el 'CreateUserUseCase'.
-const CreateUserSchema = z.object({
-  name: z.string().optional(),
-  email: z.email('El formato del email es inválido'),
-  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
-});
-
-const LoginSchema = z.object({
-  email: z.email(),
-  password: z.string(),
+export const LoginSchema = z.object({
+  email: z.email({ message: 'Por favor, introduce un email válido.' }),
+  password: z.string().min(1, { message: 'La contraseña es obligatoria.' }),
 });
 export class LoginDto extends createZodDto(LoginSchema) {}
 
+// Schema para la validación del formulario de registro
+export const RegisterSchema = z.object({
+  name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres.' }),
+  email: z.email({ message: 'Por favor, introduce un email válido.' }),
+  password: z.string().min(8, { message: 'La contraseña debe tener al menos 8 caracteres.' }),
+});
 
 // Creamos la clase que NestJS y Swagger pueden usar.
-export class CreateUserDto extends createZodDto(CreateUserSchema) {}
+export class CreateUserDto extends createZodDto(RegisterSchema) {}

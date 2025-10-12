@@ -5,14 +5,12 @@ declare const InvoiceItemSchema: z.ZodObject<{
     unitPrice: z.ZodNumber;
     taxRate: z.ZodNumber;
 }, z.core.$strip>;
-declare const InvoiceItemDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
+declare const InvoiceItemDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     description: z.ZodString;
     quantity: z.ZodNumber;
     unitPrice: z.ZodNumber;
     taxRate: z.ZodNumber;
-}, z.core.$strip>> & {
-    io: "input";
-};
+}, z.core.$strip>>;
 export declare class InvoiceItemDto extends InvoiceItemDto_base {
 }
 declare const CreateInvoiceSchema: z.ZodObject<{
@@ -26,7 +24,7 @@ declare const CreateInvoiceSchema: z.ZodObject<{
         taxRate: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-declare const CreateInvoiceDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
+declare const CreateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     customerId: z.ZodString;
     issueDate: z.ZodString;
     dueDate: z.ZodString;
@@ -36,9 +34,7 @@ declare const CreateInvoiceDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
     }, z.core.$strip>>;
-}, z.core.$strip>> & {
-    io: "input";
-};
+}, z.core.$strip>>;
 export declare class CreateInvoiceDto extends CreateInvoiceDto_base {
 }
 declare const UpdateInvoiceSchema: z.ZodObject<{
@@ -52,7 +48,7 @@ declare const UpdateInvoiceSchema: z.ZodObject<{
         taxRate: z.ZodNumber;
     }, z.core.$strip>>>;
 }, z.core.$strip>;
-declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
+declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     customerId: z.ZodOptional<z.ZodString>;
     issueDate: z.ZodOptional<z.ZodString>;
     dueDate: z.ZodOptional<z.ZodString>;
@@ -62,9 +58,7 @@ declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
     }, z.core.$strip>>>;
-}, z.core.$strip>> & {
-    io: "input";
-};
+}, z.core.$strip>>;
 export declare class UpdateInvoiceDto extends UpdateInvoiceDto_base {
 }
 declare const InvoiceItemResponseSchema: z.ZodObject<{
@@ -91,7 +85,7 @@ declare const InvoiceResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, z.core.$strip>;
-declare const InvoiceResponseDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
+declare const InvoiceResponseDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     id: z.ZodString;
     customerId: z.ZodString;
     invoiceNumber: z.ZodString;
@@ -107,9 +101,7 @@ declare const InvoiceResponseDto_base: import("nestjs-zod").ZodDto<z.ZodObject<{
     }, z.core.$strip>>;
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
-}, z.core.$strip>> & {
-    io: "input";
-};
+}, z.core.$strip>>;
 export declare class InvoiceResponseDto extends InvoiceResponseDto_base {
 }
 export { InvoiceItemSchema, CreateInvoiceSchema, UpdateInvoiceSchema, InvoiceItemResponseSchema, InvoiceResponseSchema, };

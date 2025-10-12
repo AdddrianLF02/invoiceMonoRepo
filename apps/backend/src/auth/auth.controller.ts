@@ -1,12 +1,14 @@
 import { Controller, Post, Body, UsePipes, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ZodValidationPipe } from 'nestjs-zod';
+import { ZodValidationPipe } from 'nestjs-zod'
+import { z } from 'zod'
 import {
-    CreateUserUseCase,
-    ValidateUserUseCase,
-    CreateUserDto,
-    LoginDto
-} from '@repo/application'
+  CreateUserUseCase,
+  ValidateUserUseCase,
+  CreateUserDto,
+  LoginDto,
+  LoginSchema
+} from '@repo/application';
 
 @ApiTags('Authentication')
 @Controller('auth')

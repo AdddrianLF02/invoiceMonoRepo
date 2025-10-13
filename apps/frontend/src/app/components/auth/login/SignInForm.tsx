@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Label } from '@radix-ui/react-label';
+import { Input } from '../../ui/input';
+import { Button } from '../../ui/button';
 
 export function SignInForm() {
   const [email, setEmail] = useState('');
@@ -36,8 +39,8 @@ export function SignInForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="email">Email</label>
-        <input 
+        <Label htmlFor="email">Email</Label>
+        <Input 
           id="email" 
           name="email" 
           type="email" 
@@ -48,8 +51,8 @@ export function SignInForm() {
         />
       </div>
       <div>
-        <label htmlFor="password">Password</label>
-        <input 
+        <Label htmlFor="password">Password</Label>
+        <Input 
           id="password" 
           name="password" 
           type="password" 
@@ -60,9 +63,9 @@ export function SignInForm() {
         />
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Iniciando sesión...' : 'Sign In'}
-      </button>
+      </Button>
       <p>
         Don't have an account? <Link href="/register">Sign up</Link>
       </p>

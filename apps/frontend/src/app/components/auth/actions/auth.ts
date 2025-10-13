@@ -1,4 +1,3 @@
-// apps/frontend/src/app/components/auth/actions/auth.ts
 'use server';
 
 import { RegisterSchema } from "@repo/application";

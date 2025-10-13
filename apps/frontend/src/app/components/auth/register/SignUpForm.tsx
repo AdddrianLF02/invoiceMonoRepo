@@ -1,7 +1,6 @@
-// apps/frontend/src/app/components/auth/register/signup.tsx
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom' // Hooks de Server-Side Form Handling
+import { useFormStatus } from 'react-dom' // Hooks de Server-Side Form Handling
 import { useRouter } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { Button } from '../../ui/button' 

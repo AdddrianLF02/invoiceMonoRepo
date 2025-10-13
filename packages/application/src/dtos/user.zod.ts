@@ -11,19 +11,23 @@ export const LoginSchema = z.object({
 });
 export class LoginDto extends createZodDto(LoginSchema) {}
 
-// Schema para la validación del formulario de registro
+
+// FRONTEND: esquema con confirmación de contraseña
 export const RegisterSchema = z.object({
   name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres.' }),
-  email: z.email({ message: 'Por favor, introduce un email válido.' }),
+  email: z.string().email({ message: 'Por favor, introduce un email válido.' }),
   password: z.string().min(8, { message: 'La contraseña debe tener al menos 8 caracteres.' }),
-  // 1. Añadimos el campo confirmPassword
   confirmPassword: z.string().min(8, { message: 'La confirmación de la contraseña es obligatoria.' }),
-})
-// 2. Añadimos la función refine para validar que las contraseñas coincidan
-.refine((data) => data.password === data.confirmPassword, {
+}).refine((data) => data.password === data.confirmPassword, {
   message: 'Las contraseñas no coinciden.',
-  path: ['confirmPassword'], // Asocia el error al campo de confirmación
+  path: ['confirmPassword'],
 });
 
-// Creamos la clase que NestJS y Swagger pueden usar.
-export class CreateUserDto extends createZodDto(RegisterSchema) {}
+// BACKEND: esquema sin confirmación
+export const CreateUserSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export class CreateUserDto extends createZodDto(CreateUserSchema) {}

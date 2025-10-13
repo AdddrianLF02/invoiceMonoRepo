@@ -1,6 +1,7 @@
 "use strict";
+// packages/application/src/dtos/user.zod.ts
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateUserDto = exports.RegisterSchema = exports.LoginDto = exports.LoginSchema = void 0;
+exports.CreateUserDto = exports.CreateUserSchema = exports.RegisterSchema = exports.LoginDto = exports.LoginSchema = void 0;
 const nestjs_zod_1 = require("nestjs-zod");
 const zod_1 = require("zod");
 // Schema que define los datos necesarios para crear un usuario.
@@ -12,14 +13,23 @@ exports.LoginSchema = zod_1.z.object({
 class LoginDto extends (0, nestjs_zod_1.createZodDto)(exports.LoginSchema) {
 }
 exports.LoginDto = LoginDto;
-// Schema para la validación del formulario de registro
+// FRONTEND: esquema con confirmación de contraseña
 exports.RegisterSchema = zod_1.z.object({
     name: zod_1.z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres.' }),
-    email: zod_1.z.email({ message: 'Por favor, introduce un email válido.' }),
+    email: zod_1.z.string().email({ message: 'Por favor, introduce un email válido.' }),
     password: zod_1.z.string().min(8, { message: 'La contraseña debe tener al menos 8 caracteres.' }),
+    confirmPassword: zod_1.z.string().min(8, { message: 'La confirmación de la contraseña es obligatoria.' }),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: 'Las contraseñas no coinciden.',
+    path: ['confirmPassword'],
 });
-// Creamos la clase que NestJS y Swagger pueden usar.
-class CreateUserDto extends (0, nestjs_zod_1.createZodDto)(exports.RegisterSchema) {
+// BACKEND: esquema sin confirmación
+exports.CreateUserSchema = zod_1.z.object({
+    name: zod_1.z.string().min(2),
+    email: zod_1.z.string().email(),
+    password: zod_1.z.string().min(8),
+});
+class CreateUserDto extends (0, nestjs_zod_1.createZodDto)(exports.CreateUserSchema) {
 }
 exports.CreateUserDto = CreateUserDto;
 //# sourceMappingURL=user.zod.js.map

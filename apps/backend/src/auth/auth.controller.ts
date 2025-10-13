@@ -26,6 +26,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   @ApiResponse({ status: 409, description: 'El email ya está en uso' })
   async register(@Body() createUserDto: CreateUserDto) {
+     console.log('Datos recibidos en /register:', createUserDto);
     const user = await this.createUserUseCase.execute(createUserDto);
     // Por seguridad, nunca devolvemos la entidad User completa con la contraseña
     return { id: user.getId().getValue(), email: user.getEmail().getValue(), message: 'Usuario registrado con éxito' };

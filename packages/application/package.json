@@ -9,12 +9,13 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@repo/core": "*"
+    "@repo/core": "*",
+    "nestjs-zod": "^1.0.0",
+    "zod": "^4.1.11"
+    
   },
   "devDependencies": {
     "typescript": "^5.7.3",
-    "rimraf": "^6.0.1",
-    "nestjs-zod": "^1.0.0",
-    "zod": "^4.1.11"
+    "rimraf": "^6.0.1"
   }
 }

@@ -1,7 +1,5 @@
 import NextAuth, { NextAuthOptions, User } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { z } from "zod";
-
 // Para asegurar que los tipos de la sesión son correctos
 // Importamos JWT de next-auth/jwt con un alias para evitar conflictos
 import { JWT } from "next-auth/jwt";

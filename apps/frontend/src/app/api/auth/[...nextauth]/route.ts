@@ -1,14 +1,29 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
+import NextAuth, { NextAuthOptions, User } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { z } from "zod";
 
 // Para asegurar que los tipos de la sesión son correctos
-import { User } from "next-auth";
+// Importamos JWT de next-auth/jwt con un alias para evitar conflictos
 import { JWT } from "next-auth/jwt";
 
 // Reutilizamos el schema de validación que ya tenemos en nuestro paquete core
-import { LoginSchema } from "@repo/core";
+import { LoginSchema } from "@repo/application"
 
+// **Definiciones de Tipos Personalizadas (Correctas)**
+// Nota: NextAuth ya tiene su propia definición de User y JWT. 
+// Las mantenemos aquí para que la lógica interna sea legible,
+// pero usamos type assertion en los callbacks.
+interface CustomUser extends User {
+    id: string;
+    email: string;
+    access_token: string;
+}
+
+interface CustomJWT extends JWT {
+    id: string;
+    email: string;
+    access_token: string; // Coherente con el backend (snake_case)
+}
 
 
 export const authOptions: NextAuthOptions = {
@@ -20,33 +35,39 @@ export const authOptions: NextAuthOptions = {
                 password: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
-                // 1. Validamos la entrada con nuestro schema compartido
                 const parsedCredentials = LoginSchema.safeParse(credentials);
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
                     
                     // 2. Llamamos a nuestra API de backend para que haga el trabajo duro
-                    const res = await fetch('http://localhost:3000/auth/login', { // Asegúrate de que el puerto del backend es correcto
+                    const res = await fetch('http://localhost:3000/auth/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, password }),
                     });
 
-                    // 3. Si la API del backend devuelve un error (401, etc.), fallamos la autenticación
                     if (!res.ok) {
                         console.error("La autenticación en el backend ha fallado.");
                         return null;
                     }
 
                     // 4. Si la API devuelve un usuario, lo pasamos a NextAuth para que cree la sesión
-                    const user = await res.json();
-                    if (user) {
-                        return user;
+                    // Recibimos: { access_token: string, user: { id: string, email: string } }
+                    const data = await res.json()
+                    
+                    if(data && data.user && data.access_token) {
+                        // Mapeamos la respuesta al tipo NextAuth User extendido
+                        const nextAuthUser: CustomUser = {
+                            id: data.user.id,
+                            email: data.user.email,
+                            name: data.user.email,
+                            access_token: data.access_token,
+                        }
+                        return nextAuthUser;
                     }
                 }
                 
-                // Si la validación de Zod falla o el backend no devuelve usuario, fallamos.
                 return null;
             },
         }),
@@ -55,21 +76,43 @@ export const authOptions: NextAuthOptions = {
         strategy: 'jwt',
     },
     pages: {
-        signIn: '/login', // Corregido: La página de login debería ser /login
+        signIn: '/login',
     },
     callbacks: {
-        async jwt({ token, user }: { token: JWT; user?: User }) {
-            // Cuando el usuario inicia sesión, el objeto 'user' viene del `authorize`
-            if (user) {
-                token.id = user.id;
-                // Puedes añadir más datos del usuario al token si lo necesitas
+        // SOLUCIÓN: Usamos la firma de función genérica esperada por NextAuth.
+        // `user` será de tipo `CustomUser` SOLO en el primer sign-in, así que lo forzamos.
+        // `token` es de tipo `JWT` (de next-auth/jwt) y lo forzamos a `CustomJWT`.
+        async jwt({ token, user, trigger, account, profile, isNewUser }) {
+            
+            // 1. Forzamos el tipo del token para acceder a nuestras propiedades personalizadas
+            const customToken = token as CustomJWT;
+
+            // 2. Si el usuario existe (inicio de sesión), añadimos el ID y el Token del backend
+            if (user && trigger === 'signIn') {
+                const customUser = user as CustomUser; // Forzamos el tipo del usuario al iniciar sesión
+                
+                customToken.id = customUser.id;
+                customToken.email = customUser.email;
+                customToken.access_token = customUser.access_token; // Almacenamos el JWT del backend (el que usaremos en las peticiones)
             }
+            
+            // Justificación: NextAuth gestiona la rotación y el cifrado del token (session token).
+            // Nosotros inyectamos nuestro access_token del backend en ese token.
             return token;
         },
-        async session({ session, token }: { session: any; token: JWT }) {
-            // Hacemos que los datos del token estén disponibles en el objeto de sesión
-            if (token && session.user) {
-                session.user.id = token.id as string;
+        
+        // SOLUCIÓN: Mismo problema de tipado, usamos la firma genérica y type assertion.
+        async session({ session, token }) {
+            
+            // Forzamos el tipo del token para leer las propiedades añadidas
+            const sessionToken = token as CustomJWT;
+
+            // Hacemos que los datos (ID y Token del backend) estén disponibles en el objeto de sesión
+            if (sessionToken && session.user) {
+                session.user.id = sessionToken.id;
+                session.user.email = sessionToken.email;
+                // Usamos 'access_token' para ser coherentes con la definición de CustomJWT y el backend
+                session.accessToken = sessionToken.access_token; 
             }
             return session;
         },
@@ -79,4 +122,3 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
-

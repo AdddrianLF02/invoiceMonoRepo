@@ -2,105 +2,141 @@ import { Money } from "../value-objects/Money";
 import { v4 as uuidv4 } from 'uuid';
 
 export class InvoiceItem {
-  private readonly id: string;
-  private readonly description: string;
-  private readonly quantity: number;
-  private readonly unitPrice: Money;
-  private readonly taxRate: number;
+  private readonly id: string;
+  private readonly description: string;
+  private readonly quantity: number;
+  private readonly unitPrice: Money;
+  private readonly taxRate: number; // Se mantiene como dato histórico/auditoría
+  // Valores calculados y fijos (resultados de la Strategy en la Capa Application)
+  private readonly subtotal: Money;
+  private readonly taxAmount: Money;
+  private readonly total: Money;
 
-  public static create(
-    description: string,
-    quantity: number,
-    unitPrice: Money,
-    taxRate: number
-  ): InvoiceItem {
-    return new InvoiceItem(
-      uuidv4(),
-      description,
-      quantity,
-      unitPrice,
-      taxRate
-    );
-  }
+  // --- FACTORY METHOD: CREACIÓN (Uso en Casos de Uso) ---
+  // Requiere explícitamente los valores calculados por la Strategy externa.
+  public static create(
+    description: string,
+    quantity: number,
+    unitPrice: Money,
+    taxRate: number,
+    subtotal: Money,
+    taxAmount: Money,
+    total: Money
+  ): InvoiceItem {
+    // Invariante de Consistencia: Garantizamos que la suma de los componentes sea correcta
+    if (!total.equals(subtotal.add(taxAmount))) {
+      throw new Error('Calculated total does not match subtotal + tax amount');
+    }
+    
+    return new InvoiceItem(
+      uuidv4(),
+      description,
+      quantity,
+      unitPrice,
+      taxRate,
+      subtotal,
+      taxAmount,
+      total
+    )
+  }
 
-  public static reconstitute(
-    id: string,
-    description: string,
-    quantity: number,
-    unitPrice: Money,
-    taxRate: number
-  ): InvoiceItem {
-    return new InvoiceItem(
-      id,
-      description,
-      quantity,
-      unitPrice,
-      taxRate
-    );
-  }
+  // --- FACTORY METHOD: RECONSTITUCIÓN (Uso en Repositorios) ---
+  // Debe aceptar todos los campos (incluidos los calculados) para restaurar el estado desde la BBDD.
+  public static reconstitute(
+    id: string,
+    description: string,
+    quantity: number,
+    unitPrice: Money,
+    taxRate: number,
+    subtotal: Money, // <-- AÑADIDO
+    taxAmount: Money, // <-- AÑADIDO
+    total: Money // <-- AÑADIDO
+  ): InvoiceItem {
+    // No chequeamos la invariante aquí, ya que asumimos que la BBDD almacena datos válidos.
+    return new InvoiceItem(
+        id,
+        description,
+        quantity,
+        unitPrice,
+        taxRate,
+        subtotal,
+        taxAmount,
+        total
+    );
+  }
 
-  constructor(
-    id: string,
-    description: string,
-    quantity: number,
-    unitPrice: Money,
-    taxRate: number
-  ) {
-    this.validate(description, quantity, taxRate);
-    
-    this.id = id;
-    this.description = description;
-    this.quantity = quantity;
-    this.unitPrice = unitPrice;
-    this.taxRate = taxRate;
-  }
+  // --- CONSTRUCTOR PRIVADO (Con todos los campos) ---
+  private constructor(
+    id: string,
+    description: string,
+    quantity: number,
+    unitPrice: Money,
+    taxRate: number,
+    subtotal: Money,
+    taxAmount: Money,
+    total: Money
+  ) {
+    this.validate(description, quantity, taxRate);
+    
+    this.id = id;
+    this.description = description;
+    this.quantity = quantity;
+    this.unitPrice = unitPrice;
+    this.taxRate = taxRate;
+    this.subtotal = subtotal;
+    this.taxAmount = taxAmount;
+    this.total = total;
+  }
 
-  public getId(): string {
-    return this.id;
-  }
 
-  public getDescription(): string {
-    return this.description;
-  }
+  // --- GETTERS (SOLO DEVUELVEN EL ESTADO ALMACENADO) ---
+  
+  public getId(): string {
+    return this.id;
+  }
 
-  public getQuantity(): number {
-    return this.quantity;
-  }
+  public getDescription(): string {
+    return this.description;
+  }
 
-  public getUnitPrice(): Money {
-    return this.unitPrice;
-  }
+  public getQuantity(): number {
+    return this.quantity;
+  }
 
-  public getTaxRate(): number {
-    return this.taxRate;
-  }
+  public getUnitPrice(): Money {
+    return this.unitPrice;
+  }
 
-  public getSubtotal(): Money {
-    return this.unitPrice.multiply(this.quantity);
-  }
+  public getTaxRate(): number {
+    return this.taxRate;
+  }
 
-  public getTaxAmount(): Money {
-    const subtotal = this.getSubtotal();
-    return subtotal.multiply(this.taxRate / 100);
-  }
+  // CORREGIDO: Solo devuelve el valor almacenado por la Strategy
+  public getSubtotal(): Money {
+    return this.subtotal; 
+  }
 
-  public getTotal(): Money {
-    const subtotal = this.getSubtotal();
-    const taxAmount = this.getTaxAmount();
-    return subtotal.add(taxAmount);
-  }
+  // CORREGIDO: Solo devuelve el valor almacenado por la Strategy
+  public getTaxAmount(): Money {
+    return this.taxAmount; 
+  }
 
-  private validate(description: string, quantity: number, taxRate: number): void {
-    if (!description || description.trim().length === 0) {
-      throw new Error('Item description cannot be empty');
-    }
-    
-    if (quantity <= 0) {
-      throw new Error('Item quantity must be greater than zero');
-    }
-    
-    if (taxRate < 0) {
-      throw new Error('Tax rate cannot be negative');
-    }
-  }
+  // CORREGIDO: Solo devuelve el valor almacenado por la Strategy
+  public getTotal(): Money {
+    return this.total; 
+  }
+
+  private validate(description: string, quantity: number, taxRate: number): void {
+    if (!description || description.trim().length === 0) {
+      throw new Error('Item description cannot be empty');
+    }
+    
+    if (quantity <= 0) {
+      throw new Error('Item quantity must be greater than zero');
+    }
+    
+    if (taxRate < 0) {
+      throw new Error('Tax rate cannot be negative');
+    }
+  }
 }

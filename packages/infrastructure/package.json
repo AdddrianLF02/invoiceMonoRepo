@@ -7,7 +7,10 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "generate": "prisma generate",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    
+    "db:migrate": "dotenv -e ../../apps/backend/.env -- prisma migrate dev --schema ./src/database/schema/schema.prisma",
+    "db:push": "dotenv -e ../../apps/backend/.env -- prisma db push --schema ./src/database/schema/schema.prisma"
   },
   "prisma": {
     "schema": "src/database/schema/schema.prisma"
@@ -21,7 +24,8 @@
     "@repo/typescript-config": "*",
     "prisma": "^6.16.3",
     "typescript": "^5.7.3",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.0.1",
+    "dotenv-cli": "^7.4.2" 
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.1"

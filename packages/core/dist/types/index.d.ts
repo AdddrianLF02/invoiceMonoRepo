@@ -8,6 +8,7 @@ export * from './repositories/UserRepository';
 export * from './repositories/tokens/customer.provider';
 export * from './repositories/tokens/invoice.providers';
 export * from './repositories/tokens/user.provider';
+export * from './services/TaxCalculationStrategy';
 export * from './value-objects/Address';
 export * from './value-objects/CustomerId';
 export * from './value-objects/Email';

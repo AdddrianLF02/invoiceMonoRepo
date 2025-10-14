@@ -14,6 +14,9 @@ export * from './repositories/tokens/customer.provider';
 export * from './repositories/tokens/invoice.providers';
 export * from './repositories/tokens/user.provider';
 
+// SERVICES
+export * from './services/TaxCalculationStrategy'
+
 // Value Objects
 export * from './value-objects/Address';
 export * from './value-objects/CustomerId';

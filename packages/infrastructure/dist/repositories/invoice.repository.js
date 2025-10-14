@@ -32,8 +32,11 @@ let PrismaInvoiceRepository = class PrismaInvoiceRepository {
                         id: item.getId(),
                         description: item.getDescription(),
                         quantity: item.getQuantity(),
-                        unitPrice: item.getUnitPrice().getAmount(),
+                        unitPrice: item.getUnitPrice().getAmountInCents(),
                         taxRate: item.getTaxRate(),
+                        subtotal: item.getSubtotal().getAmountInCents(),
+                        taxAmount: item.getTaxAmount().getAmountInCents(),
+                        total: item.getTotal().getAmountInCents()
                     })),
                 },
             },

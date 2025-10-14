@@ -27,6 +27,8 @@ __exportStar(require("./repositories/UserRepository"), exports);
 __exportStar(require("./repositories/tokens/customer.provider"), exports);
 __exportStar(require("./repositories/tokens/invoice.providers"), exports);
 __exportStar(require("./repositories/tokens/user.provider"), exports);
+// SERVICES
+__exportStar(require("./services/TaxCalculationStrategy"), exports);
 // Value Objects
 __exportStar(require("./value-objects/Address"), exports);
 __exportStar(require("./value-objects/CustomerId"), exports);

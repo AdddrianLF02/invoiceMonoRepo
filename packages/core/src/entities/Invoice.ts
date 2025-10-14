@@ -5,7 +5,7 @@ import { InvoiceNumber } from "../value-objects/InvoiceNumber";
 import { InvoiceStatus } from "../value-objects/InvoiceStatus";
 import { Money } from "../value-objects/Money";
 
-export class Invoice {
+export class Invoice  {
   private readonly id: InvoiceId;
   private readonly customerId: CustomerId;
   private invoiceNumber: InvoiceNumber;
@@ -38,6 +38,7 @@ export class Invoice {
     this.updatedAt = updatedAt || new Date();
   }
 
+  // FACTORY METHOD
   public static create(
     customerId: CustomerId,
     issueDate: Date,
@@ -61,6 +62,8 @@ export class Invoice {
       items
     );
   }
+
+  // FACTORY METHOD (RECONSTITUCIÓN)
 
   public static reconstitute(
     id: InvoiceId,
@@ -86,7 +89,7 @@ export class Invoice {
     );
   }
 
-  // NUEVO MÉTODO AYUDANTE --
+  // NUEVO MÉTODO AYUDANTE- PROXY --
   private copyWith(props: {
     customerId?: CustomerId;
     invoiceNumber?: InvoiceNumber;

@@ -26,6 +26,7 @@ class Invoice {
         this.createdAt = createdAt || new Date();
         this.updatedAt = updatedAt || new Date();
     }
+    // FACTORY METHOD
     static create(customerId, issueDate, dueDate, items = []) {
         if (dueDate < issueDate) {
             throw new Error('Due date cannot be before issue date');
@@ -34,10 +35,11 @@ class Invoice {
         const invoiceNumber = InvoiceNumber_1.InvoiceNumber.create(`INV-${Date.now()}`);
         return new Invoice(InvoiceId_1.InvoiceId.create(), customerId, invoiceNumber, InvoiceStatus_1.InvoiceStatus.draft(), issueDate, dueDate, items);
     }
+    // FACTORY METHOD (RECONSTITUCIÓN)
     static reconstitute(id, customerId, invoiceNumber, status, issueDate, dueDate, items = [], createdAt, updatedAt) {
         return new Invoice(id, customerId, invoiceNumber, status, issueDate, dueDate, items, createdAt, updatedAt);
     }
-    // NUEVO MÉTODO AYUDANTE --
+    // NUEVO MÉTODO AYUDANTE- PROXY --
     copyWith(props) {
         return new Invoice(this.id, props.customerId ?? this.customerId, props.invoiceNumber ?? this.invoiceNumber, props.status ?? this.status, props.issueDate ?? this.issueDate, props.dueDate ?? this.dueDate, props.items ?? this.items, this.createdAt, new Date());
     }

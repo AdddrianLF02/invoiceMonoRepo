@@ -30,8 +30,11 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
             id: item.getId(),
             description: item.getDescription(),
             quantity: item.getQuantity(),
-            unitPrice: item.getUnitPrice().getAmount(),
+            unitPrice: item.getUnitPrice().getAmountInCents(),
             taxRate: item.getTaxRate(),
+            subtotal: item.getSubtotal().getAmountInCents(),
+            taxAmount: item.getTaxAmount().getAmountInCents(),
+            total: item.getTotal().getAmountInCents()
           })),
         },
       },
@@ -78,8 +81,11 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
             id: item.getId(),
             description: item.getDescription(),
             quantity: item.getQuantity(),
-            unitPrice: item.getUnitPrice().getAmount(),
+            unitPrice: item.getUnitPrice().getAmountInCents(),
             taxRate: item.getTaxRate(),
+            subtotal: item.getSubtotal().getAmountInCents(),
+            taxAmount: item.getTaxAmount().getAmountInCents(),
+            total: item.getTotal().getAmountInCents()
           })),
         },
       },
@@ -105,8 +111,11 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
         item.id,
         item.description,
         item.quantity,
-        Money.create(item.unitPrice, 'EUR'),
+        Money.fromFloat(item.unitPrice, 'EUR'),
         item.taxRate,
+        item.subtotal,
+        item.taxAmount,
+        item.total
       ),
     );
 

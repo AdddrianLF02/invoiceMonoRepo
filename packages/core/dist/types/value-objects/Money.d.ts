@@ -1,17 +1,17 @@
 /**
- * Value Object para representar un valor monetario.
- * Encapsula la lógica de validación y operaciones con importes monetarios.
+ * Value Object para representar un valor monetario, utilizando BigInt (céntimos) internamente
+ * para garantizar precisión aritmética, esencial para sistemas financieros (incluso en EUR).
  */
 export declare class Money {
-    private readonly amount;
+    private readonly amountInCents;
     private readonly currency;
     private constructor();
-    static create(amount: number, currency?: string): Money;
+    static fromFloat(amount: number, currency?: string): Money;
     static zero(currency?: string): Money;
-    getAmount(): number;
+    getAmountInCents(): bigint;
+    getAmountAsFloat(): number;
     getCurrency(): string;
     add(money: Money): Money;
-    subtract(money: Money): Money;
     multiply(factor: number): Money;
     equals(other?: Money): boolean;
     toString(): string;

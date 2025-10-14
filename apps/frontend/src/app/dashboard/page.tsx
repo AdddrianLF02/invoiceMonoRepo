@@ -1,8 +1,6 @@
-// apps/frontend/src/app/dashboard/page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
-
 import { Plus, FileText, DollarSign, Users, TrendingUp } from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";

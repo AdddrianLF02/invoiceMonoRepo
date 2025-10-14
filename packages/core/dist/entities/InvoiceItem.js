@@ -7,21 +7,42 @@ class InvoiceItem {
     description;
     quantity;
     unitPrice;
-    taxRate;
-    static create(description, quantity, unitPrice, taxRate) {
-        return new InvoiceItem((0, uuid_1.v4)(), description, quantity, unitPrice, taxRate);
+    taxRate; // Se mantiene como dato histórico/auditoría
+    // Valores calculados y fijos (resultados de la Strategy en la Capa Application)
+    subtotal;
+    taxAmount;
+    total;
+    // --- FACTORY METHOD: CREACIÓN (Uso en Casos de Uso) ---
+    // Requiere explícitamente los valores calculados por la Strategy externa.
+    static create(description, quantity, unitPrice, taxRate, subtotal, taxAmount, total) {
+        // Invariante de Consistencia: Garantizamos que la suma de los componentes sea correcta
+        if (!total.equals(subtotal.add(taxAmount))) {
+            throw new Error('Calculated total does not match subtotal + tax amount');
+        }
+        return new InvoiceItem((0, uuid_1.v4)(), description, quantity, unitPrice, taxRate, subtotal, taxAmount, total);
     }
-    static reconstitute(id, description, quantity, unitPrice, taxRate) {
-        return new InvoiceItem(id, description, quantity, unitPrice, taxRate);
+    // --- FACTORY METHOD: RECONSTITUCIÓN (Uso en Repositorios) ---
+    // Debe aceptar todos los campos (incluidos los calculados) para restaurar el estado desde la BBDD.
+    static reconstitute(id, description, quantity, unitPrice, taxRate, subtotal, // <-- AÑADIDO
+    taxAmount, // <-- AÑADIDO
+    total // <-- AÑADIDO
+    ) {
+        // No chequeamos la invariante aquí, ya que asumimos que la BBDD almacena datos válidos.
+        return new InvoiceItem(id, description, quantity, unitPrice, taxRate, subtotal, taxAmount, total);
     }
-    constructor(id, description, quantity, unitPrice, taxRate) {
+    // --- CONSTRUCTOR PRIVADO (Con todos los campos) ---
+    constructor(id, description, quantity, unitPrice, taxRate, subtotal, taxAmount, total) {
         this.validate(description, quantity, taxRate);
         this.id = id;
         this.description = description;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.taxRate = taxRate;
+        this.subtotal = subtotal;
+        this.taxAmount = taxAmount;
+        this.total = total;
     }
+    // --- GETTERS (SOLO DEVUELVEN EL ESTADO ALMACENADO) ---
     getId() {
         return this.id;
     }
@@ -37,17 +58,17 @@ class InvoiceItem {
     getTaxRate() {
         return this.taxRate;
     }
+    // CORREGIDO: Solo devuelve el valor almacenado por la Strategy
     getSubtotal() {
-        return this.unitPrice.multiply(this.quantity);
+        return this.subtotal;
     }
+    // CORREGIDO: Solo devuelve el valor almacenado por la Strategy
     getTaxAmount() {
-        const subtotal = this.getSubtotal();
-        return subtotal.multiply(this.taxRate / 100);
+        return this.taxAmount;
     }
+    // CORREGIDO: Solo devuelve el valor almacenado por la Strategy
     getTotal() {
-        const subtotal = this.getSubtotal();
-        const taxAmount = this.getTaxAmount();
-        return subtotal.add(taxAmount);
+        return this.total;
     }
     validate(description, quantity, taxRate) {
         if (!description || description.trim().length === 0) {

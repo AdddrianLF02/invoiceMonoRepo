@@ -1,55 +1,62 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Money = void 0;
+// packages/core/src/value-objects/Money.ts
 /**
- * Value Object para representar un valor monetario.
- * Encapsula la lógica de validación y operaciones con importes monetarios.
+ * Value Object para representar un valor monetario, utilizando BigInt (céntimos) internamente
+ * para garantizar precisión aritmética, esencial para sistemas financieros (incluso en EUR).
  */
 class Money {
-    amount;
+    // Almacenado como céntimos/peniques (ej: 10.99 EUR = 1099n)
+    amountInCents;
     currency;
-    constructor(amount, currency = 'EUR') {
-        this.amount = amount;
+    constructor(amountInCents, currency = 'EUR') {
+        this.amountInCents = amountInCents;
         this.currency = currency;
     }
-    static create(amount, currency = 'EUR') {
-        if (amount < 0) {
+    // Creación desde un flotante (el input de usuario)
+    static fromFloat(amount, currency = 'EUR') {
+        if (amount < 0)
             throw new Error('Money amount cannot be negative');
-        }
-        if (!currency || currency.trim().length === 0) {
-            throw new Error('Currency cannot be empty');
-        }
-        return new Money(amount, currency);
+        if (currency !== 'EUR')
+            throw new Error('Only EUR currency is supported in Spain'); // Nuevo chequeo
+        // Convertir a céntimos y forzar el redondeo BigInt (evitando float precision errors)
+        const amountInCents = BigInt(Math.round(amount * 100));
+        return new Money(amountInCents, currency);
     }
     static zero(currency = 'EUR') {
-        return new Money(0, currency);
+        if (currency !== 'EUR')
+            throw new Error('Only EUR currency is supported in Spain');
+        return new Money(0n, currency);
     }
-    getAmount() {
-        return this.amount;
+    // Getter principal para uso en cálculos (devuelve BigInt)
+    getAmountInCents() {
+        return this.amountInCents;
+    }
+    // Getter para representación (devuelve el valor decimal)
+    getAmountAsFloat() {
+        return Number(this.amountInCents) / 100;
     }
     getCurrency() {
         return this.currency;
     }
     add(money) {
-        if (this.currency !== money.currency) {
+        if (this.currency !== money.currency)
             throw new Error('Cannot add money with different currencies');
-        }
-        return new Money(this.amount + money.amount, this.currency);
-    }
-    subtract(money) {
-        if (this.currency !== money.currency) {
-            throw new Error('Cannot subtract money with different currencies');
-        }
-        if (this.amount < money.amount) {
-            throw new Error('Cannot subtract to a negative amount');
-        }
-        return new Money(this.amount - money.amount, this.currency);
+        return new Money(this.amountInCents + money.amountInCents, this.currency);
     }
     multiply(factor) {
-        if (factor < 0) {
+        if (factor < 0)
             throw new Error('Cannot multiply by a negative factor');
+        // Si el factor es la cantidad (entero):
+        if (Number.isInteger(factor)) {
+            return new Money(this.amountInCents * BigInt(factor), this.currency);
         }
-        return new Money(this.amount * factor, this.currency);
+        // Si el factor es un porcentaje (float, ej: tasa de impuesto 0.21):
+        // Realizamos la multiplicación en número (sólo en este punto) y redondeamos a céntimos.
+        const preciseAmount = Number(this.amountInCents) * factor;
+        const roundedCents = BigInt(Math.round(preciseAmount));
+        return new Money(roundedCents, this.currency);
     }
     equals(other) {
         if (other === null || other === undefined) {
@@ -58,10 +65,11 @@ class Money {
         if (!(other instanceof Money)) {
             return false;
         }
-        return this.amount === other.amount && this.currency === other.currency;
+        return this.amountInCents === other.amountInCents && this.currency === other.currency;
     }
     toString() {
-        return `${this.amount} ${this.currency}`;
+        // Esto es solo para representación/debugging, no para lógica de negocio.
+        return `${this.getAmountAsFloat().toFixed(2)} ${this.currency}`;
     }
 }
 exports.Money = Money;

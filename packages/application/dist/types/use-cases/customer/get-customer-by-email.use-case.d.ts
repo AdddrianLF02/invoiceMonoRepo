@@ -1,5 +1,6 @@
 import { Customer, type CustomerRepository } from '@repo/core';
-export declare class GetCustomerByEmailUseCase {
+import { GetCustomerByEmailInputPort } from './ports/input-port';
+export declare class GetCustomerByEmailUseCase implements GetCustomerByEmailInputPort {
     private readonly customerRepository;
     constructor(customerRepository: CustomerRepository);
     execute(email: string): Promise<Customer | null>;

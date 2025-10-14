@@ -1,4 +1,5 @@
 import { Customer, type CustomerRepository } from '@repo/core';
+import { UpdateCustomerInputPort } from './ports/input-port';
 export interface UpdateCustomerInput {
     id: string;
     name?: string;
@@ -11,7 +12,7 @@ export interface UpdateCustomerInput {
     taxId?: string;
     isActive?: boolean;
 }
-export declare class UpdateCustomerUseCase {
+export declare class UpdateCustomerUseCase implements UpdateCustomerInputPort {
     private readonly customerRepository;
     constructor(customerRepository: CustomerRepository);
     execute(input: UpdateCustomerInput): Promise<Customer>;

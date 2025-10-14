@@ -5,9 +5,10 @@ import {
   CustomerId,
   Invoice
 } from '@repo/core'
+import { GetCustomerInvoicesInputPort } from './ports/input-port';
 
 @Injectable()
-export class GetCustomerInvoicesUseCase {
+export class GetCustomerInvoicesUseCase implements GetCustomerInvoicesInputPort {
   constructor(
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,

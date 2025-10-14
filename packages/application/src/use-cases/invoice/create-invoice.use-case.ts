@@ -10,9 +10,10 @@ import {
   INVOICE_REPOSITORY
 } from '@repo/core';
 import { CreateInvoiceDto } from '../../dtos/invoice/invoice.zod';
+import { CreateInvoiceInputPort } from './ports/input-port';
 
 @Injectable()
-export class CreateInvoiceUseCase {
+export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
   constructor(
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,
@@ -23,15 +24,12 @@ export class CreateInvoiceUseCase {
   async execute(input: CreateInvoiceDto): Promise<string> {
       // 1. Mapear y Calcular los ítems (Strategy)
       const items = input.items.map(itemDto => {
-        // 1.1 Crear VO de precio unitario (usando fromFloat para entrada de usuario)
-        const unitPrice = Money.fromFloat(itemDto.unitPrice, 'EUR');
-
-        // 1.2 Obtener los valores de cálculo usando la Strategy injectada
-        const calculatedResults = this.taxCalculationStrategy.calculate({
-          unitPrice,
-          quantity: itemDto.quantity,
-          taxRate: itemDto.taxRate
-        });
+      const unitPrice = Money.fromFloat(itemDto.unitPrice, 'EUR');
+      const calculatedResults = this.taxCalculationStrategy.calculate({
+        unitPrice,
+        quantity: itemDto.quantity,
+        taxRate: itemDto.taxRate
+      });
 
         // 1.3 Crear la entidad de dominio InvoiceItem con los valores fijos
         return InvoiceItem.create(

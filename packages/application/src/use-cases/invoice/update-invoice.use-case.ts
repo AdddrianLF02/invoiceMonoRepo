@@ -7,7 +7,9 @@ import {
   CustomerId,
   Money,
   InvoiceStatus,
-  InvoiceItem
+  InvoiceItem,
+  TAX_CALCULATION_STRATEGY,
+  type ITaxCalculationStrategy
 } from '@repo/core'
 import {
   UpdateInvoiceDto 
@@ -18,6 +20,8 @@ export class UpdateInvoiceUseCase {
   constructor(
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,
+    @Inject(TAX_CALCULATION_STRATEGY)
+    private readonly taxCalculationStrategy: ITaxCalculationStrategy
   ) {}
 
   async execute(id: string, input: UpdateInvoiceDto): Promise<Invoice> {
@@ -54,11 +58,20 @@ export class UpdateInvoiceUseCase {
     if (input.items) {
       invoice = invoice.clearItems();
       for (const itemDto of input.items) {
+        const unitPrice = Money.fromFloat(itemDto.unitPrice, 'EUR');
+        const calculated = this.taxCalculationStrategy.calculate({
+          unitPrice,
+          quantity: itemDto.quantity,
+          taxRate: itemDto.taxRate,
+        });
         const item = InvoiceItem.create(
           itemDto.description,
           itemDto.quantity,
-          Money.create(itemDto.unitPrice, 'EUR'),
+          unitPrice,
           itemDto.taxRate,
+          calculated.subtotal,
+          calculated.taxAmount,
+          calculated.total
         );
         invoice = invoice.addItem(item);
 

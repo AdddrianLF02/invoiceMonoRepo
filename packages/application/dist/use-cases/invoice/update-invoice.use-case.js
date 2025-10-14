@@ -17,8 +17,10 @@ const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
 let UpdateInvoiceUseCase = class UpdateInvoiceUseCase {
     invoiceRepository;
-    constructor(invoiceRepository) {
+    taxCalculationStrategy;
+    constructor(invoiceRepository, taxCalculationStrategy) {
         this.invoiceRepository = invoiceRepository;
+        this.taxCalculationStrategy = taxCalculationStrategy;
     }
     async execute(id, input) {
         // 1. La comprobación de 'NotFound' actúa como un type guard.
@@ -50,7 +52,13 @@ let UpdateInvoiceUseCase = class UpdateInvoiceUseCase {
         if (input.items) {
             invoice = invoice.clearItems();
             for (const itemDto of input.items) {
-                const item = core_1.InvoiceItem.create(itemDto.description, itemDto.quantity, core_1.Money.create(itemDto.unitPrice, 'EUR'), itemDto.taxRate);
+                const unitPrice = core_1.Money.fromFloat(itemDto.unitPrice, 'EUR');
+                const calculated = this.taxCalculationStrategy.calculate({
+                    unitPrice,
+                    quantity: itemDto.quantity,
+                    taxRate: itemDto.taxRate,
+                });
+                const item = core_1.InvoiceItem.create(itemDto.description, itemDto.quantity, unitPrice, itemDto.taxRate, calculated.subtotal, calculated.taxAmount, calculated.total);
                 invoice = invoice.addItem(item);
             }
         }
@@ -61,6 +69,7 @@ exports.UpdateInvoiceUseCase = UpdateInvoiceUseCase;
 exports.UpdateInvoiceUseCase = UpdateInvoiceUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(core_1.INVOICE_REPOSITORY)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(core_1.TAX_CALCULATION_STRATEGY)),
+    __metadata("design:paramtypes", [Object, Object])
 ], UpdateInvoiceUseCase);
 //# sourceMappingURL=update-invoice.use-case.js.map

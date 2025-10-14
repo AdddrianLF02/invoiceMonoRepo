@@ -5,9 +5,10 @@ import {
   type CustomerRepository,
   Email,
 } from '@repo/core';
+import { GetCustomerByEmailInputPort } from './ports/input-port';
 
 @Injectable()
-export class GetCustomerByEmailUseCase {
+export class GetCustomerByEmailUseCase implements GetCustomerByEmailInputPort {
   constructor(
      @Inject(CUSTOMER_REPOSITORY)
     private readonly customerRepository: CustomerRepository

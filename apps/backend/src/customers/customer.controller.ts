@@ -6,14 +6,11 @@ import {
     CustomerEntitySchema,
 } from '@repo/core'
 import {
-    CreateCustomerUseCase,
-    GetCustomerByIdUseCase,
-    GetCustomerByEmailUseCase,
-    UpdateCustomerUseCase,
     CreateCustomerDto,
     CustomerResponseDto,
     UpdateCustomerDto
 } from '@repo/application'
+import type { CreateCustomerInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
 
 @ApiTags('Customers') // Agrupa los endpoints en Swagger
 @Controller('api/v1/customers')
@@ -21,10 +18,10 @@ import {
 @UseInterceptors(new ZodSerializerInterceptor(CustomerEntitySchema))
 export class CustomerController {
   constructor(
-    private readonly createCustomerUseCase: CreateCustomerUseCase,
-    private readonly getCustomerByIdUseCase: GetCustomerByIdUseCase,
-    private readonly getCustomerByEmailUseCase: GetCustomerByEmailUseCase,
-    private readonly updateCustomerUseCase: UpdateCustomerUseCase,
+    private readonly createCustomerUseCase: CreateCustomerInputPort,
+    private readonly getCustomerByIdUseCase: GetCustomerByIdInputPort,
+    private readonly getCustomerByEmailUseCase: GetCustomerByEmailInputPort,
+    private readonly updateCustomerUseCase: UpdateCustomerInputPort,
   ) {}
 
   @Post()

@@ -5,9 +5,10 @@ import {
   type CustomerRepository,
   CustomerId
 } from '@repo/core';
+import { GetCustomerByIdInputPort } from './ports/input-port';
 
 @Injectable()
-export class GetCustomerByIdUseCase {
+export class GetCustomerByIdUseCase implements GetCustomerByIdInputPort {
   constructor(
     @Inject(CUSTOMER_REPOSITORY)
     private readonly customerRepository: CustomerRepository

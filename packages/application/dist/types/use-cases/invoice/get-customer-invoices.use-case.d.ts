@@ -1,5 +1,6 @@
 import { type InvoiceRepository, Invoice } from '@repo/core';
-export declare class GetCustomerInvoicesUseCase {
+import { GetCustomerInvoicesInputPort } from './ports/input-port';
+export declare class GetCustomerInvoicesUseCase implements GetCustomerInvoicesInputPort {
     private readonly invoiceRepository;
     constructor(invoiceRepository: InvoiceRepository);
     execute(customerId: string): Promise<Invoice[]>;

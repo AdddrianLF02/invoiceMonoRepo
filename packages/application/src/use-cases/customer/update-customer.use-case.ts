@@ -8,6 +8,7 @@ import {
   TaxId,
   CustomerId
 } from '@repo/core';
+import { UpdateCustomerInputPort } from './ports/input-port';
 
 export interface UpdateCustomerInput {
   id: string;
@@ -23,7 +24,7 @@ export interface UpdateCustomerInput {
 }
 
 @Injectable()
-export class UpdateCustomerUseCase {
+export class UpdateCustomerUseCase implements UpdateCustomerInputPort {
   constructor(
       @Inject(CUSTOMER_REPOSITORY)
       private readonly customerRepository: CustomerRepository

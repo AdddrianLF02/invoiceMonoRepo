@@ -7,26 +7,23 @@ import {
 } from '@repo/core'
 import {
     CreateInvoiceDto,
-    GetInvoiceUseCase,
-    DeleteInvoiceUseCase,
     UpdateInvoiceUseCase,
-    GetCustomerInvoicesUseCase,
-    CreateInvoiceUseCase,
     UpdateInvoiceDto,
     GenericResponseDto
 } from '@repo/application'
-import { InvoiceResponseSwaggerDto } from "src/dtos/invoice-swagger.dto";
+import { InvoiceResponseSwaggerDto } from "src/invoices/invoice-swagger.dto";
+import type { DeleteInvoiceInputPort, GetCustomerInvoicesInputPort, GetInvoiceInputPort, CreateInvoiceInputPort } from "@repo/application/dist/types/use-cases/invoice/ports/input-port";
 
 @ApiTags('Invoices') // Agrupa todos los endpoints en la UI de Swagger
 @Controller('api/v1/invoices')
 @UseInterceptors(new ZodSerializerInterceptor(InvoiceEntitySchema))
 export class InvoiceController {
     constructor(
-        private readonly createInvoiceUseCase: CreateInvoiceUseCase,
-        private readonly getInvoiceUseCase: GetInvoiceUseCase,
-        private readonly deleteInvoiceUseCase: DeleteInvoiceUseCase,
+        private readonly createInvoiceUseCase: CreateInvoiceInputPort,
+        private readonly getInvoiceUseCase: GetInvoiceInputPort,
+        private readonly deleteInvoiceUseCase: DeleteInvoiceInputPort,
         private readonly updateInvoiceUseCase: UpdateInvoiceUseCase,
-        private readonly getCustomerInvoicesUseCase: GetCustomerInvoicesUseCase,
+        private readonly getCustomerInvoicesUseCase: GetCustomerInvoicesInputPort,
     ) {}
 
     @Post()

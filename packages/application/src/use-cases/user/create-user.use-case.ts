@@ -7,9 +7,10 @@ import {
 import {
   CreateUserDto
 } from '../../dtos/user.zod'
+import { CreateUserInputPort } from './ports/input-port';
 
 @Injectable()
-export class CreateUserUseCase {
+export class CreateUserUseCase implements CreateUserInputPort {
   constructor(
     @Inject(USER_REPOSITORY)
     private userRepository: UserRepository,

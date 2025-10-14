@@ -4,9 +4,10 @@ import {
   INVOICE_REPOSITORY,
   InvoiceId
 } from '@repo/core'
+import { DeleteInvoiceInputPort } from './ports/input-port';
 
 @Injectable()
-export class DeleteInvoiceUseCase {
+export class DeleteInvoiceUseCase implements DeleteInvoiceInputPort {
   constructor(
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,

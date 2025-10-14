@@ -21,7 +21,7 @@ let InvoiceMapper = class InvoiceMapper {
                 id: item.getId(),
                 description: item.getDescription(),
                 quantity: item.getQuantity(),
-                unitPrice: item.getUnitPrice().getAmount(),
+                unitPrice: item.getUnitPrice(),
                 taxRate: item.getTaxRate(),
             })),
             createdAt: invoice.getCreatedAt().toISOString(),

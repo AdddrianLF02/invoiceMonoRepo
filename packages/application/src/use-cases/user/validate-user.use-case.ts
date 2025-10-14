@@ -5,12 +5,13 @@ import {
   Email,
   User
 } from '@repo/core'
+import { ValidateUserInputPort } from './ports/input-port';
 
 
-type SafeUser = ReturnType<User['toSafeObject']>;
+export type SafeUser = ReturnType<User['toSafeObject']>;
 
 @Injectable()
-export class ValidateUserUseCase {
+export class ValidateUserUseCase implements ValidateUserInputPort {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepository,

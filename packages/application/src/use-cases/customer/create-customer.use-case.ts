@@ -9,6 +9,7 @@ import {
   TaxId,
   UserId
 } from '@repo/core'; 
+import { CreateCustomerInputPort } from './ports/input-port';
 
 // 1. Añadimos 'userId' al input del caso de uso
 export interface CreateCustomerInput {
@@ -25,7 +26,7 @@ export interface CreateCustomerInput {
 }
 
 @Injectable()
-export class CreateCustomerUseCase {
+export class CreateCustomerUseCase implements CreateCustomerInputPort {
   constructor(
       @Inject(CUSTOMER_REPOSITORY)
       private readonly customerRepository: CustomerRepository

@@ -1,9 +1,12 @@
 import { Invoice } from "@repo/core";
 import { CreateInvoiceDto } from "../../../dtos/invoice/invoice.zod";
 
+// TOKEN
+export const INPUT_TOKEN = "inputToken";
+
 // CREATE
 export interface CreateInvoiceInputPort {
-    execute(input: CreateInvoiceDto): Promise<string>;
+    execute(input: CreateInvoiceDto): Promise<void>;
 }
 
 // UPDATE

@@ -11,6 +11,7 @@ import {
 } from '@repo/core';
 import { CreateInvoiceDto } from '../../dtos/invoice/invoice.zod';
 import { CreateInvoiceInputPort } from './ports/input-port';
+import { OUTPUT_TOKEN, type CreateInvoiceOutputPort } from './ports/output-port';
 
 @Injectable()
 export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
@@ -19,9 +20,11 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
     private readonly invoiceRepository: InvoiceRepository,
     @Inject(TAX_CALCULATION_STRATEGY)
     private readonly taxCalculationStrategy: ITaxCalculationStrategy,
+    @Inject(OUTPUT_TOKEN)
+    private readonly outputPort: CreateInvoiceOutputPort
   ) {}
 
-  async execute(input: CreateInvoiceDto): Promise<string> {
+  async execute(input: CreateInvoiceDto): Promise<void> {
       // 1. Mapear y Calcular los ítems (Strategy)
       const items = input.items.map(itemDto => {
       const unitPrice = Money.fromFloat(itemDto.unitPrice, 'EUR');
@@ -54,6 +57,6 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
 
       await this.invoiceRepository.create(invoice);
 
-      return invoice.getId().toString();
+      this.outputPort.present(invoice);
   }
 }

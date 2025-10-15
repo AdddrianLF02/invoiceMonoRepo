@@ -1,8 +1,11 @@
 import { Invoice } from "@repo/core";
 
+// TOKEN
+export const OUTPUT_TOKEN = "outputToken";
+
 // CREATE
 export interface CreateInvoiceOutputPort {
-    handle(result: string): void;
+    present(result: Invoice): void;
 }
 
 // DELETE

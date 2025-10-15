@@ -6,8 +6,7 @@ import {
   ValidateUserUseCase,
   CreateUserDto,
   LoginDto,
-  LoginSchema
-} from '@repo/application';
+  } from '@repo/application';
 import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('Authentication')

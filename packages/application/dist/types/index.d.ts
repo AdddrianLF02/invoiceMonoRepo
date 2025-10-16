@@ -1,5 +1,5 @@
 export * from './dtos/customer.zod';
-export * from './dtos/invoice/invoice.zod';
+export * from './dtos/invoice.zod';
 export * from './dtos/user.zod';
 export * from './dtos/generic';
 export * from './mappers/customer.mapper';
@@ -15,4 +15,6 @@ export * from './use-cases/invoice/get-invoice.use-case';
 export * from './use-cases/invoice/update-invoice.use-case';
 export * from './use-cases/user/create-user.use-case';
 export * from './use-cases/user/validate-user.use-case';
+export * from './use-cases/invoice/ports/input-port';
+export * from './use-cases/invoice/ports/output-port';
 //# sourceMappingURL=index.d.ts.map

@@ -23,6 +23,7 @@ __exportStar(require("./entities/User"), exports);
 __exportStar(require("./repositories/CustomerRepository"), exports);
 __exportStar(require("./repositories/InvoiceRepository"), exports);
 __exportStar(require("./repositories/UserRepository"), exports);
+__exportStar(require("./repositories/UnitOfWork"), exports);
 // Repository Tokens
 __exportStar(require("./repositories/tokens/customer.provider"), exports);
 __exportStar(require("./repositories/tokens/invoice.providers"), exports);

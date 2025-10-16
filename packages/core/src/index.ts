@@ -8,6 +8,7 @@ export * from './entities/User';
 export * from './repositories/CustomerRepository';
 export * from './repositories/InvoiceRepository';
 export * from './repositories/UserRepository';
+export * from './repositories/UnitOfWork';
 
 // Repository Tokens
 export * from './repositories/tokens/customer.provider';

@@ -16,7 +16,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // DTOs
 __exportStar(require("./dtos/customer.zod"), exports);
-__exportStar(require("./dtos/invoice/invoice.zod"), exports);
+__exportStar(require("./dtos/invoice.zod"), exports);
 __exportStar(require("./dtos/user.zod"), exports);
 __exportStar(require("./dtos/generic"), exports);
 // Mappers
@@ -34,4 +34,7 @@ __exportStar(require("./use-cases/invoice/get-invoice.use-case"), exports);
 __exportStar(require("./use-cases/invoice/update-invoice.use-case"), exports);
 __exportStar(require("./use-cases/user/create-user.use-case"), exports);
 __exportStar(require("./use-cases/user/validate-user.use-case"), exports);
+// PORTS
+__exportStar(require("./use-cases/invoice/ports/input-port"), exports);
+__exportStar(require("./use-cases/invoice/ports/output-port"), exports);
 //# sourceMappingURL=index.js.map

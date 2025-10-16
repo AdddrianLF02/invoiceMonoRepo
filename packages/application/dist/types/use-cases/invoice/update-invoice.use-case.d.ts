@@ -1,5 +1,5 @@
 import { type InvoiceRepository, Invoice, type ITaxCalculationStrategy } from '@repo/core';
-import { UpdateInvoiceDto } from '../../dtos/invoice/invoice.zod';
+import { UpdateInvoiceDto } from '../../dtos/invoice.zod';
 export declare class UpdateInvoiceUseCase {
     private readonly invoiceRepository;
     private readonly taxCalculationStrategy;

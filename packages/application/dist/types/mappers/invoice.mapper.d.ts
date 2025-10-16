@@ -1,5 +1,5 @@
 import { Invoice } from '@repo/core';
-import { InvoiceResponseDto } from '../dtos/invoice/invoice.zod';
+import { InvoiceResponseDto } from '../dtos/invoice.zod';
 export declare class InvoiceMapper {
     toDto(invoice: Invoice): InvoiceResponseDto;
 }

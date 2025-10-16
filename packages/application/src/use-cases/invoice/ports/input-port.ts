@@ -1,4 +1,3 @@
-import { Invoice } from "@repo/core";
 import { CreateInvoiceDto } from "../../../dtos/invoice.zod";
 
 // TOKEN

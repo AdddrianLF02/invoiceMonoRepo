@@ -5,6 +5,7 @@ export * from './entities/User';
 export * from './repositories/CustomerRepository';
 export * from './repositories/InvoiceRepository';
 export * from './repositories/UserRepository';
+export * from './repositories/UnitOfWork';
 export * from './repositories/tokens/customer.provider';
 export * from './repositories/tokens/invoice.providers';
 export * from './repositories/tokens/user.provider';

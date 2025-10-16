@@ -1,10 +1,12 @@
-import { type InvoiceRepository, type ITaxCalculationStrategy } from '@repo/core';
-import { CreateInvoiceDto } from '../../dtos/invoice/invoice.zod';
+import { type ITaxCalculationStrategy, type IUnitOfWork } from '@repo/core';
+import { CreateInvoiceDto } from '../../dtos/invoice.zod';
 import { CreateInvoiceInputPort } from './ports/input-port';
+import { type CreateInvoiceOutputPort } from './ports/output-port';
 export declare class CreateInvoiceUseCase implements CreateInvoiceInputPort {
-    private readonly invoiceRepository;
+    private readonly uow;
     private readonly taxCalculationStrategy;
-    constructor(invoiceRepository: InvoiceRepository, taxCalculationStrategy: ITaxCalculationStrategy);
-    execute(input: CreateInvoiceDto): Promise<string>;
+    private readonly outputPort;
+    constructor(uow: IUnitOfWork, taxCalculationStrategy: ITaxCalculationStrategy, outputPort: CreateInvoiceOutputPort);
+    execute(input: CreateInvoiceDto): Promise<void>;
 }
 //# sourceMappingURL=create-invoice.use-case.d.ts.map

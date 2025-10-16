@@ -15,38 +15,46 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateInvoiceUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const output_port_1 = require("./ports/output-port");
 let CreateInvoiceUseCase = class CreateInvoiceUseCase {
-    invoiceRepository;
+    uow;
     taxCalculationStrategy;
-    constructor(invoiceRepository, taxCalculationStrategy) {
-        this.invoiceRepository = invoiceRepository;
+    outputPort;
+    constructor(uow, taxCalculationStrategy, outputPort) {
+        this.uow = uow;
         this.taxCalculationStrategy = taxCalculationStrategy;
+        this.outputPort = outputPort;
     }
     async execute(input) {
-        // 1. Mapear y Calcular los ítems (Strategy)
-        const items = input.items.map(itemDto => {
-            const unitPrice = core_1.Money.fromFloat(itemDto.unitPrice, 'EUR');
-            const calculatedResults = this.taxCalculationStrategy.calculate({
-                unitPrice,
-                quantity: itemDto.quantity,
-                taxRate: itemDto.taxRate
+        // Envolvemos la lógica de negocio en la transacción
+        await this.uow.executeTransaction(async () => {
+            const repo = this.uow.invoiceRepository;
+            // 1. Mapear y Calcular los ítems (Strategy)
+            const items = input.items.map(itemDto => {
+                const unitPrice = core_1.Money.fromFloat(itemDto.unitPrice, 'EUR');
+                const calculatedResults = this.taxCalculationStrategy.calculate({
+                    unitPrice,
+                    quantity: itemDto.quantity,
+                    taxRate: itemDto.taxRate
+                });
+                // 1.3 Crear la entidad de dominio InvoiceItem con los valores fijos
+                return core_1.InvoiceItem.create(itemDto.description, itemDto.quantity, unitPrice, itemDto.taxRate, 
+                // Valores calculados por la Strategy
+                calculatedResults.subtotal, calculatedResults.taxAmount, calculatedResults.total);
             });
-            // 1.3 Crear la entidad de dominio InvoiceItem con los valores fijos
-            return core_1.InvoiceItem.create(itemDto.description, itemDto.quantity, unitPrice, itemDto.taxRate, 
-            // Valores calculados por la Strategy
-            calculatedResults.subtotal, calculatedResults.taxAmount, calculatedResults.total);
+            // 2. Crear y guardar la factura (Domain layer)
+            const invoice = core_1.Invoice.create(core_1.CustomerId.fromString(input.customerId), new Date(input.issueDate), new Date(input.dueDate), items);
+            await repo.create(invoice);
+            this.outputPort.present(invoice);
         });
-        // 2. Crear y guardar la factura (Domain layer)
-        const invoice = core_1.Invoice.create(core_1.CustomerId.fromString(input.customerId), new Date(input.issueDate), new Date(input.dueDate), items);
-        await this.invoiceRepository.create(invoice);
-        return invoice.getId().toString();
     }
 };
 exports.CreateInvoiceUseCase = CreateInvoiceUseCase;
 exports.CreateInvoiceUseCase = CreateInvoiceUseCase = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(core_1.INVOICE_REPOSITORY)),
+    __param(0, (0, common_1.Inject)(core_1.UNIT_OF_WORK)),
     __param(1, (0, common_1.Inject)(core_1.TAX_CALCULATION_STRATEGY)),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, common_1.Inject)(output_port_1.OUTPUT_TOKEN)),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], CreateInvoiceUseCase);
 //# sourceMappingURL=create-invoice.use-case.js.map

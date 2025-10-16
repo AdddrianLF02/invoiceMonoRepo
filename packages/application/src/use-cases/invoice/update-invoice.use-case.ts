@@ -13,7 +13,7 @@ import {
 } from '@repo/core'
 import {
   UpdateInvoiceDto 
-} from '../../dtos/invoice/invoice.zod'
+} from '../../dtos/invoice.zod'
 
 @Injectable()
 export class UpdateInvoiceUseCase {

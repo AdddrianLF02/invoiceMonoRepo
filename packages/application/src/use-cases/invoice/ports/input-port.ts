@@ -1,5 +1,5 @@
 import { Invoice } from "@repo/core";
-import { CreateInvoiceDto } from "../../../dtos/invoice/invoice.zod";
+import { CreateInvoiceDto } from "../../../dtos/invoice.zod";
 
 // TOKEN
 export const INPUT_TOKEN = "inputToken";
@@ -18,13 +18,13 @@ export interface DeleteInvoiceInputPort {
 
 // GETCUSTOMERINVOICES
 export interface GetCustomerInvoicesInputPort {
-    execute(customerId: string): Promise<Invoice[]>;
+    execute(customerId: string): Promise<void>;
 }
 
 
 // GETINVOICE
 export interface GetInvoiceInputPort {
-    execute(id: string): Promise<Invoice>;
+    execute(id: string): Promise<void>;
 }
 
 

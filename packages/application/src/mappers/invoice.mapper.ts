@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Invoice } from '@repo/core';
-import { InvoiceResponseDto } from '../dtos/invoice/invoice.zod';
+import { InvoiceResponseDto } from '../dtos/invoice.zod';
 
 @Injectable()
 export class InvoiceMapper {

@@ -9,7 +9,7 @@ import {
   TAX_CALCULATION_STRATEGY,
   INVOICE_REPOSITORY
 } from '@repo/core';
-import { CreateInvoiceDto } from '../../dtos/invoice/invoice.zod';
+import { CreateInvoiceDto } from '../../dtos/invoice.zod';
 import { CreateInvoiceInputPort } from './ports/input-port';
 import { OUTPUT_TOKEN, type CreateInvoiceOutputPort } from './ports/output-port';
 

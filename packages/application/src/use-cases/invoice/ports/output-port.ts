@@ -9,16 +9,16 @@ export interface CreateInvoiceOutputPort {
 }
 
 // DELETE
-export interface DeleteInvoiceInputPort {
+export interface DeleteInvoiceOutputPort {
     execute(id: string): Promise<void>;
 }
 
 // GETCUSTOMERINVOICES
 export interface GetCustomerInvoicesOutputPort {
-    handle(result: Invoice[]): void;
+    present(result: Invoice[]): void;
 }
 
 // GETINVOICE
 export interface GetInvoiceOutPut {
-    handle(result: Invoice): void;
+    present(result: Invoice): void;
 }

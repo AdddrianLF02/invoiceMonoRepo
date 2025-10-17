@@ -14,6 +14,10 @@ import {
 import {
   UpdateInvoiceDto 
 } from '../../dtos/invoice.zod'
+import {
+  type UpdateInvoiceOutputPort,
+  UPDATE_INVOICE_OUTPUT_TOKEN
+} from './ports/output-port'
 
 @Injectable()
 export class UpdateInvoiceUseCase {
@@ -21,21 +25,19 @@ export class UpdateInvoiceUseCase {
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,
     @Inject(TAX_CALCULATION_STRATEGY)
-    private readonly taxCalculationStrategy: ITaxCalculationStrategy
+    private readonly taxCalculationStrategy: ITaxCalculationStrategy,
+    @Inject(UPDATE_INVOICE_OUTPUT_TOKEN)
+    private readonly outputPort: UpdateInvoiceOutputPort
   ) {}
 
-  async execute(id: string, input: UpdateInvoiceDto): Promise<Invoice> {
-    // 1. La comprobación de 'NotFound' actúa como un type guard.
-    // TypeScript sabe que después de esta línea, 'invoice' no puede ser null.
+  async execute(id: string, input: UpdateInvoiceDto): Promise<void> {
     let invoice: Invoice | null = await this.invoiceRepository.findById(InvoiceId.fromString(id));
     if (!invoice) {
       throw new NotFoundException(`Invoice with ID ${id} not found`);
     }
 
-    // Creamos una constante. En este punto, TypeScript sabe 100% que no es nula.
     const currentInvoice = invoice;
 
-    // 2. Definimos las estrategias con tipos explícitos, ¡adiós 'any'!
     const updateStrategies = {
       customerId: (val: string) => currentInvoice.updateCustomerId(CustomerId.fromString(val)),
       status: (val: string) => currentInvoice.updateStatus(InvoiceStatus.fromString(val)),
@@ -43,18 +45,16 @@ export class UpdateInvoiceUseCase {
       dueDate: (val: Date) => currentInvoice.updateDueDate(val),
     };
 
-    // 3. Iteramos y aplicamos las estrategias, reasignando la nueva instancia inmutable.
     for (const key of Object.keys(input) as Array<keyof UpdateInvoiceDto>) {
       if (key in updateStrategies) {
         const strategy = updateStrategies[key as keyof typeof updateStrategies];
         const value = input[key];
         if (strategy && value !== undefined) {
-          invoice = strategy(value as any); // Usamos 'as any' aquí de forma controlada porque TypeScript no puede inferir el tipo dinámico
+          invoice = strategy(value as any);
         }
       }
     }
 
-    // Manejo especial para 'items'
     if (input.items) {
       invoice = invoice.clearItems();
       for (const itemDto of input.items) {
@@ -74,10 +74,12 @@ export class UpdateInvoiceUseCase {
           calculated.total
         );
         invoice = invoice.addItem(item);
-
       }
     }
 
-    return this.invoiceRepository.update(invoice);
+    const updatedInvoice = await this.invoiceRepository.update(invoice);
+
+    // ✅ aquí notificamos al Presenter (output port)
+    this.outputPort.present(updatedInvoice);
   }
 }

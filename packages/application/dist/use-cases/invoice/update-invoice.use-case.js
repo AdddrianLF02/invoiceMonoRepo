@@ -15,12 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateInvoiceUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const output_port_1 = require("./ports/output-port");
 let UpdateInvoiceUseCase = class UpdateInvoiceUseCase {
     invoiceRepository;
     taxCalculationStrategy;
-    constructor(invoiceRepository, taxCalculationStrategy) {
+    outputPort;
+    constructor(invoiceRepository, taxCalculationStrategy, outputPort) {
         this.invoiceRepository = invoiceRepository;
         this.taxCalculationStrategy = taxCalculationStrategy;
+        this.outputPort = outputPort;
     }
     async execute(id, input) {
         // 1. La comprobación de 'NotFound' actúa como un type guard.
@@ -62,7 +65,8 @@ let UpdateInvoiceUseCase = class UpdateInvoiceUseCase {
                 invoice = invoice.addItem(item);
             }
         }
-        return this.invoiceRepository.update(invoice);
+        const updatedInvoice = await this.invoiceRepository.update(invoice);
+        this.outputPort.present(updatedInvoice);
     }
 };
 exports.UpdateInvoiceUseCase = UpdateInvoiceUseCase;
@@ -70,6 +74,7 @@ exports.UpdateInvoiceUseCase = UpdateInvoiceUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(core_1.INVOICE_REPOSITORY)),
     __param(1, (0, common_1.Inject)(core_1.TAX_CALCULATION_STRATEGY)),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, common_1.Inject)(output_port_1.UPDATE_INVOICE_OUTPUT_TOKEN)),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], UpdateInvoiceUseCase);
 //# sourceMappingURL=update-invoice.use-case.js.map

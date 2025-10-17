@@ -32,7 +32,7 @@ let CreateInvoiceUseCase = class CreateInvoiceUseCase {
             // 1. Mapear y Calcular los ítems (Strategy)
             const items = input.items.map(itemDto => {
                 const unitPrice = core_1.Money.fromFloat(itemDto.unitPrice, 'EUR');
-                const calculatedResults = this.taxCalculationStrategy.calculate({
+                const calc = this.taxCalculationStrategy.calculate({
                     unitPrice,
                     quantity: itemDto.quantity,
                     taxRate: itemDto.taxRate
@@ -40,7 +40,7 @@ let CreateInvoiceUseCase = class CreateInvoiceUseCase {
                 // 1.3 Crear la entidad de dominio InvoiceItem con los valores fijos
                 return core_1.InvoiceItem.create(itemDto.description, itemDto.quantity, unitPrice, itemDto.taxRate, 
                 // Valores calculados por la Strategy
-                calculatedResults.subtotal, calculatedResults.taxAmount, calculatedResults.total);
+                calc.subtotal, calc.taxAmount, calc.total);
             });
             // 2. Crear y guardar la factura (Domain layer)
             const invoice = core_1.Invoice.create(core_1.CustomerId.fromString(input.customerId), new Date(input.issueDate), new Date(input.dueDate), items);

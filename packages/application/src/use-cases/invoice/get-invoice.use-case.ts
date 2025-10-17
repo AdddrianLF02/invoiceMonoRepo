@@ -2,19 +2,18 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   INVOICE_REPOSITORY,
   type InvoiceRepository,
-  Invoice,
   InvoiceId
 } from '@repo/core'
 import { GetInvoiceInputPort } from './ports/input-port';
-import { type GetInvoiceOutPut, OUTPUT_TOKEN } from './ports/output-port';
+import { GET_INVOICE_OUTPUT_TOKEN, type GetInvoiceOutPutPort } from './ports/output-port';
 
 @Injectable()
 export class GetInvoiceUseCase implements GetInvoiceInputPort {
   constructor(
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,
-    @Inject(OUTPUT_TOKEN)
-    private readonly outputPort: GetInvoiceOutPut
+    @Inject(GET_INVOICE_OUTPUT_TOKEN)
+    private readonly outputPort: GetInvoiceOutPutPort
   ) {}
 
   async execute(id: string): Promise<void> {

@@ -32,7 +32,7 @@ exports.GetCustomerInvoicesUseCase = GetCustomerInvoicesUseCase;
 exports.GetCustomerInvoicesUseCase = GetCustomerInvoicesUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(core_1.INVOICE_REPOSITORY)),
-    __param(1, (0, common_1.Inject)(output_port_1.OUTPUT_TOKEN)),
+    __param(1, (0, common_1.Inject)(output_port_1.GET_CUSTOMER_INVOICES_OUTPUT_TOKEN)),
     __metadata("design:paramtypes", [Object, Object])
 ], GetCustomerInvoicesUseCase);
 //# sourceMappingURL=get-customer-invoices.use-case.js.map

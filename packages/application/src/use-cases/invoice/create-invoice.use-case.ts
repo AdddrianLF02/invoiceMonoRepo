@@ -18,8 +18,10 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
   constructor(
     @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
+
     @Inject(TAX_CALCULATION_STRATEGY)
     private readonly taxCalculationStrategy: ITaxCalculationStrategy,
+
     @Inject(OUTPUT_TOKEN)
     private readonly outputPort: CreateInvoiceOutputPort
   ) {}
@@ -27,12 +29,12 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
   async execute(input: CreateInvoiceDto): Promise<void> {
       // Envolvemos la lógica de negocio en la transacción
       await this.uow.executeTransaction(async () => {
-        
         const repo = this.uow.invoiceRepository;
+
             // 1. Mapear y Calcular los ítems (Strategy)
               const items = input.items.map(itemDto => {
                       const unitPrice = Money.fromFloat(itemDto.unitPrice, 'EUR');
-                      const calculatedResults = this.taxCalculationStrategy.calculate({
+                      const calc = this.taxCalculationStrategy.calculate({
                         unitPrice,
                         quantity: itemDto.quantity,
                         taxRate: itemDto.taxRate
@@ -45,9 +47,9 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
                 unitPrice,
                 itemDto.taxRate,
                 // Valores calculados por la Strategy
-                calculatedResults.subtotal,
-                calculatedResults.taxAmount,
-                calculatedResults.total
+                calc.subtotal,
+                calc.taxAmount,
+                calc.total
             );
           });
 

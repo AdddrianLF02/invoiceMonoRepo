@@ -23,8 +23,6 @@ export class InvoiceController {
     constructor(
         @Inject(INPUT_TOKEN)
         private readonly createInvoiceUseCase: CreateInvoiceInputPort,
-        private readonly createInvoicePresenter: CreateInvoicePresenter,
-
         private readonly getInvoiceUseCase: GetInvoiceInputPort,
         private readonly deleteInvoiceUseCase: DeleteInvoiceInputPort,
         private readonly updateInvoiceUseCase: UpdateInvoiceUseCase,

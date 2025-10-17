@@ -3,41 +3,46 @@ import { ApplicattionModule } from 'src/modules/application.module';
 import { InvoiceController } from './invoice.controller';
 import { InfrastructureModule } from 'src/modules/infrastructure.module';
 import { CreateInvoicePresenter } from './presenters/create-invoice.presenter';
-import { CreateInvoiceUseCase, INPUT_TOKEN, OUTPUT_TOKEN } from '@repo/application';
+import { CREATE_INVOICE_INPUT_TOKEN, CREATE_INVOICE_OUTPUT_TOKEN, CreateInvoiceUseCase, INPUT_TOKEN, OUTPUT_TOKEN } from '@repo/application';
 
 @Module({
     // Necesitamos el ApplicationModule para Use Cases y el InfrastructureModule para UoW/Repos
     imports: [ApplicattionModule, InfrastructureModule],
     controllers: [InvoiceController],
     providers: [
-        // El presenter (Request Scoped) - Debe estar listado primero
+        // Custom Provider para el objeto Response (scope por request)
+        {
+          provide: 'EXPRESS_RESPONSE',
+          scope: Scope.REQUEST,
+          useFactory: (context: any) => {
+            // context es un ExecutionContext en tiempo de ejecución
+            // Nest lo resuelve internamente con `HttpArgumentsHost`
+            const http = context.switchToHttp();
+            return http.getResponse()
+          } ,
+          inject: [/** nest inyectará el contexto automáticamente */] 
+        },
+        // Presenter
         {
             provide: CreateInvoicePresenter,
             useClass: CreateInvoicePresenter,
             scope: Scope.REQUEST
         },
-
-        // El enlace OutPutPort -> Presenter (Adapter)
         {
-            provide: OUTPUT_TOKEN,
-            // Usamos la instancia REQUEST SCOPED del Presenter
+            provide: CREATE_INVOICE_OUTPUT_TOKEN,
             useExisting: CreateInvoicePresenter,
             scope: Scope.REQUEST
         },
-        // 3. ENLACE: Input Port (Core Interface) -> Use Case (Interactor)
+
+        // Use Case
         {
-            // El Controller pide el Input Port (su token)
-            provide: INPUT_TOKEN, 
-            useClass: CreateInvoiceUseCase, // Implementación
+            provide: CREATE_INVOICE_INPUT_TOKEN,
+            useClass: CreateInvoiceUseCase
         },
-        
-        // [FALTA CRÍTICA]: Se debe definir el binding para UNIT_OF_WORK y TAX_CALCULATION_STRATEGY 
-        // si no están definidos en ApplicationModule o InfrastructureModule.
-        // Si InfrastructureModule ya expone IUnitOfWork, esto está bien.
-        
-        // Si no:
-        // { provide: UNIT_OF_WORK, useClass: PrismaUnitOfWork, scope: Scope.REQUEST }, 
-        // { provide: TAX_CALCULATION_STRATEGY, useClass: DefaultTaxStrategy },
+
+        // (Opcional, si no vienen desde InfrastructureModule)
+    // { provide: UNIT_OF_WORK, useClass: PrismaUnitOfWork, scope: Scope.REQUEST },
+    // { provide: TAX_CALCULATION_STRATEGY, useClass: DefaultTaxCalculationStrategy },
     ]
 })
 

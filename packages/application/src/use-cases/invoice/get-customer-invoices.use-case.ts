@@ -3,17 +3,16 @@ import {
   INVOICE_REPOSITORY,
   type InvoiceRepository,
   CustomerId,
-  Invoice
 } from '@repo/core'
 import { GetCustomerInvoicesInputPort } from './ports/input-port';
-import { type GetCustomerInvoicesOutputPort, OUTPUT_TOKEN } from './ports/output-port';
+import { GET_CUSTOMER_INVOICES_OUTPUT_TOKEN, type GetCustomerInvoicesOutputPort } from './ports/output-port';
 
 @Injectable()
 export class GetCustomerInvoicesUseCase implements GetCustomerInvoicesInputPort {
   constructor(
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,
-    @Inject(OUTPUT_TOKEN)
+    @Inject(GET_CUSTOMER_INVOICES_OUTPUT_TOKEN)
     private readonly outputPort: GetCustomerInvoicesOutputPort
   ) {}
 

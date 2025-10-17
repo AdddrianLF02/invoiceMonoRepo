@@ -5,12 +5,15 @@ import {
   InvoiceId
 } from '@repo/core'
 import { DeleteInvoiceInputPort } from './ports/input-port';
+import { DELETE_INVOICE_OUTPUT_TOKEN, type DeleteInvoiceOutputPort } from './ports/output-port';
 
 @Injectable()
 export class DeleteInvoiceUseCase implements DeleteInvoiceInputPort {
   constructor(
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,
+    @Inject(DELETE_INVOICE_OUTPUT_TOKEN)
+    private readonly outputPort: DeleteInvoiceOutputPort
   ) {}
 
   async execute(id: string): Promise<void> {
@@ -23,5 +26,7 @@ export class DeleteInvoiceUseCase implements DeleteInvoiceInputPort {
 
     // Eliminar la factura
     await this.invoiceRepository.delete(InvoiceId.fromString(id));
+
+    this.outputPort.present(id);
   }
 }

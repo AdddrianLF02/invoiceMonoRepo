@@ -65,3 +65,4 @@ export class InvoiceResponseSwaggerDto {
   @ApiProperty()
   updatedAt!: string;
 }
+

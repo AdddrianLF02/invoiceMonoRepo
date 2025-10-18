@@ -1,6 +1,6 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import type { Response } from "express";
-import { InvoiceResponseSwaggerDto } from "../invoice-swagger.dto";
+import { InvoiceResponseSwaggerDto } from "../dtos/invoice-swagger.dto";
 import { Invoice } from "@repo/core";
 import { InvoiceMapper } from "../mappers/invoice.mapper";
 import { UpdateInvoiceOutputPort } from "@repo/application";

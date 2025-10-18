@@ -1,5 +1,5 @@
 import { Invoice } from '@repo/core';
-import { InvoiceResponseSwaggerDto } from '../invoice-swagger.dto';
+import { InvoiceResponseSwaggerDto } from '../dtos/response/invoice-swagger-response.dto';
 
 export class InvoiceMapper {
   static toResponse(invoice: Invoice): InvoiceResponseSwaggerDto {

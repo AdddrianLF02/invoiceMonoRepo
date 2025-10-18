@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaInvoiceRepository = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
-const prisma_service_1 = require("../database/prisma.service"); // Ruta relativa corregida
 let PrismaInvoiceRepository = class PrismaInvoiceRepository {
     prisma;
     constructor(prisma) {
@@ -76,8 +75,11 @@ let PrismaInvoiceRepository = class PrismaInvoiceRepository {
                         id: item.getId(),
                         description: item.getDescription(),
                         quantity: item.getQuantity(),
-                        unitPrice: item.getUnitPrice().getAmount(),
+                        unitPrice: item.getUnitPrice().getAmountInCents(),
                         taxRate: item.getTaxRate(),
+                        subtotal: item.getSubtotal().getAmountInCents(),
+                        taxAmount: item.getTaxAmount().getAmountInCents(),
+                        total: item.getTotal().getAmountInCents()
                     })),
                 },
             },
@@ -95,7 +97,7 @@ let PrismaInvoiceRepository = class PrismaInvoiceRepository {
         });
     }
     mapToDomain(invoiceData) {
-        const invoiceItems = invoiceData.items.map((item) => core_1.InvoiceItem.reconstitute(item.id, item.description, item.quantity, core_1.Money.create(item.unitPrice, 'EUR'), item.taxRate));
+        const invoiceItems = invoiceData.items.map((item) => core_1.InvoiceItem.reconstitute(item.id, item.description, item.quantity, core_1.Money.fromFloat(item.unitPrice, 'EUR'), item.taxRate, item.subtotal, item.taxAmount, item.total));
         if (!invoiceData.dueDate) {
             throw new Error(`La factura con ID ${invoiceData.id} no tiene fecha de vencimiento en la base de datos.`);
         }
@@ -105,6 +107,6 @@ let PrismaInvoiceRepository = class PrismaInvoiceRepository {
 exports.PrismaInvoiceRepository = PrismaInvoiceRepository;
 exports.PrismaInvoiceRepository = PrismaInvoiceRepository = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [Object])
 ], PrismaInvoiceRepository);
 //# sourceMappingURL=invoice.repository.js.map

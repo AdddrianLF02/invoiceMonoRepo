@@ -16,7 +16,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./database/prisma.module"), exports);
 __exportStar(require("./database/prisma.service"), exports);
+__exportStar(require("./database/prisma-uow.service"), exports);
 __exportStar(require("./repositories/customer.repository"), exports);
 __exportStar(require("./repositories/invoice.repository"), exports);
 __exportStar(require("./repositories/user.repository"), exports);
+__exportStar(require("./strategies/vat-tax-calculation.strategy"), exports);
 //# sourceMappingURL=index.js.map

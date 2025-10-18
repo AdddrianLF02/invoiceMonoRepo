@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
-import { CreateInvoiceDto as AppCreateInvoiceDto, CreateInvoiceDto, InvoiceResponseDto } from '@repo/application';
+import { CreateInvoiceDto } from '@repo/application';
 
 // DTO de un item para Swagger
 class InvoiceItemSwaggerDto {

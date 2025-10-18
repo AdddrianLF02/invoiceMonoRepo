@@ -11,11 +11,9 @@ import {
   UseInterceptors,
   Inject,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
-import {
-  InvoiceEntitySchema,
-} from '@repo/core';
+import { InvoiceEntitySchema } from '@repo/core';
 import {
   CreateInvoiceDto,
   UpdateInvoiceDto,
@@ -30,7 +28,10 @@ import {
   type UpdateInvoiceInputPort,
   type GetCustomerInvoicesInputPort,
 } from '@repo/application';
-import { InvoiceResponseSwaggerDto } from 'src/invoices/invoice-swagger.dto';
+import { CreateInvoiceSwaggerRequestDto } from './dtos';
+import { InvoiceResponseSwaggerDto } from './dtos/response/invoice-swagger-response.dto';
+import { UpdateInvoiceSwaggerRequestDto } from './dtos/request/update-invoice-swagger-request.dto';
+
 
 @ApiTags('Invoices')
 @Controller('api/v1/invoices')
@@ -49,46 +50,69 @@ export class InvoiceController {
     private readonly getCustomerInvoicesUseCase: GetCustomerInvoicesInputPort,
   ) {}
 
+  // 🧾 CREATE
   @Post()
   @UsePipes(ZodValidationPipe)
   @ApiOperation({ summary: 'Crear una nueva factura' })
-  @ApiResponse({ status: 201, description: 'Factura creada exitosamente', type: InvoiceResponseSwaggerDto })
+  @ApiBody({ type: CreateInvoiceSwaggerRequestDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Factura creada exitosamente',
+    type: InvoiceResponseSwaggerDto,
+  })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
-  async create(@Body() createInvoiceDto: CreateInvoiceDto): Promise<void> {
-    await this.createInvoiceUseCase.execute(createInvoiceDto);
+  async create(@Body() dto: CreateInvoiceSwaggerRequestDto): Promise<void> {
+    await this.createInvoiceUseCase.execute(dto);
   }
 
+  // 🔍 GET BY ID
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una factura por su ID' })
   @ApiParam({ name: 'id', description: 'ID de la factura (UUID)' })
-  @ApiResponse({ status: 200, description: 'Factura encontrada', type: InvoiceResponseSwaggerDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Factura encontrada',
+    type: InvoiceResponseSwaggerDto,
+  })
   @ApiResponse({ status: 404, description: 'Factura no encontrada' })
   async findById(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     await this.getInvoiceUseCase.execute(id);
   }
 
+  // 📦 GET BY CUSTOMER
   @Get('customer/:customerId')
   @ApiOperation({ summary: 'Obtener todas las facturas de un cliente' })
   @ApiParam({ name: 'customerId', description: 'ID del cliente (UUID)' })
-  @ApiResponse({ status: 200, description: 'Lista de facturas del cliente', type: [InvoiceResponseSwaggerDto] })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de facturas del cliente',
+    type: [InvoiceResponseSwaggerDto],
+  })
   async findByCustomerId(@Param('customerId', ParseUUIDPipe) customerId: string): Promise<void> {
     await this.getCustomerInvoicesUseCase.execute(customerId);
   }
 
+  // ✏️ UPDATE
   @Put(':id')
   @UsePipes(ZodValidationPipe)
   @ApiOperation({ summary: 'Actualizar una factura existente' })
   @ApiParam({ name: 'id', description: 'ID de la factura a actualizar (UUID)' })
-  @ApiResponse({ status: 200, description: 'Factura actualizada con éxito', type: InvoiceResponseSwaggerDto })
+  @ApiBody({ type: UpdateInvoiceSwaggerRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Factura actualizada con éxito',
+    type: InvoiceResponseSwaggerDto,
+  })
   @ApiResponse({ status: 404, description: 'Factura no encontrada' })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateInvoiceDto: UpdateInvoiceDto,
+    @Body() dto: UpdateInvoiceSwaggerRequestDto,
   ): Promise<void> {
-    await this.updateInvoiceUseCase.execute(id, updateInvoiceDto);
+    await this.updateInvoiceUseCase.execute(id, dto);
   }
 
+  // ❌ DELETE
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una factura' })
   @ApiParam({ name: 'id', description: 'ID de la factura a eliminar (UUID)' })

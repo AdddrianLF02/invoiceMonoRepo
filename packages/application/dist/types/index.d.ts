@@ -17,4 +17,6 @@ export * from './use-cases/user/create-user.use-case';
 export * from './use-cases/user/validate-user.use-case';
 export * from './use-cases/invoice/ports/input-port';
 export * from './use-cases/invoice/ports/output-port';
+export * from './use-cases/customer/ports/input-port';
+export * from './use-cases/customer/ports/output-port';
 //# sourceMappingURL=index.d.ts.map

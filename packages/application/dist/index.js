@@ -23,18 +23,23 @@ __exportStar(require("./dtos/generic"), exports);
 __exportStar(require("./mappers/customer.mapper"), exports);
 __exportStar(require("./mappers/invoice.mapper"), exports);
 // Use Cases
+/// CUSTOMER
 __exportStar(require("./use-cases/customer/create-customer.use-case"), exports);
 __exportStar(require("./use-cases/customer/get-customer-by-email.use-case"), exports);
 __exportStar(require("./use-cases/customer/get-customer-by-id.use-case"), exports);
 __exportStar(require("./use-cases/customer/update-customer.use-case"), exports);
+/// INVOICE
 __exportStar(require("./use-cases/invoice/create-invoice.use-case"), exports);
 __exportStar(require("./use-cases/invoice/delete-invoice.use-case"), exports);
 __exportStar(require("./use-cases/invoice/get-customer-invoices.use-case"), exports);
 __exportStar(require("./use-cases/invoice/get-invoice.use-case"), exports);
 __exportStar(require("./use-cases/invoice/update-invoice.use-case"), exports);
+/// USER
 __exportStar(require("./use-cases/user/create-user.use-case"), exports);
 __exportStar(require("./use-cases/user/validate-user.use-case"), exports);
 // PORTS
 __exportStar(require("./use-cases/invoice/ports/input-port"), exports);
 __exportStar(require("./use-cases/invoice/ports/output-port"), exports);
+__exportStar(require("./use-cases/customer/ports/input-port"), exports);
+__exportStar(require("./use-cases/customer/ports/output-port"), exports);
 //# sourceMappingURL=index.js.map

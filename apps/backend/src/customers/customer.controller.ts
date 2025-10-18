@@ -1,13 +1,16 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import {
-    Customer,
     CustomerEntitySchema,
 } from '@repo/core'
 import {
+  CREATE_CUSTOMER_INPUT_TOKEN,
     CreateCustomerDto,
     CustomerResponseDto,
+    GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN,
+    GET_CUSTOMER_BY_ID_INPUT_TOKEN,
+    UPDATE_INVOICE_INPUT_TOKEN,
     UpdateCustomerDto
 } from '@repo/application'
 import type { CreateCustomerInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
@@ -18,9 +21,16 @@ import type { CreateCustomerInputPort, GetCustomerByEmailInputPort, GetCustomerB
 @UseInterceptors(new ZodSerializerInterceptor(CustomerEntitySchema))
 export class CustomerController {
   constructor(
+    @Inject(CREATE_CUSTOMER_INPUT_TOKEN)
     private readonly createCustomerUseCase: CreateCustomerInputPort,
+    
+    @Inject(GET_CUSTOMER_BY_ID_INPUT_TOKEN)
     private readonly getCustomerByIdUseCase: GetCustomerByIdInputPort,
+    
+    @Inject(GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN)
     private readonly getCustomerByEmailUseCase: GetCustomerByEmailInputPort,
+    
+    @Inject(UPDATE_INVOICE_INPUT_TOKEN)
     private readonly updateCustomerUseCase: UpdateCustomerInputPort,
   ) {}
 
@@ -30,8 +40,8 @@ export class CustomerController {
   @ApiResponse({ status: 201, description: 'Cliente creado exitosamente', type: CustomerResponseDto })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   @ApiResponse({ status: 409, description: 'El email ya está en uso' })
-  async create(@Body() createCustomerDto: CreateCustomerDto): Promise<Customer> {
-    return this.createCustomerUseCase.execute(createCustomerDto);
+  async create(@Body() dto: CreateCustomerDto): Promise<void> {
+    await this.createCustomerUseCase.execute(dto);
   }
 
   @Get(':id')
@@ -39,12 +49,8 @@ export class CustomerController {
   @ApiParam({ name: 'id', description: 'ID del cliente (UUID)' })
   @ApiResponse({ status: 200, description: 'Cliente encontrado', type: CustomerResponseDto })
   @ApiResponse({ status: 404, description: 'Cliente no encontrado' })
-  async findById(@Param('id', ParseUUIDPipe) id: string): Promise<Customer> {
-    const customer = await this.getCustomerByIdUseCase.execute(id);
-    if (!customer) {
-      throw new HttpException('Cliente no encontrado', HttpStatus.NOT_FOUND);
-    }
-    return customer;
+  async findById(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    await this.getCustomerByIdUseCase.execute(id);
   }
 
   @Get('email/:email')
@@ -52,12 +58,8 @@ export class CustomerController {
   @ApiParam({ name: 'email', description: 'Email del cliente' })
   @ApiResponse({ status: 200, description: 'Cliente encontrado', type: CustomerResponseDto })
   @ApiResponse({ status: 404, description: 'Cliente no encontrado' })
-  async findByEmail(@Param('email') email: string): Promise<Customer> {
-    const customer = await this.getCustomerByEmailUseCase.execute(email);
-    if (!customer) {
-      throw new HttpException('Cliente no encontrado', HttpStatus.NOT_FOUND);
-    }
-    return customer;
+  async findByEmail(@Param('email') email: string): Promise<void> {
+    await this.getCustomerByEmailUseCase.execute(email);
   }
 
   @Put(':id')
@@ -69,11 +71,8 @@ export class CustomerController {
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateCustomerDto: UpdateCustomerDto,
-  ): Promise<Customer> {
-    return this.updateCustomerUseCase.execute({
-      id,
-      ...updateCustomerDto,
-    });
+    @Body() dto: UpdateCustomerDto,
+  ): Promise<void> {
+    await this.updateCustomerUseCase.execute({ ...dto, id })
   }
 }

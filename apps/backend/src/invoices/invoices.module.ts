@@ -3,7 +3,11 @@ import { ApplicattionModule } from 'src/modules/application.module';
 import { InvoiceController } from './invoice.controller';
 import { InfrastructureModule } from 'src/modules/infrastructure.module';
 import { CreateInvoicePresenter } from './presenters/create-invoice.presenter';
-import { CREATE_INVOICE_INPUT_TOKEN, CREATE_INVOICE_OUTPUT_TOKEN, CreateInvoiceUseCase, INPUT_TOKEN, OUTPUT_TOKEN } from '@repo/application';
+import { CREATE_INVOICE_INPUT_TOKEN, CREATE_INVOICE_OUTPUT_TOKEN, CreateInvoiceUseCase, DELETE_INVOICE_INPUT_TOKEN, DeleteInvoiceUseCase, GET_CUSTOMER_INVOICES_INPUT_TOKEN, GET_CUSTOMER_INVOICES_OUTPUT_TOKEN, GET_INVOICE_INPUT_TOKEN, GetCustomerInvoicesUseCase, GetInvoiceUseCase, UPDATE_INVOICE_INPUT_TOKEN, UpdateInvoiceUseCase } from '@repo/application';
+import { GetCustomerInvoicesPresenter } from './presenters/get-customer-invoices.presenter';
+import { GetInvoicePresenter } from './presenters/get-invoice.presenter';
+import { DeleteInvoicePresenter } from './presenters/delete-invoice.presenter';
+import { UpdateInvoicePresenter } from './presenters/update-invoice.presenter';
 
 @Module({
     // Necesitamos el ApplicationModule para Use Cases y el InfrastructureModule para UoW/Repos
@@ -22,27 +26,60 @@ import { CREATE_INVOICE_INPUT_TOKEN, CREATE_INVOICE_OUTPUT_TOKEN, CreateInvoiceU
           } ,
           inject: [/** nest inyectará el contexto automáticamente */] 
         },
-        // Presenter
-        {
-            provide: CreateInvoicePresenter,
-            useClass: CreateInvoicePresenter,
-            scope: Scope.REQUEST
-        },
-        {
-            provide: CREATE_INVOICE_OUTPUT_TOKEN,
-            useExisting: CreateInvoicePresenter,
-            scope: Scope.REQUEST
-        },
+         // --- CREATE ---
+    {
+      provide: CREATE_INVOICE_INPUT_TOKEN,
+      useClass: CreateInvoiceUseCase,
+    },
+    {
+      provide: CREATE_INVOICE_OUTPUT_TOKEN,
+      useClass: CreateInvoicePresenter,
+      scope: Scope.REQUEST,
+    },
 
-        // Use Case
-        {
-            provide: CREATE_INVOICE_INPUT_TOKEN,
-            useClass: CreateInvoiceUseCase
-        },
+    // --- UPDATE ---
+    {
+      provide: UPDATE_INVOICE_INPUT_TOKEN,
+      useClass: UpdateInvoiceUseCase,
+    },
+    {
+      provide: UPDATE_INVOICE_INPUT_TOKEN,
+      useClass: UpdateInvoicePresenter,
+      scope: Scope.REQUEST,
+    },
 
-        // (Opcional, si no vienen desde InfrastructureModule)
-    // { provide: UNIT_OF_WORK, useClass: PrismaUnitOfWork, scope: Scope.REQUEST },
-    // { provide: TAX_CALCULATION_STRATEGY, useClass: DefaultTaxCalculationStrategy },
+    // --- DELETE ---
+    {
+      provide: DELETE_INVOICE_INPUT_TOKEN,
+      useClass: DeleteInvoiceUseCase,
+    },
+    {
+      provide: DELETE_INVOICE_INPUT_TOKEN,
+      useClass: DeleteInvoicePresenter,
+      scope: Scope.REQUEST,
+    },
+
+    // --- GET ONE ---
+    {
+      provide: GET_INVOICE_INPUT_TOKEN,
+      useClass: GetInvoiceUseCase,
+    },
+    {
+      provide: GET_INVOICE_INPUT_TOKEN,
+      useClass: GetInvoicePresenter,
+      scope: Scope.REQUEST,
+    },
+
+    // --- GET BY CUSTOMER ---
+    {
+      provide: GET_CUSTOMER_INVOICES_INPUT_TOKEN,
+      useClass: GetCustomerInvoicesUseCase,
+    },
+    {
+      provide: GET_CUSTOMER_INVOICES_OUTPUT_TOKEN,
+      useClass: GetCustomerInvoicesPresenter,
+      scope: Scope.REQUEST,
+    },
     ]
 })
 

@@ -26,32 +26,26 @@ let UpdateInvoiceUseCase = class UpdateInvoiceUseCase {
         this.outputPort = outputPort;
     }
     async execute(id, input) {
-        // 1. La comprobación de 'NotFound' actúa como un type guard.
-        // TypeScript sabe que después de esta línea, 'invoice' no puede ser null.
         let invoice = await this.invoiceRepository.findById(core_1.InvoiceId.fromString(id));
         if (!invoice) {
             throw new common_1.NotFoundException(`Invoice with ID ${id} not found`);
         }
-        // Creamos una constante. En este punto, TypeScript sabe 100% que no es nula.
         const currentInvoice = invoice;
-        // 2. Definimos las estrategias con tipos explícitos, ¡adiós 'any'!
         const updateStrategies = {
             customerId: (val) => currentInvoice.updateCustomerId(core_1.CustomerId.fromString(val)),
             status: (val) => currentInvoice.updateStatus(core_1.InvoiceStatus.fromString(val)),
             issueDate: (val) => currentInvoice.updateIssueDate(val),
             dueDate: (val) => currentInvoice.updateDueDate(val),
         };
-        // 3. Iteramos y aplicamos las estrategias, reasignando la nueva instancia inmutable.
         for (const key of Object.keys(input)) {
             if (key in updateStrategies) {
                 const strategy = updateStrategies[key];
                 const value = input[key];
                 if (strategy && value !== undefined) {
-                    invoice = strategy(value); // Usamos 'as any' aquí de forma controlada porque TypeScript no puede inferir el tipo dinámico
+                    invoice = strategy(value);
                 }
             }
         }
-        // Manejo especial para 'items'
         if (input.items) {
             invoice = invoice.clearItems();
             for (const itemDto of input.items) {
@@ -66,6 +60,7 @@ let UpdateInvoiceUseCase = class UpdateInvoiceUseCase {
             }
         }
         const updatedInvoice = await this.invoiceRepository.update(invoice);
+        // ✅ aquí notificamos al Presenter (output port)
         this.outputPort.present(updatedInvoice);
     }
 };

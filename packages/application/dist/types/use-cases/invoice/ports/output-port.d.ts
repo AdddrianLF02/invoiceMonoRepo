@@ -14,7 +14,7 @@ export interface UpdateInvoiceOutputPort {
 }
 export declare const GET_CUSTOMER_INVOICES_OUTPUT_TOKEN = "GET_CUSTOMER_INVOICES_OUTPUT_TOKEN";
 export interface GetCustomerInvoicesOutputPort {
-    present(result: Invoice): void;
+    present(result: Invoice[]): void;
 }
 export declare const GET_INVOICE_OUTPUT_TOKEN = "GET_INVOICE_OUTPUT_TOKEN";
 export interface GetInvoiceOutPutPort {

@@ -15,10 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteInvoiceUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const output_port_1 = require("./ports/output-port");
 let DeleteInvoiceUseCase = class DeleteInvoiceUseCase {
     invoiceRepository;
-    constructor(invoiceRepository) {
+    outputPort;
+    constructor(invoiceRepository, outputPort) {
         this.invoiceRepository = invoiceRepository;
+        this.outputPort = outputPort;
     }
     async execute(id) {
         // Verificar que la factura existe
@@ -28,12 +31,14 @@ let DeleteInvoiceUseCase = class DeleteInvoiceUseCase {
         }
         // Eliminar la factura
         await this.invoiceRepository.delete(core_1.InvoiceId.fromString(id));
+        this.outputPort.present(id);
     }
 };
 exports.DeleteInvoiceUseCase = DeleteInvoiceUseCase;
 exports.DeleteInvoiceUseCase = DeleteInvoiceUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(core_1.INVOICE_REPOSITORY)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(output_port_1.DELETE_INVOICE_OUTPUT_TOKEN)),
+    __metadata("design:paramtypes", [Object, Object])
 ], DeleteInvoiceUseCase);
 //# sourceMappingURL=delete-invoice.use-case.js.map

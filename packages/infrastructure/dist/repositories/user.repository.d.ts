@@ -1,5 +1,5 @@
 import { type UserRepository, User, Email } from '@repo/core';
-import { PrismaService } from '@repo/infrastructure';
+import { PrismaService } from '../database/prisma.service';
 export declare class PrismaUserRepository implements UserRepository {
     private prisma;
     constructor(prisma: PrismaService);

@@ -3,9 +3,9 @@ import {
   PrismaCustomerRepository, 
   PrismaInvoiceRepository, 
   PrismaModule, 
-  PrismaUserRepository, 
-  PrismaUnitOfWork,
-  VatTaxCalculationStrategy 
+  PrismaUserRepository,
+  VatTaxCalculationStrategy,
+  PrismaUnitOfWork 
 } from '@repo/infrastructure';
 import { 
   USER_REPOSITORY, 

@@ -1,4 +1,3 @@
-// src/modules/invoices.module.ts
 import { Module, Scope } from '@nestjs/common';
 import { InvoiceController } from './invoice.controller';
 import {
@@ -26,14 +25,15 @@ import { GetCustomerInvoicesPresenter } from './presenters/get-customer-invoices
 import { UpdateInvoicePresenter } from './presenters/update-invoice.presenter';
 
 import { InfrastructureModule } from 'src/modules/infrastructure.module';
-import { ApplicattionModule } from 'src/modules/application.module';
+import { ApplicationModule } from 'src/modules/application.module';
 import { REQUEST } from '@nestjs/core';
 import type { Request, Response } from 'express';
+
 
 @Module({
   imports: [
     InfrastructureModule,
-    ApplicattionModule,
+    ApplicationModule,
   ],
   controllers: [InvoiceController],
   providers: [

@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
-import { ApplicattionModule } from 'src/modules/application.module';
+import { ApplicationModule } from 'src/modules/application.module';
+import { CreateUserUseCase, ValidateUserUseCase } from '@repo/application';
 
 @Module({
   imports: [
-    ApplicattionModule,
+    ApplicationModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'una-clave-secreta-muy-segura-en-desarrollo',
@@ -14,7 +15,10 @@ import { ApplicattionModule } from 'src/modules/application.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [],
+  providers: [
+    CreateUserUseCase,
+    ValidateUserUseCase
+  ],
 })
 export class AuthModule {}
 

@@ -1,7 +1,5 @@
 import { Invoice } from "@repo/core";
 
-// TOKEN
-export const OUTPUT_TOKEN = "outputToken";
 
 // CREATE
 export const CREATE_INVOICE_OUTPUT_TOKEN = "CREATE_INVOICE_OUTPUT_PORT";

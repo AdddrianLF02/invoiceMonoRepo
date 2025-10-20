@@ -11,7 +11,8 @@ import {
 } from '@repo/core';
 import { CreateInvoiceDto } from '../../dtos/invoice.zod';
 import { CreateInvoiceInputPort } from './ports/input-port';
-import { OUTPUT_TOKEN, type CreateInvoiceOutputPort } from './ports/output-port';
+import { CREATE_INVOICE_OUTPUT_TOKEN, type CreateInvoiceOutputPort } from './ports/output-port';
+
 
 @Injectable()
 export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
@@ -22,7 +23,7 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
     @Inject(TAX_CALCULATION_STRATEGY)
     private readonly taxCalculationStrategy: ITaxCalculationStrategy,
 
-    @Inject(OUTPUT_TOKEN)
+    @Inject(CREATE_INVOICE_OUTPUT_TOKEN)
     private readonly outputPort: CreateInvoiceOutputPort
   ) {}
 

@@ -54,7 +54,7 @@ exports.CreateInvoiceUseCase = CreateInvoiceUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(core_1.UNIT_OF_WORK)),
     __param(1, (0, common_1.Inject)(core_1.TAX_CALCULATION_STRATEGY)),
-    __param(2, (0, common_1.Inject)(output_port_1.OUTPUT_TOKEN)),
+    __param(2, (0, common_1.Inject)(output_port_1.CREATE_INVOICE_OUTPUT_TOKEN)),
     __metadata("design:paramtypes", [Object, Object, Object])
 ], CreateInvoiceUseCase);
 //# sourceMappingURL=create-invoice.use-case.js.map

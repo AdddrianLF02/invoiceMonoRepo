@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaInvoiceRepository = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const prisma_service_1 = require("../database/prisma.service"); // Ruta relativa corregida
 let PrismaInvoiceRepository = class PrismaInvoiceRepository {
     prisma;
     constructor(prisma) {
@@ -107,6 +108,6 @@ let PrismaInvoiceRepository = class PrismaInvoiceRepository {
 exports.PrismaInvoiceRepository = PrismaInvoiceRepository;
 exports.PrismaInvoiceRepository = PrismaInvoiceRepository = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [Object])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], PrismaInvoiceRepository);
 //# sourceMappingURL=invoice.repository.js.map

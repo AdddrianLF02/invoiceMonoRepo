@@ -1,3 +1,4 @@
+// src/modules/invoices.module.ts
 import { Module, Scope } from '@nestjs/common';
 import { InvoiceController } from './invoice.controller';
 import {
@@ -26,32 +27,25 @@ import { UpdateInvoicePresenter } from './presenters/update-invoice.presenter';
 
 import { InfrastructureModule } from 'src/modules/infrastructure.module';
 import { ApplicattionModule } from 'src/modules/application.module';
-
+import { REQUEST } from '@nestjs/core';
+import type { Request, Response } from 'express';
 
 @Module({
   imports: [
-    // Importa donde se define UNIT_OF_WORK y TAX_CALCULATION_STRATEGY
     InfrastructureModule,
     ApplicattionModule,
   ],
   controllers: [InvoiceController],
   providers: [
-    /**
-     * Bind de la Response (por request)
-     */
+    // ✅ Vincula Response de Express por request
     {
       provide: 'EXPRESS_RESPONSE',
       scope: Scope.REQUEST,
-      useFactory: (context: any) => {
-        const http = context.switchToHttp();
-        return http.getResponse();
-      },
-      inject: [],
+      useFactory: (req: Request & { res?: Response }) => req.res,
+      inject: [REQUEST],
     },
 
-    /**
-     * --- CREATE ---
-     */
+    // --- CREATE ---
     {
       provide: CREATE_INVOICE_INPUT_TOKEN,
       useClass: CreateInvoiceUseCase,
@@ -62,9 +56,7 @@ import { ApplicattionModule } from 'src/modules/application.module';
       scope: Scope.REQUEST,
     },
 
-    /**
-     * --- UPDATE ---
-     */
+    // --- UPDATE ---
     {
       provide: UPDATE_INVOICE_INPUT_TOKEN,
       useClass: UpdateInvoiceUseCase,
@@ -75,9 +67,7 @@ import { ApplicattionModule } from 'src/modules/application.module';
       scope: Scope.REQUEST,
     },
 
-    /**
-     * --- DELETE ---
-     */
+    // --- DELETE ---
     {
       provide: DELETE_INVOICE_INPUT_TOKEN,
       useClass: DeleteInvoiceUseCase,
@@ -88,9 +78,7 @@ import { ApplicattionModule } from 'src/modules/application.module';
       scope: Scope.REQUEST,
     },
 
-    /**
-     * --- GET ONE ---
-     */
+    // --- GET ONE ---
     {
       provide: GET_INVOICE_INPUT_TOKEN,
       useClass: GetInvoiceUseCase,
@@ -101,9 +89,7 @@ import { ApplicattionModule } from 'src/modules/application.module';
       scope: Scope.REQUEST,
     },
 
-    /**
-     * --- GET BY CUSTOMER ---
-     */
+    // --- GET BY CUSTOMER ---
     {
       provide: GET_CUSTOMER_INVOICES_INPUT_TOKEN,
       useClass: GetCustomerInvoicesUseCase,
@@ -114,6 +100,5 @@ import { ApplicattionModule } from 'src/modules/application.module';
       scope: Scope.REQUEST,
     },
   ],
-  exports: [],
 })
 export class InvoicesModule {}

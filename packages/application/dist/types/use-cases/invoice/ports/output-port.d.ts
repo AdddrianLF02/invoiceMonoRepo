@@ -1,5 +1,4 @@
 import { Invoice } from "@repo/core";
-export declare const OUTPUT_TOKEN = "outputToken";
 export declare const CREATE_INVOICE_OUTPUT_TOKEN = "CREATE_INVOICE_OUTPUT_PORT";
 export interface CreateInvoiceOutputPort {
     present(result: Invoice): void;

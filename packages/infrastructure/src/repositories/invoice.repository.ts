@@ -13,11 +13,13 @@ import { PrismaService } from '../database/prisma.service'; // Ruta relativa cor
 import { Prisma, InvoiceStatus as PrismaInvoiceStatus } from '@prisma/client'; // Importación correcta
 
 // Tipo que puede ser el cliente estándar o el cliente de transacción de Prisma
-type PrismaClientOrTx = PrismaService | Prisma.TransactionClient;
+export type PrismaClientOrTx = PrismaService | Prisma.TransactionClient;
 
 @Injectable()
 export class PrismaInvoiceRepository implements InvoiceRepository {
-  constructor(private readonly prisma: PrismaClientOrTx) {}
+  constructor(
+    private readonly prisma: PrismaService
+  ) {}
 
   async create(invoice: Invoice): Promise<Invoice> {
     const createdInvoiceData = await this.prisma.invoice.create({

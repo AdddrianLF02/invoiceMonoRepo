@@ -15,20 +15,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetCustomerByEmailUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const output_port_1 = require("./ports/output-port");
 let GetCustomerByEmailUseCase = class GetCustomerByEmailUseCase {
     customerRepository;
-    constructor(customerRepository) {
+    outputPort;
+    constructor(customerRepository, outputPort) {
         this.customerRepository = customerRepository;
+        this.outputPort = outputPort;
     }
     async execute(email) {
         const customerEmail = core_1.Email.create(email);
-        return this.customerRepository.findByEmail(customerEmail);
+        const customer = await this.customerRepository.findByEmail(customerEmail);
+        this.outputPort.present(customer);
     }
 };
 exports.GetCustomerByEmailUseCase = GetCustomerByEmailUseCase;
 exports.GetCustomerByEmailUseCase = GetCustomerByEmailUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(core_1.CUSTOMER_REPOSITORY)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(output_port_1.GET_CUSTOMER_BY_EMAIL_OUTPUT_TOKEN)),
+    __metadata("design:paramtypes", [Object, Object])
 ], GetCustomerByEmailUseCase);
 //# sourceMappingURL=get-customer-by-email.use-case.js.map

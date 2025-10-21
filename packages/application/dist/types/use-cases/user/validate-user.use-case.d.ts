@@ -1,7 +1,6 @@
-import { type UserRepository, User } from '@repo/core';
+import { type UserRepository } from '@repo/core';
 import { ValidateUserInputPort } from './ports/input-port';
 import { type ValidateUserOutputPort } from './ports/output-port';
-export type SafeUser = ReturnType<User['toSafeObject']>;
 export declare class ValidateUserUseCase implements ValidateUserInputPort {
     private readonly userRepository;
     private readonly outputPort;

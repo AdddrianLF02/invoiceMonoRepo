@@ -5,7 +5,7 @@ import {
   Email,
 } from '@repo/core';
 import { GetCustomerByEmailInputPort } from './ports/input-port';
-import { GET_CUSTOMER_BY_EMAIL_OUTPUT_TOKEN, GetCustomerByEmailOutputPort } from './ports/output-port';
+import { GET_CUSTOMER_BY_EMAIL_OUTPUT_TOKEN, type GetCustomerByEmailOutputPort } from './ports/output-port';
 
 @Injectable()
 export class GetCustomerByEmailUseCase implements GetCustomerByEmailInputPort {

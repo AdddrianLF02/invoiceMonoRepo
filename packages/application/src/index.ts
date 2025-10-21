@@ -23,9 +23,16 @@ export * from './use-cases/invoice/update-invoice.use-case';
 /// USER
 export * from './use-cases/user/create-user.use-case';
 export * from './use-cases/user/validate-user.use-case';
+export * from './use-cases/user/update-user.use-case';
 
 // PORTS
+//// INVOICE
 export * from './use-cases/invoice/ports/input-port';
 export * from './use-cases/invoice/ports/output-port';
+//// CUSTOMER
 export * from './use-cases/customer/ports/input-port';
 export * from './use-cases/customer/ports/output-port';
+//// USER
+export * from './use-cases/user/ports/input-port';
+export * from './use-cases/user/ports/output-port';
+

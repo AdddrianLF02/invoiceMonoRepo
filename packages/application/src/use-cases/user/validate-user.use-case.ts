@@ -8,7 +8,7 @@ import {
 import { ValidateUserInputPort } from './ports/input-port';
 import { VALIDATE_USER_OUTPUT_TOKEN, type ValidateUserOutputPort } from './ports/output-port';
 
-export type SafeUser = ReturnType<User['toSafeObject']>;
+
 
 @Injectable()
 export class ValidateUserUseCase implements ValidateUserInputPort {

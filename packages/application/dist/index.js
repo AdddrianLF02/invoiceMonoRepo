@@ -37,9 +37,15 @@ __exportStar(require("./use-cases/invoice/update-invoice.use-case"), exports);
 /// USER
 __exportStar(require("./use-cases/user/create-user.use-case"), exports);
 __exportStar(require("./use-cases/user/validate-user.use-case"), exports);
+__exportStar(require("./use-cases/user/update-user.use-case"), exports);
 // PORTS
+//// INVOICE
 __exportStar(require("./use-cases/invoice/ports/input-port"), exports);
 __exportStar(require("./use-cases/invoice/ports/output-port"), exports);
+//// CUSTOMER
 __exportStar(require("./use-cases/customer/ports/input-port"), exports);
 __exportStar(require("./use-cases/customer/ports/output-port"), exports);
+//// USER
+__exportStar(require("./use-cases/user/ports/input-port"), exports);
+__exportStar(require("./use-cases/user/ports/output-port"), exports);
 //# sourceMappingURL=index.js.map

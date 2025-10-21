@@ -6,7 +6,7 @@ import {
   User
 } from '@repo/core'
 import { ValidateUserInputPort } from './ports/input-port';
-
+import { VALIDATE_USER_OUTPUT_TOKEN, type ValidateUserOutputPort } from './ports/output-port';
 
 export type SafeUser = ReturnType<User['toSafeObject']>;
 
@@ -15,16 +15,19 @@ export class ValidateUserUseCase implements ValidateUserInputPort {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepository,
+    
+    @Inject(VALIDATE_USER_OUTPUT_TOKEN)
+    private readonly outputPort: ValidateUserOutputPort
   ) {}
 
-  async execute(email: string, pass: string): Promise<SafeUser | null> {
+  async execute(email: string, pass: string): Promise<void> {
     const user = await this.userRepository.findByEmail(Email.create(email));
 
     if (user && (await user.comparePassword(pass))) {
-      
-      return user.toSafeObject();
+      this.outputPort.present(user.toSafeObject());
+      return;
     }
     
-    return null;
+    this.outputPort.present(null);
   }
 }

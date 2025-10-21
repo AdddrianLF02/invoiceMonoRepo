@@ -16,32 +16,40 @@ exports.CreateCustomerUseCase = void 0;
 require("reflect-metadata");
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const output_port_1 = require("./ports/output-port");
 let CreateCustomerUseCase = class CreateCustomerUseCase {
-    customerRepository;
-    constructor(customerRepository) {
-        this.customerRepository = customerRepository;
+    uow;
+    outputPort;
+    constructor(uow, outputPort) {
+        this.uow = uow;
+        this.outputPort = outputPort;
     }
     async execute(input) {
-        const email = core_1.Email.create(input.email);
-        const existingCustomer = await this.customerRepository.findByEmail(email);
-        if (existingCustomer) {
-            // Usamos una excepción de NestJS para un mejor manejo de errores
-            throw new common_1.ConflictException('Ya existe un cliente con este email');
-        }
-        // 2. Creamos el Value Object para el UserId
-        const userId = core_1.UserId.fromString(input.userId);
-        const address = core_1.Address.create(input.street || '', input.city || '', input.postalCode || '', input.country || '');
-        const taxId = core_1.TaxId.create(input.taxId || '');
-        // 3. Pasamos el 'userId' al crear la entidad Customer
-        const customer = core_1.Customer.create(userId, input.name, email, address, // Reutilizamos la variable, más limpio
-        input.number || '', taxId);
-        return this.customerRepository.create(customer);
+        await this.uow.executeTransaction(async () => {
+            const repo = this.uow.customerRepository;
+            const email = core_1.Email.create(input.email);
+            const existingCustomer = await repo.findByEmail(email);
+            if (existingCustomer) {
+                throw new common_1.ConflictException('Ya existe un cliente con este email');
+            }
+            // Creamos el Value Object para el UserId
+            const userId = core_1.UserId.fromString(input.userId);
+            const address = core_1.Address.create(input.street || '', input.city || '', input.postalCode || '', input.country || '');
+            const taxId = input.taxId
+                ? core_1.TaxId.create(input.taxId)
+                : undefined;
+            // Creamos el cliente
+            const customer = core_1.Customer.create(userId, input.name, email, address, input.number || '', taxId);
+            await repo.create(customer);
+            this.outputPort.present(customer);
+        });
     }
 };
 exports.CreateCustomerUseCase = CreateCustomerUseCase;
 exports.CreateCustomerUseCase = CreateCustomerUseCase = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(core_1.CUSTOMER_REPOSITORY)),
-    __metadata("design:paramtypes", [Object])
+    __param(0, (0, common_1.Inject)(core_1.UNIT_OF_WORK)),
+    __param(1, (0, common_1.Inject)(output_port_1.CREATE_CUSTOMER_OUTPUT_TOKEN)),
+    __metadata("design:paramtypes", [Object, Object])
 ], CreateCustomerUseCase);
 //# sourceMappingURL=create-customer.use-case.js.map

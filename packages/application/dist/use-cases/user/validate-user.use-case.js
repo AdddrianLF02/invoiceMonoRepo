@@ -15,23 +15,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidateUserUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const output_port_1 = require("./ports/output-port");
 let ValidateUserUseCase = class ValidateUserUseCase {
     userRepository;
-    constructor(userRepository) {
+    outputPort;
+    constructor(userRepository, outputPort) {
         this.userRepository = userRepository;
+        this.outputPort = outputPort;
     }
     async execute(email, pass) {
         const user = await this.userRepository.findByEmail(core_1.Email.create(email));
         if (user && (await user.comparePassword(pass))) {
-            return user.toSafeObject();
+            this.outputPort.present(user.toSafeObject());
+            return;
         }
-        return null;
+        this.outputPort.present(null);
     }
 };
 exports.ValidateUserUseCase = ValidateUserUseCase;
 exports.ValidateUserUseCase = ValidateUserUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(core_1.USER_REPOSITORY)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(output_port_1.VALIDATE_USER_OUTPUT_TOKEN)),
+    __metadata("design:paramtypes", [Object, Object])
 ], ValidateUserUseCase);
 //# sourceMappingURL=validate-user.use-case.js.map

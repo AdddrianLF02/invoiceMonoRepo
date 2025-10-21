@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomerId = exports.CustomerIdSchema = void 0;
-const uuid_1 = require("uuid");
+const crypto_1 = require("crypto");
 const zod_1 = __importDefault(require("zod"));
 exports.CustomerIdSchema = zod_1.default.string().uuid();
 /**
@@ -19,7 +19,7 @@ class CustomerId {
     }
     // Generamos un nuevo UUID para nuevos clientes
     static create() {
-        return new CustomerId((0, uuid_1.v4)());
+        return new CustomerId((0, crypto_1.randomUUID)());
     }
     // Permite reconstruir el ID desde la base de datos.
     static fromString(id) {

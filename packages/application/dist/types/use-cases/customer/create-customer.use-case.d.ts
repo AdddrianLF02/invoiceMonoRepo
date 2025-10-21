@@ -1,21 +1,12 @@
 import 'reflect-metadata';
-import { Customer, type CustomerRepository } from '@repo/core';
+import { type IUnitOfWork } from '@repo/core';
+import { CreateCustomerDto } from '../../dtos/customer.zod';
 import { CreateCustomerInputPort } from './ports/input-port';
-export interface CreateCustomerInput {
-    userId: string;
-    name: string;
-    email: string;
-    number?: string;
-    street?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-    taxId?: string;
-    taxIdType?: string;
-}
+import { type CreateCustomerOutputPort } from './ports/output-port';
 export declare class CreateCustomerUseCase implements CreateCustomerInputPort {
-    private readonly customerRepository;
-    constructor(customerRepository: CustomerRepository);
-    execute(input: CreateCustomerInput): Promise<Customer>;
+    private readonly uow;
+    private readonly outputPort;
+    constructor(uow: IUnitOfWork, outputPort: CreateCustomerOutputPort);
+    execute(input: CreateCustomerDto): Promise<void>;
 }
 //# sourceMappingURL=create-customer.use-case.d.ts.map

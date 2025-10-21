@@ -1,8 +1,24 @@
 import { Module, Scope } from '@nestjs/common';
 import { ApplicationModule } from 'src/modules/application.module';
 import { CustomerController } from './customer.controller';
-import { CREATE_CUSTOMER_INPUT_TOKEN, CREATE_CUSTOMER_OUTPUT_TOKEN, CreateCustomerUseCase, GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN, GET_CUSTOMER_BY_ID_INPUT_TOKEN, GetCustomerByEmailUseCase, GetCustomerByIdUseCase, UPDATE_INVOICE_INPUT_TOKEN, UpdateCustomerUseCase } from '@repo/application';
+import { 
+    CREATE_CUSTOMER_INPUT_TOKEN, 
+    CREATE_CUSTOMER_OUTPUT_TOKEN, 
+    CreateCustomerUseCase, 
+    GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN, 
+    GET_CUSTOMER_BY_EMAIL_OUTPUT_TOKEN,
+    GET_CUSTOMER_BY_ID_INPUT_TOKEN, 
+    GET_CUSTOMER_BY_ID_OUTPUT_TOKEN,
+    GetCustomerByEmailUseCase, 
+    GetCustomerByIdUseCase, 
+    UPDATE_CUSTOMER_INPUT_TOKEN, 
+    UPDATE_CUSTOMER_OUTPUT_TOKEN,
+    UpdateCustomerUseCase 
+} from '@repo/application';
 import { CreateCustomerPresenter } from './presenters/create-custom.presenter';
+import { GetCustomerByIdPresenter } from './presenters/get-customer-by-id.presenter';
+import { GetCustomerByEmailPresenter } from './presenters/get-customer-by-email.presenter';
+import { UpdateCustomerPresenter } from './presenters/update-customer.presenter';
 
 @Module({
     imports: [ApplicationModule],
@@ -18,9 +34,15 @@ import { CreateCustomerPresenter } from './presenters/create-custom.presenter';
         // CREATE 
         { provide: CREATE_CUSTOMER_INPUT_TOKEN, useClass: CreateCustomerUseCase },
         { provide: CREATE_CUSTOMER_OUTPUT_TOKEN, useClass: CreateCustomerPresenter },
-        { provide: UPDATE_INVOICE_INPUT_TOKEN, useClass: UpdateCustomerUseCase },
+        // UPDATE
+        { provide: UPDATE_CUSTOMER_INPUT_TOKEN, useClass: UpdateCustomerUseCase },
+        { provide: UPDATE_CUSTOMER_OUTPUT_TOKEN, useClass: UpdateCustomerPresenter },
+        // GET BY EMAIL
         { provide: GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN, useClass: GetCustomerByEmailUseCase },
-        { provide: GET_CUSTOMER_BY_ID_INPUT_TOKEN, useClass: GetCustomerByIdUseCase }
+        { provide: GET_CUSTOMER_BY_EMAIL_OUTPUT_TOKEN, useClass: GetCustomerByEmailPresenter },
+        // GET BY ID
+        { provide: GET_CUSTOMER_BY_ID_INPUT_TOKEN, useClass: GetCustomerByIdUseCase },
+        { provide: GET_CUSTOMER_BY_ID_OUTPUT_TOKEN, useClass: GetCustomerByIdPresenter }
     ]
 })
 

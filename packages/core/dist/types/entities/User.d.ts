@@ -34,5 +34,9 @@ export declare class User {
     getPasswordHash(): string;
     getCreatedAt(): Date;
     getUpdatedAt(): Date;
+    private copyWith;
+    updateName(name: string | null): User;
+    updateEmail(email: Email): User;
+    updatePassword(password: string): User;
 }
 //# sourceMappingURL=User.d.ts.map

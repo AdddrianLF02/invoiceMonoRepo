@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceItem = void 0;
-const uuid_1 = require("uuid");
+const InvoiceItemId_1 = require("../value-objects/InvoiceItemId");
 class InvoiceItem {
     id;
     description;
@@ -19,16 +19,7 @@ class InvoiceItem {
         if (!total.equals(subtotal.add(taxAmount))) {
             throw new Error('Calculated total does not match subtotal + tax amount');
         }
-        return new InvoiceItem((0, uuid_1.v4)(), description, quantity, unitPrice, taxRate, subtotal, taxAmount, total);
-    }
-    // --- FACTORY METHOD: RECONSTITUCIÓN (Uso en Repositorios) ---
-    // Debe aceptar todos los campos (incluidos los calculados) para restaurar el estado desde la BBDD.
-    static reconstitute(id, description, quantity, unitPrice, taxRate, subtotal, // <-- AÑADIDO
-    taxAmount, // <-- AÑADIDO
-    total // <-- AÑADIDO
-    ) {
-        // No chequeamos la invariante aquí, ya que asumimos que la BBDD almacena datos válidos.
-        return new InvoiceItem(id, description, quantity, unitPrice, taxRate, subtotal, taxAmount, total);
+        return new InvoiceItem(InvoiceItemId_1.InvoiceItemId.create(), description, quantity, unitPrice, taxRate, subtotal, taxAmount, total);
     }
     // --- CONSTRUCTOR PRIVADO (Con todos los campos) ---
     constructor(id, description, quantity, unitPrice, taxRate, subtotal, taxAmount, total) {
@@ -44,7 +35,7 @@ class InvoiceItem {
     }
     // --- GETTERS (SOLO DEVUELVEN EL ESTADO ALMACENADO) ---
     getId() {
-        return this.id;
+        return this.id.getValue();
     }
     getDescription() {
         return this.description;
@@ -62,7 +53,6 @@ class InvoiceItem {
     getSubtotal() {
         return this.subtotal;
     }
-    // CORREGIDO: Solo devuelve el valor almacenado por la Strategy
     getTaxAmount() {
         return this.taxAmount;
     }

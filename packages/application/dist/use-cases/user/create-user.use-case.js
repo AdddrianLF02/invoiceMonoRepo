@@ -15,42 +15,46 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
+const output_port_1 = require("./ports/output-port");
 let CreateUserUseCase = class CreateUserUseCase {
-    userRepository;
-    constructor(userRepository) {
-        this.userRepository = userRepository;
+    uow;
+    outputPort;
+    constructor(uow, outputPort) {
+        this.uow = uow;
+        this.outputPort = outputPort;
     }
     async execute(input) {
-        const bcrypt = await import('bcrypt');
-        const saltRounds = 10;
-        try {
-            // Log input to track if anything unexpected is being passed
-            console.log('Creating user with input:', input);
-            // Hash the password securely
-            const hashedPassword = await bcrypt.hash(input.password, saltRounds);
-            // Create the user object
-            const user = core_1.User.create({
-                name: input.name,
-                email: input.email,
-                password: hashedPassword,
-            });
-            // Log the created user (excluding sensitive info like password)
-            console.log('User object created:', user);
-            // Save the user to the repository
-            return await this.userRepository.create(user);
-        }
-        catch (error) {
-            // Log the error for debugging purposes
-            console.error('Error in CreateUserUseCase:', error);
-            // Throw a more meaningful error if necessary
-            throw new Error('Error creating user, please try again later.');
-        }
+        await this.uow.executeTransaction(async () => {
+            const repo = this.uow.userRepository;
+            const bcrypt = await import('bcrypt');
+            const saltRounds = 10;
+            try {
+                // Hash the password securely
+                const hashedPassword = await bcrypt.hash(input.password, saltRounds);
+                // Create the user object
+                const user = core_1.User.create({
+                    name: input.name,
+                    email: input.email,
+                    password: hashedPassword
+                });
+                // Log the created user (excluding sensitive info like password)
+                console.log('User object created:', user);
+                await repo.save(user);
+                this.outputPort.present(user);
+            }
+            catch (error) {
+                // Log the error for debugging purposes
+                console.error('Error creating user:', error);
+                throw error;
+            }
+        });
     }
 };
 exports.CreateUserUseCase = CreateUserUseCase;
 exports.CreateUserUseCase = CreateUserUseCase = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(core_1.USER_REPOSITORY)),
-    __metadata("design:paramtypes", [Object])
+    __param(0, (0, common_1.Inject)(core_1.UNIT_OF_WORK)),
+    __param(1, (0, common_1.Inject)(output_port_1.CREATE_USER_OUTPUT_TOKEN)),
+    __metadata("design:paramtypes", [Object, Object])
 ], CreateUserUseCase);
 //# sourceMappingURL=create-user.use-case.js.map

@@ -1,20 +1,11 @@
-import { Customer, type CustomerRepository } from '@repo/core';
+import { type IUnitOfWork } from '@repo/core';
+import { UpdateCustomerDto } from '../../dtos/customer.zod';
 import { UpdateCustomerInputPort } from './ports/input-port';
-export interface UpdateCustomerInput {
-    id: string;
-    name?: string;
-    email?: string;
-    number?: string;
-    street?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-    taxId?: string;
-    isActive?: boolean;
-}
+import { type UpdateCustomerOutputPort } from './ports/output-port';
 export declare class UpdateCustomerUseCase implements UpdateCustomerInputPort {
-    private readonly customerRepository;
-    constructor(customerRepository: CustomerRepository);
-    execute(input: UpdateCustomerInput): Promise<Customer>;
+    private readonly uow;
+    private readonly outputPort;
+    constructor(uow: IUnitOfWork, outputPort: UpdateCustomerOutputPort);
+    execute(input: UpdateCustomerDto): Promise<void>;
 }
 //# sourceMappingURL=update-customer.use-case.d.ts.map

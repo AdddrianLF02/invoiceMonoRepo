@@ -76,6 +76,26 @@ class User {
     getPasswordHash() { return this.password; }
     getCreatedAt() { return this.createdAt; }
     getUpdatedAt() { return this.updatedAt; }
+    // Métodos de actualización inmutables
+    copyWith(props) {
+        return new User({
+            id: this.id.getValue(),
+            name: props.name ?? this.name,
+            email: props.email ?? this.email.getValue(),
+            password: props.password ?? this.password,
+            createdAt: this.createdAt,
+            updatedAt: new Date(),
+        });
+    }
+    updateName(name) {
+        return this.copyWith({ name });
+    }
+    updateEmail(email) {
+        return this.copyWith({ email: email.getValue() });
+    }
+    updatePassword(password) {
+        return this.copyWith({ password });
+    }
 }
 exports.User = User;
 //# sourceMappingURL=User.js.map

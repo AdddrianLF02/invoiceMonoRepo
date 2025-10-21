@@ -10,7 +10,7 @@ import {
     CustomerResponseDto,
     GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN,
     GET_CUSTOMER_BY_ID_INPUT_TOKEN,
-    UPDATE_INVOICE_INPUT_TOKEN,
+    UPDATE_CUSTOMER_INPUT_TOKEN,
     UpdateCustomerDto
 } from '@repo/application'
 import type { CreateCustomerInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
@@ -30,7 +30,7 @@ export class CustomerController {
     @Inject(GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN)
     private readonly getCustomerByEmailUseCase: GetCustomerByEmailInputPort,
     
-    @Inject(UPDATE_INVOICE_INPUT_TOKEN)
+    @Inject(UPDATE_CUSTOMER_INPUT_TOKEN)
     private readonly updateCustomerUseCase: UpdateCustomerInputPort,
   ) {}
 

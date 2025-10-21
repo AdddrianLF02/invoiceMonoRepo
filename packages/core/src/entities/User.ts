@@ -87,4 +87,28 @@ export class User {
   public getPasswordHash(): string { return this.password; }
   public getCreatedAt(): Date { return this.createdAt; }
   public getUpdatedAt(): Date { return this.updatedAt; }
+
+  // Métodos de actualización inmutables
+  private copyWith(props: Partial<Omit<UserData, 'id' | 'createdAt'>>): User {
+    return new User({
+      id: this.id.getValue(),
+      name: props.name ?? this.name,
+      email: props.email ?? this.email.getValue(),
+      password: props.password ?? this.password,
+      createdAt: this.createdAt,
+      updatedAt: new Date(),
+    });
+  }
+
+  public updateName(name: string | null): User {
+    return this.copyWith({ name });
+  }
+
+  public updateEmail(email: Email): User {
+    return this.copyWith({ email: email.getValue() });
+  }
+
+  public updatePassword(password: string): User {
+    return this.copyWith({ password });
+  }
 }

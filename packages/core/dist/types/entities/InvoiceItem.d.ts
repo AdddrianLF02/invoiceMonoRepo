@@ -9,9 +9,6 @@ export declare class InvoiceItem {
     private readonly taxAmount;
     private readonly total;
     static create(description: string, quantity: number, unitPrice: Money, taxRate: number, subtotal: Money, taxAmount: Money, total: Money): InvoiceItem;
-    static reconstitute(id: string, description: string, quantity: number, unitPrice: Money, taxRate: number, subtotal: Money, // <-- AÑADIDO
-    taxAmount: Money, // <-- AÑADIDO
-    total: Money): InvoiceItem;
     private constructor();
     getId(): string;
     getDescription(): string;

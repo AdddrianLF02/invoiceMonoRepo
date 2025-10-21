@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceId = void 0;
-const uuid_1 = require("uuid");
+const crypto_1 = require("crypto");
 /**
  * Value Object para representar el ID de una factura.
  * Encapsulamos la lógica de negocio relacionada con el ID de la factura.
@@ -14,7 +14,7 @@ class InvoiceId {
     }
     // Generamos un nuevo UUID para nuevas facturas
     static create() {
-        return new InvoiceId((0, uuid_1.v4)());
+        return new InvoiceId((0, crypto_1.randomUUID)());
     }
     // Permite reconstruir el ID desde la base de datos.
     static fromString(id) {

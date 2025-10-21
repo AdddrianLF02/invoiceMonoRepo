@@ -1,0 +1,32 @@
+erDiagram
+    User ||--o| Customer : "tiene"
+    Customer ||--|{ Invoice : "crea"
+    Invoice ||--|{ InvoiceItem : "contiene"
+
+    User {
+        string id PK
+        string name
+        string email
+        string password
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    Customer {
+        string id PK
+        string userId FK
+        string name
+        string email
+        string address
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Invoice {
+        string id PK
+        string customerId FK
+        string invoiceNumber
+        datetime issueDate
+        datetime dueDate
+        enum status
+    }

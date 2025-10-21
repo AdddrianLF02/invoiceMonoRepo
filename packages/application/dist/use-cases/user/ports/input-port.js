@@ -1,3 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UPDATE_USER_INPUT_TOKEN = exports.VALIDATE_USER_INPUT_TOKEN = exports.CREATE_USER_INPUT_TOKEN = void 0;
+// CREATE
+exports.CREATE_USER_INPUT_TOKEN = "CREATE_USER_INPUT_TOKEN";
+// VALIDATE
+exports.VALIDATE_USER_INPUT_TOKEN = "VALIDATE_USER_INPUT_TOKEN";
+// UPDATE
+exports.UPDATE_USER_INPUT_TOKEN = "UPDATE_USER_INPUT_TOKEN";
 //# sourceMappingURL=input-port.js.map

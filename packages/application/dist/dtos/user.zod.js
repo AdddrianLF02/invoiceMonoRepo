@@ -1,7 +1,7 @@
 "use strict";
 // packages/application/src/dtos/user.zod.ts
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateUserDto = exports.CreateUserSchema = exports.RegisterSchema = exports.LoginDto = exports.LoginSchema = void 0;
+exports.UpdateUserDto = exports.UpdateUserSchema = exports.CreateUserDto = exports.CreateUserSchema = exports.RegisterSchema = exports.LoginDto = exports.LoginSchema = void 0;
 const nestjs_zod_1 = require("nestjs-zod");
 const zod_1 = require("zod");
 // Schema que define los datos necesarios para crear un usuario.
@@ -32,4 +32,20 @@ exports.CreateUserSchema = zod_1.z.object({
 class CreateUserDto extends (0, nestjs_zod_1.createZodDto)(exports.CreateUserSchema) {
 }
 exports.CreateUserDto = CreateUserDto;
+exports.UpdateUserSchema = zod_1.z.object({
+    name: zod_1.z.string().min(2).optional(),
+    email: zod_1.z.string().email().optional(),
+    password: zod_1.z.string().min(8).optional(),
+    currentPassword: zod_1.z.string().optional(),
+    updateCustomerInfo: zod_1.z.boolean().optional().default(false),
+}).refine(data => {
+    // Si se proporciona password, currentPassword es obligatorio
+    return !data.password || (data.password && data.currentPassword);
+}, {
+    message: 'Se requiere la contraseña actual para cambiar la contraseña',
+    path: ['currentPassword'],
+});
+class UpdateUserDto extends (0, nestjs_zod_1.createZodDto)(exports.UpdateUserSchema) {
+}
+exports.UpdateUserDto = UpdateUserDto;
 //# sourceMappingURL=user.zod.js.map

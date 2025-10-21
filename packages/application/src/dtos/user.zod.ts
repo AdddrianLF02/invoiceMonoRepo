@@ -31,3 +31,19 @@ export const CreateUserSchema = z.object({
 });
 
 export class CreateUserDto extends createZodDto(CreateUserSchema) {}
+
+export const UpdateUserSchema = z.object({
+  name: z.string().min(2).optional(),
+  email: z.string().email().optional(),
+  password: z.string().min(8).optional(),
+  currentPassword: z.string().optional(),
+  updateCustomerInfo: z.boolean().optional().default(false),
+}).refine(data => {
+  // Si se proporciona password, currentPassword es obligatorio
+  return !data.password || (data.password && data.currentPassword);
+}, {
+  message: 'Se requiere la contraseña actual para cambiar la contraseña',
+  path: ['currentPassword'],
+});
+
+export class UpdateUserDto extends createZodDto(UpdateUserSchema) {}

@@ -15,18 +15,21 @@ const core_1 = require("@repo/core");
 const prisma_service_1 = require("./prisma.service");
 const invoice_repository_1 = require("../repositories/invoice.repository");
 const customer_repository_1 = require("../repositories/customer.repository");
+const user_repository_1 = require("../repositories/user.repository");
 let PrismaUnitOfWork = class PrismaUnitOfWork {
     prisma;
     UOW_TOKEN = core_1.UNIT_OF_WORK;
     // INICIALIZACIÓN DE REPOSITORIOS
     invoiceRepository;
     customerRepository;
+    userRepository;
     // Inyectamos el servicio Prisma ( que es el cliente )
     constructor(prisma) {
         this.prisma = prisma;
         // INICIALIZAMOS CON EL CLIENTE BASE ( SIN TRANSACCIÓN )
         this.invoiceRepository = new invoice_repository_1.PrismaInvoiceRepository(this.prisma);
         this.customerRepository = new customer_repository_1.PrismaCustomerRepository(this.prisma);
+        this.userRepository = new user_repository_1.PrismaUserRepository(this.prisma);
     }
     async executeTransaction(callback) {
         // Ejecuta la transacción de Prisma, obteniendo un cliente transaccional
@@ -34,6 +37,7 @@ let PrismaUnitOfWork = class PrismaUnitOfWork {
             // Reemplaza los repositorios con versiones que usan el cliente transaccional
             this.invoiceRepository = new invoice_repository_1.PrismaInvoiceRepository(tx);
             this.customerRepository = new customer_repository_1.PrismaCustomerRepository(tx);
+            this.userRepository = new user_repository_1.PrismaUserRepository(tx);
             // Ejecuta el Caso de Uso (callback)
             return callback();
         });

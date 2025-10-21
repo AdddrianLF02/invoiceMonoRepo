@@ -15,7 +15,7 @@ exports.PrismaModule = PrismaModule;
 exports.PrismaModule = PrismaModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        providers: [prisma_service_1.PrismaService],
+        providers: [prisma_service_1.PrismaService,],
         exports: [prisma_service_1.PrismaService],
     })
 ], PrismaModule);

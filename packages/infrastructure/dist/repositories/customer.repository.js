@@ -98,6 +98,33 @@ let PrismaCustomerRepository = class PrismaCustomerRepository {
         });
         return customer;
     }
+    async findByUserId(userId) {
+        const customers = await this.prisma.customer.findMany({
+            where: { userId: userId.getValue() },
+        });
+        return Promise.all(customers.map(async (customer) => {
+            const customerId = core_1.CustomerId.fromString(customer.id);
+            const userIdObj = core_1.UserId.fromString(customer.userId);
+            const email = core_1.Email.create(customer.email);
+            let address = undefined;
+            if (customer.address) {
+                const addressParts = customer.address.split(', ');
+                address = core_1.Address.create(addressParts[0] || '', addressParts[1] || '', addressParts[2] || '', addressParts[3] || '');
+            }
+            return core_1.Customer.reconstitute(customerId, userIdObj, customer.name, email, customer.phone || '', address || core_1.Address.create('', '', '', ''), core_1.TaxId.create(''), true, customer.createdAt, customer.updatedAt);
+        }));
+    }
+    async delete(id) {
+        await this.prisma.customer.delete({
+            where: { id: id.getValue() },
+        });
+    }
+    async exists(id) {
+        const count = await this.prisma.customer.count({
+            where: { id: id.getValue() },
+        });
+        return count > 0;
+    }
 };
 exports.PrismaCustomerRepository = PrismaCustomerRepository;
 exports.PrismaCustomerRepository = PrismaCustomerRepository = __decorate([

@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
                     const res = await fetch('http://localhost:3000/auth/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password }),
+                        body: JSON.stringify({ email, pass: password }),
                     });
 
                     if (!res.ok) {

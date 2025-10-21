@@ -39,6 +39,34 @@ export class InvoiceItem {
       total
     )
   }
+  
+  // --- FACTORY METHOD: RECONSTITUCIÓN (Uso en Repositorios) ---
+  public static reconstitute(
+    id: string,
+    description: string,
+    quantity: number,
+    unitPrice: Money,
+    taxRate: number,
+    subtotalInCents: number,
+    taxAmountInCents: number,
+    totalInCents: number
+  ): InvoiceItem {
+    // Convertimos de centavos a valor decimal (dividiendo por 100)
+    const subtotal = Money.fromFloat(subtotalInCents / 100, unitPrice.getCurrency());
+    const taxAmount = Money.fromFloat(taxAmountInCents / 100, unitPrice.getCurrency());
+    const total = Money.fromFloat(totalInCents / 100, unitPrice.getCurrency());
+    
+    return new InvoiceItem(
+      InvoiceItemId.fromString(id),
+      description,
+      quantity,
+      unitPrice,
+      taxRate,
+      subtotal,
+      taxAmount,
+      total
+    );
+  }
 
   // --- CONSTRUCTOR PRIVADO (Con todos los campos) ---
   private constructor(

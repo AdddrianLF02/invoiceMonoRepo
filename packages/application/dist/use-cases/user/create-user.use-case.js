@@ -39,7 +39,7 @@ let CreateUserUseCase = class CreateUserUseCase {
                 });
                 // Log the created user (excluding sensitive info like password)
                 console.log('User object created:', user);
-                await repo.save(user);
+                await repo.create(user);
                 this.outputPort.present(user);
             }
             catch (error) {

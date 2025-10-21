@@ -23,7 +23,7 @@ let PrismaUserRepository = class PrismaUserRepository {
             data: {
                 email: user.getEmail().toString(),
                 password: user.getPasswordHash(),
-                name: user.name,
+                name: user.getName(),
             },
         });
         return core_1.User.reconstitute(createdUser);
@@ -35,6 +35,34 @@ let PrismaUserRepository = class PrismaUserRepository {
         if (!userData)
             return null;
         return core_1.User.reconstitute(userData);
+    }
+    async findById(id) {
+        const userData = await this.prisma.user.findUnique({
+            where: { id: id.getValue() },
+        });
+        if (!userData)
+            return null;
+        return core_1.User.reconstitute(userData);
+    }
+    async update(user) {
+        const updatedUser = await this.prisma.user.update({
+            where: { id: user.getId().getValue() },
+            data: {
+                email: user.getEmail().toString(),
+                password: user.getPasswordHash(),
+                name: user.getName(),
+                updatedAt: user.getUpdatedAt(),
+            },
+        });
+        return core_1.User.reconstitute(updatedUser);
+    }
+    async save(user) {
+        await this.update(user);
+    }
+    async delete(id) {
+        await this.prisma.user.delete({
+            where: { id: id.getValue() },
+        });
     }
 };
 exports.PrismaUserRepository = PrismaUserRepository;

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Email, type IUnitOfWork, User, UserRepository, CustomerRepository, UserId } from '@repo/core';
+import { Email, type IUnitOfWork, UserId } from '@repo/core';
 import { UpdateUserDto } from '../../dtos/user.zod';
 import { UpdateUserInputPort } from './ports/input-port';
 import { type UpdateUserOutputPort, UPDATE_USER_OUTPUT_TOKEN } from './ports/output-port';

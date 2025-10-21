@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceItem = void 0;
+const Money_1 = require("../value-objects/Money");
 const InvoiceItemId_1 = require("../value-objects/InvoiceItemId");
 class InvoiceItem {
     id;
@@ -20,6 +21,14 @@ class InvoiceItem {
             throw new Error('Calculated total does not match subtotal + tax amount');
         }
         return new InvoiceItem(InvoiceItemId_1.InvoiceItemId.create(), description, quantity, unitPrice, taxRate, subtotal, taxAmount, total);
+    }
+    // --- FACTORY METHOD: RECONSTITUCIÓN (Uso en Repositorios) ---
+    static reconstitute(id, description, quantity, unitPrice, taxRate, subtotalInCents, taxAmountInCents, totalInCents) {
+        // Convertimos de centavos a valor decimal (dividiendo por 100)
+        const subtotal = Money_1.Money.fromFloat(subtotalInCents / 100, unitPrice.getCurrency());
+        const taxAmount = Money_1.Money.fromFloat(taxAmountInCents / 100, unitPrice.getCurrency());
+        const total = Money_1.Money.fromFloat(totalInCents / 100, unitPrice.getCurrency());
+        return new InvoiceItem(InvoiceItemId_1.InvoiceItemId.fromString(id), description, quantity, unitPrice, taxRate, subtotal, taxAmount, total);
     }
     // --- CONSTRUCTOR PRIVADO (Con todos los campos) ---
     constructor(id, description, quantity, unitPrice, taxRate, subtotal, taxAmount, total) {

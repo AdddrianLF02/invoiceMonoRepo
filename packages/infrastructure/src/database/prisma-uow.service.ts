@@ -1,8 +1,9 @@
 import { Injectable, Scope } from "@nestjs/common";
-import { CustomerRepository, InvoiceRepository, IUnitOfWork, UNIT_OF_WORK } from "@repo/core";
+import { CustomerRepository, InvoiceRepository, IUnitOfWork, UNIT_OF_WORK, UserRepository } from "@repo/core";
 import { PrismaService } from "./prisma.service";
 import { PrismaInvoiceRepository } from "../repositories/invoice.repository";
 import { PrismaCustomerRepository } from "../repositories/customer.repository";
+import { PrismaUserRepository } from "../repositories/user.repository";
 
 @Injectable({ scope: Scope.REQUEST })// [CRÍTICO] Debe ser Request-Scope
 export class PrismaUnitOfWork implements IUnitOfWork {
@@ -11,12 +12,14 @@ export class PrismaUnitOfWork implements IUnitOfWork {
     // INICIALIZACIÓN DE REPOSITORIOS
     public invoiceRepository: InvoiceRepository;
     public customerRepository: CustomerRepository;
+    public userRepository: UserRepository;
 
     // Inyectamos el servicio Prisma ( que es el cliente )
     constructor(private readonly prisma: PrismaService) {
         // INICIALIZAMOS CON EL CLIENTE BASE ( SIN TRANSACCIÓN )
         this.invoiceRepository = new PrismaInvoiceRepository(this.prisma);
         this.customerRepository = new PrismaCustomerRepository(this.prisma);
+        this.userRepository = new PrismaUserRepository(this.prisma);
     }
 
     async executeTransaction<T>(callback: () => Promise<T>): Promise<T> {
@@ -25,6 +28,7 @@ export class PrismaUnitOfWork implements IUnitOfWork {
             // Reemplaza los repositorios con versiones que usan el cliente transaccional
             this.invoiceRepository = new PrismaInvoiceRepository(tx as any); 
             this.customerRepository = new PrismaCustomerRepository(tx as any); 
+            this.userRepository = new PrismaUserRepository(tx as any);
             
             // Ejecuta el Caso de Uso (callback)
             return callback();

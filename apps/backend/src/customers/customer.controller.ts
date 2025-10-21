@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import {

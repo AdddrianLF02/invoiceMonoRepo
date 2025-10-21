@@ -14,6 +14,7 @@ import {
 import { CreateUserPresenter } from './presenters/create-user.presenter';
 import { ValidateUserPresenter } from './presenters/validate-user.presenter';
 import { REQUEST } from '@nestjs/core';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { REQUEST } from '@nestjs/core';
   ],
   controllers: [AuthController],
   providers: [
+    JwtStrategy,
     // EXPRESS RESPONSE PARA PRESENTERS
     {
       provide: 'EXPRESS_RESPONSE',

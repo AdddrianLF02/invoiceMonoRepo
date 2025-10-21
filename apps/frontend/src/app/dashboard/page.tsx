@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { Plus, FileText, DollarSign, Users, TrendingUp } from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-
+import Link from "next/link";
+import { getDashboardStats, getRecentInvoices, InvoiceSummary } from "@/lib/api-service";
 
 
 export default async function DashboardPage() {
@@ -14,14 +15,32 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // TODO: Aquí puedes hacer un fetch de estadísticas o facturas con session.accessToken
+  // Obtenemos los datos reales usando el accessToken
+  const accessToken = session.accessToken as string;
+  const stats = await getDashboardStats(accessToken);
+  const recentInvoices = await getRecentInvoices(accessToken);
 
   const statsData = [
-    { title: 'Total Revenue', value: `$12,345.67`, icon: <DollarSign className="h-6 w-6 text-gray-500" /> },
-    { title: 'Invoices', value: 42, icon: <FileText className="h-6 w-6 text-gray-500" /> },
-    { title: 'Customers', value: 18, icon: <Users className="h-6 w-6 text-gray-500" /> },
-    { title: 'Growth', value: '+12.5%', icon: <TrendingUp className="h-6 w-6 text-gray-500" /> },
+    { title: 'Total Revenue', value: `$${stats.totalRevenue.toFixed(2)}`, icon: <DollarSign className="h-6 w-6 text-gray-500" /> },
+    { title: 'Invoices', value: stats.totalInvoices, icon: <FileText className="h-6 w-6 text-gray-500" /> },
+    { title: 'Customers', value: stats.totalCustomers, icon: <Users className="h-6 w-6 text-gray-500" /> },
+    { title: 'Growth', value: stats.growthRate, icon: <TrendingUp className="h-6 w-6 text-gray-500" /> },
   ];
+
+  // Función para mostrar el estado de la factura con el color adecuado
+  const getStatusBadge = (status: InvoiceSummary['status']) => {
+    const statusClasses = {
+      paid: "bg-green-100 text-green-800",
+      pending: "bg-yellow-100 text-yellow-800",
+      overdue: "bg-red-100 text-red-800"
+    };
+    
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusClasses[status]}`}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -33,10 +52,12 @@ export default async function DashboardPage() {
               <FileText className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900">InvoiceFlow</span>
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4 mr-2" />
-              New Invoice
-            </Button>
+            <Link href="/create-invoice">
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                New Invoice
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -67,10 +88,13 @@ export default async function DashboardPage() {
           ))}
         </div>
 
-        {/* Recent Invoices Table (pendiente de integración real) */}
+        {/* Recent Invoices Table */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Invoices</CardTitle>
+            <Link href="/invoices">
+              <Button variant="outline" size="sm">View All</Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -86,15 +110,20 @@ export default async function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Aquí irán tus datos reales de facturas */}
-                  <tr>
-                    <td className="py-2">INV-0001</td>
-                    <td className="py-2">Acme Inc.</td>
-                    <td className="py-2">$1,200.00</td>
-                    <td className="py-2">Paid</td>
-                    <td className="py-2">2025-10-12</td>
-                    <td className="py-2 text-right">-</td>
-                  </tr>
+                  {recentInvoices.map((invoice) => (
+                    <tr key={invoice.id} className="border-b">
+                      <td className="py-2">{invoice.number}</td>
+                      <td className="py-2">{invoice.clientName}</td>
+                      <td className="py-2">${invoice.amount.toFixed(2)}</td>
+                      <td className="py-2">{getStatusBadge(invoice.status)}</td>
+                      <td className="py-2">{invoice.date}</td>
+                      <td className="py-2 text-right">
+                        <Link href={`/invoices/${invoice.id}`}>
+                          <Button variant="ghost" size="sm">Ver</Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

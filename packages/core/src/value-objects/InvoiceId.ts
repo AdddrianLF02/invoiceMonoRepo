@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 /**
  * Value Object para representar el ID de una factura.
@@ -14,7 +14,7 @@ export class InvoiceId {
 
   // Generamos un nuevo UUID para nuevas facturas
   public static create(): InvoiceId {
-    return new InvoiceId(uuidv4());
+    return new InvoiceId(randomUUID());
   }
 
   // Permite reconstruir el ID desde la base de datos.

@@ -1,6 +1,5 @@
 
 import { z } from 'zod';
-import { v4 as uuidv4 } from 'uuid' 
 import cuid from 'cuid';
 
 // Schema de Zod para la validación

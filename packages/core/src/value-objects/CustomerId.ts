@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import z from 'zod';
 
 export const CustomerIdSchema = z.string().uuid();
@@ -16,7 +16,7 @@ export class CustomerId {
 
   // Generamos un nuevo UUID para nuevos clientes
   public static create(): CustomerId {
-    return new CustomerId(uuidv4());
+    return new CustomerId(randomUUID());
   }
 
   // Permite reconstruir el ID desde la base de datos.

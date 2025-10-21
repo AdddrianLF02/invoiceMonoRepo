@@ -1,9 +1,9 @@
 "use client"
 
 import React from 'react';
-import ModernTemplate from '../../templates/ModernTemplate';
-import ClassicTemplate from '../../templates/ClassicTemplate';
-import MinimalTemplate from '../../templates/MinimalTemplate';
+import ModernTemplate from '../templates/ModernTemplate';
+import ClassicTemplate from '../templates/ClassicTemplate';
+import MinimalTemplate from '../templates/MinimalTemplate';
 import { InvoiceState } from '../hooks/useInvoiceState';
 
 interface InvoicePreviewProps {

@@ -15,7 +15,7 @@ export class CustomerMapper {
             country: customer.getAddress().getCountry(),
             taxId: customer.getTaxId()?.getValue(),
             taxIdType: customer.getTaxId?.().getType() ?? undefined,
-            isActive: customer.isActive(),
+            isActive: customer.getActive(),
             createdAt: customer.getCreatedAt().toISOString(),
             updatedAt: customer.getUpdatedAt().toISOString(),
         }

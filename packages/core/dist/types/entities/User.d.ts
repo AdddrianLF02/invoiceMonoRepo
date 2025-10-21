@@ -11,12 +11,12 @@ export declare const UserEntitySchema: z.ZodObject<{
 }, z.core.$strip>;
 export type UserData = z.infer<typeof UserEntitySchema>;
 export declare class User {
-    readonly id: UserId;
-    readonly name: string | null;
-    readonly email: Email;
+    private readonly id;
+    private readonly name;
+    private readonly email;
     private readonly password;
-    readonly createdAt: Date;
-    readonly updatedAt: Date;
+    private readonly createdAt;
+    private readonly updatedAt;
     private constructor();
     static create(props: Omit<UserData, 'id' | 'createdAt' | 'updatedAt'>): User;
     toSafeObject(): {

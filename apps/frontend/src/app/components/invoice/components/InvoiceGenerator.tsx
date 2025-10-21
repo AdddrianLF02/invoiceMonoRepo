@@ -10,7 +10,7 @@ import InvoiceForm from "./InvoiceForm";
 import InvoicePreview from "./InvoicePreview";
 import { toast } from "sonner";
 import { Invoice } from "@/lib/types";
-import { createInvoiceAction } from "../actions";
+import { createInvoiceAction } from "../../../create-invoice/actions/actions";
 
 const InvoiceGenerator = () => {
   const { state, dispatch, calculations } = useInvoiceState();

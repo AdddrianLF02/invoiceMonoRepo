@@ -2,67 +2,63 @@ import 'reflect-metadata'
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
 import {
   Customer,
-  CUSTOMER_REPOSITORY,
-  type CustomerRepository,
+  UNIT_OF_WORK,
+  type IUnitOfWork,
   Address,
   Email,
   TaxId,
   UserId
 } from '@repo/core'; 
+import { CreateCustomerDto } from '../../dtos/customer.zod';
 import { CreateCustomerInputPort } from './ports/input-port';
-
-// 1. Añadimos 'userId' al input del caso de uso
-export interface CreateCustomerInput {
-  userId: string;
-  name: string;
-  email: string;
-  number?: string;
-  street?: string;
-  city?: string;
-  postalCode?: string;
-  country?: string;
-  taxId?: string;
-  taxIdType?: string;
-}
+import { CREATE_CUSTOMER_OUTPUT_TOKEN, type CreateCustomerOutputPort } from './ports/output-port';
 
 @Injectable()
 export class CreateCustomerUseCase implements CreateCustomerInputPort {
   constructor(
-      @Inject(CUSTOMER_REPOSITORY)
-      private readonly customerRepository: CustomerRepository
+      @Inject(UNIT_OF_WORK)
+      private readonly uow: IUnitOfWork,
+
+      @Inject(CREATE_CUSTOMER_OUTPUT_TOKEN)
+      private readonly outputPort: CreateCustomerOutputPort
   ) {}
 
-  async execute(input: CreateCustomerInput): Promise<Customer> {
-    const email = Email.create(input.email);
-    
-    const existingCustomer = await this.customerRepository.findByEmail(email);
-    if (existingCustomer) {
-      // Usamos una excepción de NestJS para un mejor manejo de errores
-      throw new ConflictException('Ya existe un cliente con este email');
-    }
+  async execute(input: CreateCustomerDto): Promise<void> {
+    await this.uow.executeTransaction(async () => {
+      const repo = this.uow.customerRepository;
+      const email = Email.create(input.email);
+      
+      const existingCustomer = await repo.findByEmail(email);
+      if (existingCustomer) {
+        throw new ConflictException('Ya existe un cliente con este email');
+      }
 
-    // 2. Creamos el Value Object para el UserId
-    const userId = UserId.fromString(input.userId);
+      // Creamos el Value Object para el UserId
+      const userId = UserId.fromString(input.userId);
 
-    const address = Address.create(
-      input.street || '',
-      input.city || '',
-      input.postalCode || '',
-      input.country || ''
-    );
+      const address = Address.create(
+        input.street || '',
+        input.city || '',
+        input.postalCode || '',
+        input.country || ''
+      );
 
-    const taxId = TaxId.create(input.taxId || '');
-    
-    // 3. Pasamos el 'userId' al crear la entidad Customer
-    const customer = Customer.create(
-      userId,
-      input.name,
-      email,
-      address, // Reutilizamos la variable, más limpio
-      input.number || '',
-      taxId,    // Reutilizamos la variable
-    );
+      const taxId = input.taxId 
+        ? TaxId.create(input.taxId) 
+        : undefined;
 
-    return this.customerRepository.create(customer);
+      // Creamos el cliente
+      const customer = Customer.create(
+        userId,
+        input.name,
+        email,
+        address,
+        input.number || '',
+        taxId
+      );
+
+      await repo.create(customer);
+      this.outputPort.present(customer);
+    });
   }
 }

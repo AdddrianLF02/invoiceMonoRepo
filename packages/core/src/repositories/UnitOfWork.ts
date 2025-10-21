@@ -1,5 +1,6 @@
 import { CustomerRepository } from "./CustomerRepository";
 import { InvoiceRepository } from "./InvoiceRepository";
+import { UserRepository } from "./UserRepository";
 
 // Interfaz que expone el conjunto de repositorios dentro de la transacción
 export interface IUnitOfWork {
@@ -9,6 +10,7 @@ export interface IUnitOfWork {
     // Repositorios específicos (pueden ser 'transactional-scoped')
     readonly invoiceRepository: InvoiceRepository;
     readonly customerRepository: CustomerRepository;
+    readonly userRepository: UserRepository;
 
     // Método para ejecutar la lógica de negocio transaccional
     executeTransaction<T>(callback: () => Promise<T>): Promise<T>;

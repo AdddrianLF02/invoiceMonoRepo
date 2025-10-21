@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1761045707380" clover="3.2.0">
+  <project timestamp="1761045707380" name="All files">
+    <metrics statements="14" coveredstatements="14" conditionals="8" coveredconditionals="8" methods="6" coveredmethods="6" elements="28" coveredelements="28" complexity="0" loc="14" ncloc="14" packages="1" files="1" classes="1"/>
+    <file name="InvoiceId.ts" path="C:\Users\LofgDev\invoiceMonoRepo\packages\core\src\value-objects\InvoiceId.ts">
+      <metrics statements="14" coveredstatements="14" conditionals="8" coveredconditionals="8" methods="6" coveredmethods="6"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="12" count="11" type="stmt"/>
+      <line num="17" count="1" type="stmt"/>
+      <line num="22" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="23" count="1" type="stmt"/>
+      <line num="25" count="10" type="stmt"/>
+      <line num="29" count="5" type="stmt"/>
+      <line num="34" count="5" type="cond" truecount="4" falsecount="0"/>
+      <line num="35" count="2" type="stmt"/>
+      <line num="37" count="3" type="cond" truecount="2" falsecount="0"/>
+      <line num="38" count="1" type="stmt"/>
+      <line num="40" count="2" type="stmt"/>
+      <line num="44" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>

@@ -1,10 +1,9 @@
 import { Customer } from "@repo/core";
-import { CreateCustomerInput } from "../create-customer.use-case";
-import { UpdateCustomerInput } from "../update-customer.use-case";
+import { CreateCustomerDto, UpdateCustomerDto } from "../../../dtos/customer.zod";
 
 export const CREATE_CUSTOMER_INPUT_TOKEN = "CREATE_CUSTOMER_INPUT_TOKEN";
 export interface CreateCustomerInputPort {
-    execute(input: CreateCustomerInput): Promise<Customer>;
+    execute(input: CreateCustomerDto): Promise<void>;
 }
 
 export const GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN = "GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN";
@@ -20,5 +19,5 @@ export interface GetCustomerByIdInputPort {
 
 export const UPDATE_CUSTOMER_INPUT_PORT = "UPDATE_CUSTOMER_INPUT_TOKEN";
 export interface UpdateCustomerInputPort {
-  execute(input: UpdateCustomerInput): Promise<Customer>;
+  execute(input: UpdateCustomerDto): Promise<void>;
 }

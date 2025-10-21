@@ -17,12 +17,12 @@ export type UserData = z.infer<typeof UserEntitySchema>;
 
 // --- La Clase de Dominio 'User' ---
 export class User {
-  public readonly id: UserId;
-  public readonly name: string | null;
-  public readonly email: Email;
+  private readonly id: UserId;
+  private readonly name: string | null;
+  private readonly email: Email;
   private readonly password: string; // La contraseña es privada y readonly
-  public readonly createdAt: Date;
-  public readonly updatedAt: Date;
+  private readonly createdAt: Date;
+  private readonly updatedAt: Date;
 
   private constructor(props: UserData) {
     this.id = UserId.fromString(props.id);

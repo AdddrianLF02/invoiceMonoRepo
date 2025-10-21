@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { DomainExceptionFilter } from './api/filters/domain-exception.filter';
+import { DomainExceptionFilter } from './filters/domain-exception.filter';
 import helmet from 'helmet'
 import { ZodValidationPipe } from 'nestjs-zod';
 

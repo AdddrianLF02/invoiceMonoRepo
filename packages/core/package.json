@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
-    "test": "jest --passWithNoTests"
+    "test": "jest"
   },
   "dependencies": {
     "cuid": "^3.0.0",
@@ -15,10 +15,13 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.27.1",
+    "@jest/globals": "^30.2.0",
+    "@types/jest": "^30.0.0",
     "@types/uuid": "^10.0.0",
-    "typescript": "^5.7.3",
-    "rimraf": "^6.0.1",
     "jest": "^30.2.0",
-    "ts-jest": "^29.4.5"
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.7.3"
   }
 }

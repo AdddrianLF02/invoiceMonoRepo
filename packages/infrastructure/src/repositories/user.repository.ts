@@ -11,6 +11,7 @@ import {
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
+
     constructor(private prisma: PrismaService) {}
 
     async create(user: User): Promise<User> {
@@ -56,5 +57,15 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     return User.reconstitute(updatedUser);
+  }
+
+  async save(user: User): Promise<void> {
+    await this.update(user);
+  }
+
+  async delete(id: UserId): Promise<void> {
+    await this.prisma.user.delete({
+      where: { id: id.getValue() },
+    });
   }
 }

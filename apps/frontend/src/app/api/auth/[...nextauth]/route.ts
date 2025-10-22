@@ -3,9 +3,10 @@ import CredentialsProvider from "next-auth/providers/credentials"
 // Para asegurar que los tipos de la sesión son correctos
 // Importamos JWT de next-auth/jwt con un alias para evitar conflictos
 import { JWT } from "next-auth/jwt";
+import { LoginSchema } from "@repo/application";
 
 // Reutilizamos el schema de validación que ya tenemos en nuestro paquete core
-import { LoginSchema } from "@repo/application"
+
 
 // **Definiciones de Tipos Personalizadas (Correctas)**
 // Nota: NextAuth ya tiene su propia definición de User y JWT. 
@@ -30,19 +31,19 @@ export const authOptions: NextAuthOptions = {
             name: 'Credentials',
             credentials: {
                 email: { label: 'Email', type: 'email' },
-                password: { label: 'Password', type: 'password' },
+                pass: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
                 const parsedCredentials = LoginSchema.safeParse(credentials);
 
                 if (parsedCredentials.success) {
-                    const { email, password } = parsedCredentials.data;
+                    const { email, pass } = parsedCredentials.data;
                     
                     // 2. Llamamos a nuestra API de backend para que haga el trabajo duro
                     const res = await fetch('http://localhost:3000/auth/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, pass: password }),
+                        body: JSON.stringify({ email, pass }),
                     });
 
                     if (!res.ok) {
@@ -75,6 +76,7 @@ export const authOptions: NextAuthOptions = {
     },
     pages: {
         signIn: '/login',
+        signOut: '/register'
     },
     callbacks: {
         // SOLUCIÓN: Usamos la firma de función genérica esperada por NextAuth.

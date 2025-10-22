@@ -23,7 +23,7 @@ export function SignInForm() {
     const result = await signIn('credentials', {
       redirect: false, // No redirigir automáticamente
       email,
-      password,
+      pass: password,
     });
 
     setIsSubmitting(false);

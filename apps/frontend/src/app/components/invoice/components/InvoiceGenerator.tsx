@@ -10,7 +10,8 @@ import InvoiceForm from "./InvoiceForm";
 import InvoicePreview from "./InvoicePreview";
 import { toast } from "sonner";
 import { Invoice } from "@/lib/types";
-import { createInvoiceAction } from "../../../create-invoice/actions/actions";
+import { createInvoiceAction } from "@/app/create-invoice/actions/invoice.actions";
+
 
 const InvoiceGenerator = () => {
   const { state, dispatch, calculations } = useInvoiceState();
@@ -57,6 +58,8 @@ const InvoiceGenerator = () => {
   };
   
   const handleSaveInvoice = async () => {
+    if (isPending) return;
+    
     const invoiceData = {
       customerName: state.invoiceData.toName,
       customerEmail: state.invoiceData.toEmail,
@@ -77,11 +80,17 @@ const InvoiceGenerator = () => {
     };
 
     startTransition(async () => {
-      const result = await createInvoiceAction(invoiceData);
-      if (result.success) {
-        toast.success(result.message);
-      } else {
+      try {
+        const result = await createInvoiceAction(invoiceData);
+        if (result.success) {
+          toast.success("Factura guardada correctamente");
+          // Opcional: redirigir al dashboard o a la lista de facturas
+        } else {
+          toast.error(result.error || "Error al guardar la factura");
+        }
+      } catch (error) {
         toast.error("Error al guardar la factura");
+        console.error(error);
       }
     });
   };

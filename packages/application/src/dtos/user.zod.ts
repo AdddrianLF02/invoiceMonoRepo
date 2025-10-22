@@ -7,7 +7,7 @@ import { z } from 'zod';
 // Coincide con lo que espera el 'CreateUserUseCase'.
 export const LoginSchema = z.object({
   email: z.email({ message: 'Por favor, introduce un email válido.' }),
-  password: z.string().min(1, { message: 'La contraseña es obligatoria.' }),
+  pass: z.string().min(1, { message: 'La contraseña es obligatoria.' }),
 });
 export class LoginDto extends createZodDto(LoginSchema) {}
 

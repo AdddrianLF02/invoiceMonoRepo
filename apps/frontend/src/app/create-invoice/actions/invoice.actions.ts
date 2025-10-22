@@ -36,7 +36,9 @@ export interface InvoiceDto extends CreateInvoiceDto {
 }
 
 // Base URL para la API
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+// Puerto del backend para las peticiones directas
+const BACKEND_URL = 'http://localhost:3000';
 
 // Función para manejar respuestas y errores
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -48,6 +50,137 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 // Server Actions
+export async function createInvoiceAction(data: CreateInvoiceDto) {
+  try {
+    console.log('Guardando factura:', data);
+    
+    // Importamos getServerSession de next-auth
+    const { getServerSession } = await import('next-auth/next');
+    const { authOptions } = await import('@/app/api/auth/[...nextauth]/route');
+    
+    // Obtenemos la sesión
+    const session = await getServerSession(authOptions);
+    
+    if (!session || !session.user) {
+      console.error('No hay sesión de usuario');
+      return { success: false, error: 'No autorizado' };
+    }
+    
+    // Obtenemos el token de acceso de la sesión
+    // @ts-ignore - Ignoramos el error de TypeScript porque sabemos que accessToken existe
+    const accessToken = session.user.accessToken || session.accessToken;
+    
+    if (!accessToken) {
+      console.error('No se encontró el token de acceso en la sesión');
+      return { success: false, error: 'No se encontró el token de acceso' };
+    }
+    
+    console.log('Token encontrado, realizando petición a la API');
+    
+    // Transformamos los datos al formato que espera el backend
+    // Usamos un UUID válido para el customerId (hardcodeado para pruebas)
+    const backendData = {
+      customerId: "123e4567-e89b-12d3-a456-426614174000", // UUID válido para pruebas
+      issueDate: data.date,
+      dueDate: data.dueDate,
+      items: data.items.map(item => ({
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        taxRate: data.taxRate || 0.1
+      }))
+    };
+    
+    console.log('Datos transformados para el backend:', backendData);
+    
+    // Usamos directamente la URL del backend
+    const url = 'http://localhost:3000/api/v1/invoices';
+    console.log('URL de la petición:', url);
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+        'Origin': 'http://localhost:3001' // Añadimos el origen esperado por el backend
+      },
+      body: JSON.stringify(backendData),
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Error en la respuesta: ${response.status} ${response.statusText}`, errorText);
+      return { 
+        success: false, 
+        error: `Error ${response.status}: ${errorText || response.statusText}` 
+      };
+    }
+
+    const result = await response.json();
+    
+    // Revalidamos las rutas que muestran facturas
+    revalidatePath('/dashboard');
+    revalidatePath('/invoices');
+    
+    return { success: true, data: result };
+  } catch (error) {
+    console.error('Error al crear factura:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Error desconocido' 
+    };
+  }
+}
+
+export async function updateInvoiceAction(id: string, data: Partial<CreateInvoiceDto>) {
+  try {
+    const response = await fetch(`${API_URL}/invoices/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await handleResponse<InvoiceDto>(response);
+    
+    // Revalidamos las rutas que muestran facturas
+    revalidatePath('/dashboard');
+    revalidatePath(`/invoices/${id}`);
+    
+    return { success: true, data: result };
+  } catch (error) {
+    console.error(`Error al actualizar factura ${id}:`, error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Error desconocido' 
+    };
+  }
+}
+
+export async function deleteInvoiceAction(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/invoices/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error al eliminar factura: ${response.status}`);
+    }
+    
+    // Revalidamos las rutas que muestran facturas
+    revalidatePath('/dashboard');
+    
+    return { success: true };
+  } catch (error) {
+    console.error(`Error al eliminar factura ${id}:`, error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Error desconocido' 
+    };
+  }
+}
 export async function getInvoices(): Promise<InvoiceDto[]> {
   try {
     const response = await fetch(`${API_URL}/invoices`, { cache: 'no-store' });

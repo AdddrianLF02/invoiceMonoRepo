@@ -8,7 +8,7 @@ const zod_1 = require("zod");
 // Coincide con lo que espera el 'CreateUserUseCase'.
 exports.LoginSchema = zod_1.z.object({
     email: zod_1.z.email({ message: 'Por favor, introduce un email válido.' }),
-    password: zod_1.z.string().min(1, { message: 'La contraseña es obligatoria.' }),
+    pass: zod_1.z.string().min(1, { message: 'La contraseña es obligatoria.' }),
 });
 class LoginDto extends (0, nestjs_zod_1.createZodDto)(exports.LoginSchema) {
 }

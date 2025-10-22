@@ -1,11 +1,11 @@
 import { z } from 'zod';
 export declare const LoginSchema: z.ZodObject<{
     email: z.ZodEmail;
-    password: z.ZodString;
+    pass: z.ZodString;
 }, z.core.$strip>;
 declare const LoginDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     email: z.ZodEmail;
-    password: z.ZodString;
+    pass: z.ZodString;
 }, z.core.$strip>>;
 export declare class LoginDto extends LoginDto_base {
 }

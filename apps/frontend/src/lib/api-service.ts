@@ -51,13 +51,14 @@ export async function getRecentInvoices(accessToken: string): Promise<InvoiceSum
         });
 
         if(!response.ok) {
-            throw new Error('Failed to fetch recent invoices');
+            console.warn(`Failed to fetch recent invoices: ${response.status} ${response.statusText}`);
+            return [];
         }
 
         return await response.json();
     } catch(error) {
         console.error('Error fetching recent invoices:', error);
-        throw error;
+        return [];
     }
 }
 

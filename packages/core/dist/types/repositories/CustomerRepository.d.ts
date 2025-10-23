@@ -38,5 +38,9 @@ export interface CustomerRepository {
      * @param id ID del cliente a verificar
      */
     exists(id: CustomerId): Promise<boolean>;
+    /**
+     * Busca todos los clientes
+     */
+    findAll(): Promise<Customer[]>;
 }
 //# sourceMappingURL=CustomerRepository.d.ts.map

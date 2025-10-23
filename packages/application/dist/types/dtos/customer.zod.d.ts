@@ -1,8 +1,8 @@
 import { z } from 'zod';
 declare const CreateCustomerDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     number: z.ZodString;
-    email: z.ZodEmail;
     name: z.ZodString;
+    email: z.ZodEmail;
     address: z.ZodObject<{
         street: z.ZodString;
         city: z.ZodString;
@@ -16,8 +16,8 @@ export declare class CreateCustomerDto extends CreateCustomerDto_base {
 }
 declare const UpdateCustomerDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     number: z.ZodOptional<z.ZodString>;
-    email: z.ZodOptional<z.ZodEmail>;
     name: z.ZodOptional<z.ZodString>;
+    email: z.ZodOptional<z.ZodEmail>;
     address: z.ZodOptional<z.ZodObject<{
         street: z.ZodString;
         city: z.ZodString;

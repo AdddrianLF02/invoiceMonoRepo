@@ -14,6 +14,7 @@ export interface InvoiceItemDto {
 export interface CreateInvoiceDto {
   customerName: string;
   customerEmail: string;
+  customerId: string;
   invoiceNumber: string;
   date: string;
   dueDate: string;
@@ -81,9 +82,9 @@ export async function createInvoiceAction(data: CreateInvoiceDto) {
     // Transformamos los datos al formato que espera el backend
     // Usamos un UUID válido para el customerId (hardcodeado para pruebas)
     const backendData = {
-      customerId: "123e4567-e89b-12d3-a456-426614174000", // UUID válido para pruebas
-      issueDate: data.date,
-      dueDate: data.dueDate,
+      customerId: data.customerId, // UUID válido para pruebas
+      issueDate: new Date(data.date).toISOString(),
+      dueDate: new Date(data.dueDate).toISOString(),
       items: data.items.map(item => ({
         description: item.description,
         quantity: item.quantity,

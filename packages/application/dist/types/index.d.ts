@@ -8,6 +8,7 @@ export * from './use-cases/customer/create-customer.use-case';
 export * from './use-cases/customer/get-customer-by-email.use-case';
 export * from './use-cases/customer/get-customer-by-id.use-case';
 export * from './use-cases/customer/update-customer.use-case';
+export * from './use-cases/customer/get-all-customers.use-case';
 export * from './use-cases/invoice/create-invoice.use-case';
 export * from './use-cases/invoice/delete-invoice.use-case';
 export * from './use-cases/invoice/get-customer-invoices.use-case';

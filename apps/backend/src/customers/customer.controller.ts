@@ -8,12 +8,13 @@ import {
   CREATE_CUSTOMER_INPUT_TOKEN,
     CreateCustomerDto,
     CustomerResponseDto,
+    GET_ALL_CUSTOMERS_INPUT_TOKEN,
     GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN,
     GET_CUSTOMER_BY_ID_INPUT_TOKEN,
     UPDATE_CUSTOMER_INPUT_TOKEN,
     UpdateCustomerDto
 } from '@repo/application'
-import type { CreateCustomerInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
+import type { CreateCustomerInputPort, GetAllCustomersInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
 
 @ApiTags('Customers') // Agrupa los endpoints en Swagger
 @Controller('api/v1/customers')
@@ -32,6 +33,9 @@ export class CustomerController {
     
     @Inject(UPDATE_CUSTOMER_INPUT_TOKEN)
     private readonly updateCustomerUseCase: UpdateCustomerInputPort,
+
+    @Inject(GET_ALL_CUSTOMERS_INPUT_TOKEN)
+    private readonly getAllCustomersUseCase: GetAllCustomersInputPort,
   ) {}
 
   @Post()
@@ -42,6 +46,13 @@ export class CustomerController {
   @ApiResponse({ status: 409, description: 'El email ya está en uso' })
   async create(@Body() dto: CreateCustomerDto): Promise<void> {
     await this.createCustomerUseCase.execute(dto);
+  }
+
+  @Get('all')
+  @ApiOperation({ summary: 'Obtener todos los clientes' })
+  @ApiResponse({ status: 200, description: 'Clientes encontrados', type: [CustomerResponseDto] })
+  async findAll(): Promise<void> {
+    await this.getAllCustomersUseCase.execute();
   }
 
   @Get(':id')

@@ -43,7 +43,7 @@ export async function getDashboardStats(accessToken: string): Promise<DashboardS
 
 export async function getRecentInvoices(accessToken: string): Promise<InvoiceSummary[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/invoices/recent`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/recent-invoices`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ export async function getInvoiceById(accessToken: string, invoiceId: string): Pr
 // Función para obtener todos los clientes
 export async function getAllCustomers(accessToken: string): Promise<Customer[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/customers/all`, {
+        const response = await fetch(`${API_BASE_URL}/customers`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'

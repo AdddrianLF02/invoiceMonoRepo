@@ -16,7 +16,7 @@ class InvoiceItemDto extends (0, nestjs_zod_1.createZodDto)(InvoiceItemSchema) {
 exports.InvoiceItemDto = InvoiceItemDto;
 // --- Crear Factura ---
 const CreateInvoiceSchema = zod_1.z.object({
-    customerId: zod_1.z.string().uuid(),
+    customerId: zod_1.z.uuid(),
     issueDate: zod_1.z.string().datetime(),
     dueDate: zod_1.z.string().datetime(),
     items: zod_1.z.array(InvoiceItemSchema).min(1),

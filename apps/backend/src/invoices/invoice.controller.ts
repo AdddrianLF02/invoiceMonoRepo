@@ -12,11 +12,8 @@ import {
   Inject,
 } from '@nestjs/common';
 import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
-import { InvoiceEntitySchema } from '@repo/core';
+import { ZodValidationPipe } from 'nestjs-zod';
 import {
-  CreateInvoiceDto,
-  UpdateInvoiceDto,
   CREATE_INVOICE_INPUT_TOKEN,
   GET_INVOICE_INPUT_TOKEN,
   DELETE_INVOICE_INPUT_TOKEN,
@@ -35,7 +32,7 @@ import { UpdateInvoiceSwaggerRequestDto } from './dtos/request/update-invoice-sw
 
 @ApiTags('Invoices')
 @Controller('api/v1/invoices')
-@UseInterceptors(new ZodSerializerInterceptor(InvoiceEntitySchema))
+
 export class InvoiceController {
   constructor(
     @Inject(CREATE_INVOICE_INPUT_TOKEN)

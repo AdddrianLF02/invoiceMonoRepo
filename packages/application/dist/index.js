@@ -28,6 +28,7 @@ __exportStar(require("./use-cases/customer/create-customer.use-case"), exports);
 __exportStar(require("./use-cases/customer/get-customer-by-email.use-case"), exports);
 __exportStar(require("./use-cases/customer/get-customer-by-id.use-case"), exports);
 __exportStar(require("./use-cases/customer/update-customer.use-case"), exports);
+__exportStar(require("./use-cases/customer/get-all-customers.use-case"), exports);
 /// INVOICE
 __exportStar(require("./use-cases/invoice/create-invoice.use-case"), exports);
 __exportStar(require("./use-cases/invoice/delete-invoice.use-case"), exports);

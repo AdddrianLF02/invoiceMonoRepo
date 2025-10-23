@@ -15,4 +15,8 @@ export declare const UPDATE_CUSTOMER_OUTPUT_TOKEN = "UPDATE_CUSTOMER_OUTPUT_TOKE
 export interface UpdateCustomerOutputPort {
     present(customer: Customer): void;
 }
+export declare const GET_ALL_CUSTOMERS_OUTPUT_TOKEN = "GET_ALL_CUSTOMERS_OUTPUT_TOKEN";
+export interface GetAllCustomersOutputPort {
+    present(customers: Customer[]): void;
+}
 //# sourceMappingURL=output-port.d.ts.map

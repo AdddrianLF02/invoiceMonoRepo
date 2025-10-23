@@ -12,6 +12,7 @@ export interface InvoiceItem {
 }
 
 export interface InvoiceData {
+  customerId: string;
   invoiceNumber: string;
   date: string;
   dueDate: string;
@@ -42,6 +43,7 @@ export type InvoiceAction =
 const initialState: InvoiceState = {
   selectedTemplate: 'modern',
   invoiceData: {
+    customerId: '',
     invoiceNumber: 'INV-001',
     date: new Date().toISOString().split('T')[0],
     dueDate: '',

@@ -186,4 +186,38 @@ export class PrismaCustomerRepository implements CustomerRepository {
     });
     return count > 0;
   }
+
+  async findAll(): Promise<Customer[]> {
+    const customers = await this.prisma.customer.findMany();
+
+    return Promise.all(customers.map(async (customer) => {
+      const customerId = CustomerId.fromString(customer.id);
+      const userId = UserId.fromString(customer.userId);
+      const email = Email.create(customer.email);
+      
+      let address: Address | undefined = undefined;
+      if (customer.address) {
+        const addressParts = customer.address.split(', ');
+        address = Address.create(
+          addressParts[0] || '',
+          addressParts[1] || '',
+          addressParts[2] || '',
+          addressParts[3] || ''
+        );
+      }
+
+      return Customer.reconstitute(
+        customerId,
+        userId,
+        customer.name,
+        email,
+        customer.phone || '',
+        address || Address.create('', '', '', ''),
+        TaxId.create(''),
+        true,
+        customer.createdAt,
+        customer.updatedAt
+      );
+    }));
+  }
 }

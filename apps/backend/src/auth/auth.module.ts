@@ -15,7 +15,9 @@ import { CreateUserPresenter } from './presenters/create-user.presenter';
 import { ValidateUserPresenter } from './presenters/validate-user.presenter';
 import { REQUEST } from '@nestjs/core';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { Global } from '@nestjs/common';
 
+@Global()
 @Module({
   imports: [
     ApplicationModule,
@@ -35,6 +37,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       useFactory: (req) => req.res,
       inject: [REQUEST]
     },
+    JwtStrategy,
     // CREATE USER
     CreateUserUseCase,
     { provide: CREATE_USER_INPUT_TOKEN, useClass: CreateUserUseCase },
@@ -44,6 +47,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     { provide: VALIDATE_USER_INPUT_TOKEN, useClass: ValidateUserUseCase },
     { provide: VALIDATE_USER_OUTPUT_TOKEN, useClass: ValidateUserPresenter }
   ],
+  exports: [
+    PassportModule,
+    JwtModule,
+    JwtStrategy
+  ]
 })
 export class AuthModule {}
 

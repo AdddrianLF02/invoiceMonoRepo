@@ -8,13 +8,16 @@ import { Textarea } from '../../ui/textarea';
 import { Button } from '../../ui/button';
 import { Card, CardContent } from '../../ui/card';
 import { InvoiceState, InvoiceAction } from '../hooks/useInvoiceState';
+import { Customer } from '@repo/core';
 
 interface InvoiceFormProps {
   state: InvoiceState;
   dispatch: React.Dispatch<InvoiceAction>;
+  customers: Customer[];
+  onCustomerChange: (customerId: string) => void;
 }
 
-const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch }) => {
+const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch, customers, onCustomerChange }) => {
   const { invoiceData, items } = state;
 
   const handleInvoiceDataChange = (field: keyof typeof invoiceData, value: string) => {
@@ -31,6 +34,17 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch }) => {
 
   const removeItem = (index: number) => {
     dispatch({ type: 'REMOVE_ITEM', index });
+  };
+
+  const handleCustomerSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const customerId = e.target.value;
+    onCustomerChange(customerId);
+    const selectedCustomer = customers.find(c => c.getId().getValue() === customerId);
+    if (selectedCustomer) {
+      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toName', value: selectedCustomer.getName() });
+      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toEmail', value: selectedCustomer.getEmail().getValue() });
+      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toAddress', value: selectedCustomer.getAddress().toString() });
+    }
   };
 
   return (
@@ -115,6 +129,21 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch }) => {
           <h3 className="text-lg font-medium mb-4">Para (Cliente)</h3>
           <div className="space-y-4">
             <div>
+              <Label htmlFor="customer">Seleccionar Cliente</Label>
+              <select
+                id="customer"
+                onChange={handleCustomerSelect}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              >
+                <option value="">Seleccione un cliente</option>
+                {customers.map((customer) => (
+                  <option key={customer.getId().getValue()} value={customer.getId().getValue()}>
+                    {customer.getName()}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <Label htmlFor="toName">Nombre / Empresa</Label>
               <Input
                 id="toName"
@@ -134,7 +163,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch }) => {
               />
             </div>
             <div>
-              <Label htmlFor="toAddress">Dirección</Label>
+              <Label htmlFor="toAddress">Dirección</Label>geo
               <Textarea
                 id="toAddress"
                 value={invoiceData.toAddress}

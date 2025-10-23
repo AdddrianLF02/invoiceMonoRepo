@@ -21,3 +21,8 @@ export const UPDATE_CUSTOMER_INPUT_TOKEN = "UPDATE_CUSTOMER_INPUT_TOKEN";
 export interface UpdateCustomerInputPort {
   execute(input: UpdateCustomerDto): Promise<void>;
 }
+
+export const GET_ALL_CUSTOMERS_INPUT_TOKEN = "GET_ALL_CUSTOMERS_INPUT_TOKEN";
+export interface GetAllCustomersInputPort {
+  execute(): Promise<void>;
+}

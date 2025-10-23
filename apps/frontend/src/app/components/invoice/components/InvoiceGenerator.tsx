@@ -1,5 +1,5 @@
 "use client";
-import React, { useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { Download, Save } from "lucide-react";
 import TemplateSelector from "../../TemplateSelector";
 import { Button } from "../../ui/button";
@@ -9,15 +9,34 @@ import useInvoicePDF from "../hooks/useInvoicePDF";
 import InvoiceForm from "./InvoiceForm";
 import InvoicePreview from "./InvoicePreview";
 import { toast } from "sonner";
-import { Invoice } from "@/lib/types";
+import { Customer, Invoice } from "@/lib/types";
 import { createInvoiceAction } from "@/app/create-invoice/actions/invoice.actions";
+import { getAllCustomers } from "@/lib/api-service";
+import { getServerSession } from "next-auth";
 
 
 const InvoiceGenerator = () => {
   const { state, dispatch, calculations } = useInvoiceState();
   const { isGenerating, generatePDF } = useInvoicePDF();
   const { subtotal, tax, total } = calculations;
-  const [isPending, startTransition] = useTransition(); 
+  const [isPending, startTransition] = useTransition();
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const session =  getServerSession();
+  
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const fetchedCustomers = await getAllCustomers("");
+        setCustomers(fetchedCustomers);
+      } catch (error) {
+        toast.error("Error al cargar los clientes");
+        console.error(error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
 
   const handleGeneratePDF = async () => {
     try {
@@ -25,9 +44,9 @@ const InvoiceGenerator = () => {
       const invoice: Invoice = {
         id: "temp-" + Date.now(), // ID temporal
         invoiceNumber: state.invoiceData.invoiceNumber,
-        customerId: "temp-customer", // ID temporal del cliente
+        customerId: selectedCustomerId || "temp-customer", // ID temporal del cliente
         customer: {
-          id: "temp-customer",
+          id: selectedCustomerId || "temp-customer",
           name: state.invoiceData.toName,
           email: state.invoiceData.toEmail,
           address: state.invoiceData.toAddress
@@ -58,9 +77,13 @@ const InvoiceGenerator = () => {
   };
   
   const handleSaveInvoice = async () => {
-    if (isPending) return;
+    if (isPending || !selectedCustomerId) {
+      toast.error("Por favor, seleccione un cliente");
+      return;
+    }
     
     const invoiceData = {
+      customerId: selectedCustomerId,
       customerName: state.invoiceData.toName,
       customerEmail: state.invoiceData.toEmail,
       invoiceNumber: state.invoiceData.invoiceNumber,
@@ -122,7 +145,12 @@ const InvoiceGenerator = () => {
               </CardContent>
             </Card>
 
-            <InvoiceForm state={state} dispatch={dispatch} />
+            <InvoiceForm 
+              state={state} 
+              dispatch={dispatch} 
+              customers={customers as any}
+              onCustomerChange={setSelectedCustomerId}
+            />
 
             <div className="flex justify-end space-x-4">
               <Button

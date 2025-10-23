@@ -10,5 +10,6 @@ export declare class PrismaCustomerRepository implements CustomerRepository {
     findByUserId(userId: UserId): Promise<Customer[]>;
     delete(id: CustomerId): Promise<void>;
     exists(id: CustomerId): Promise<boolean>;
+    findAll(): Promise<Customer[]>;
 }
 //# sourceMappingURL=customer.repository.d.ts.map

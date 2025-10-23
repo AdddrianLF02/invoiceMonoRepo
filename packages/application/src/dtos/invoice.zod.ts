@@ -13,7 +13,7 @@ export class InvoiceItemDto extends createZodDto(InvoiceItemSchema) {}
 
 // --- Crear Factura ---
 const CreateInvoiceSchema = z.object({
-  customerId: z.string().uuid(),
+  customerId: z.uuid(),
   issueDate: z.string().datetime(),
   dueDate: z.string().datetime(),
   items: z.array(InvoiceItemSchema).min(1),

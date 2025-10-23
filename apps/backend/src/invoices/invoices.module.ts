@@ -26,9 +26,7 @@ import { UpdateInvoicePresenter } from './presenters/update-invoice.presenter';
 
 import { InfrastructureModule } from 'src/modules/infrastructure.module';
 import { ApplicationModule } from 'src/modules/application.module';
-import { HttpAdapterHost, REQUEST } from '@nestjs/core';
-import type { Response } from 'express';
-
+import {  REQUEST } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -39,19 +37,14 @@ import type { Response } from 'express';
   providers: [
     // ✅ Vincula Response de Express por request
     {
-  provide: 'EXPRESS_RESPONSE',
-  scope: Scope.REQUEST,
-  useFactory: (req: Request): Response => {
-    const res = (req as any).res as Response | undefined;
-    if (!res) {
-      throw new Error('No Express Response object found in Request.');
-    }
-    return res;
-  },
-  inject: [REQUEST],
-},
+      provide: 'EXPRESS_RESPONSE',
+      scope: Scope.REQUEST,
+      useFactory: (req) => req.res,
+      inject: [REQUEST],
+    },
 
     // --- CREATE ---
+    CreateInvoiceUseCase,
     {
       provide: CREATE_INVOICE_INPUT_TOKEN,
       useClass: CreateInvoiceUseCase,

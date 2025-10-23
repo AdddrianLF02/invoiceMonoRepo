@@ -1,7 +1,7 @@
 import { Customer, Invoice } from "./types";
 
 // URL base para las API calls
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 // Interface para los datos del dashboard
 export interface DashboardStats {

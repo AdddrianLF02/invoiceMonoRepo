@@ -26,27 +26,32 @@ let CreateInvoiceUseCase = class CreateInvoiceUseCase {
         this.outputPort = outputPort;
     }
     async execute(input) {
+        console.log('[CreateInvoiceUseCase] Input recibido:', input);
         // Envolvemos la lógica de negocio en la transacción
-        await this.uow.executeTransaction(async () => {
-            const repo = this.uow.invoiceRepository;
-            // 1. Mapear y Calcular los ítems (Strategy)
-            const items = input.items.map(itemDto => {
-                const unitPrice = core_1.Money.fromFloat(itemDto.unitPrice, 'EUR');
-                const calc = this.taxCalculationStrategy.calculate({
-                    unitPrice,
-                    quantity: itemDto.quantity,
-                    taxRate: itemDto.taxRate
-                });
-                // 1.3 Crear la entidad de dominio InvoiceItem con los valores fijos
-                return core_1.InvoiceItem.create(itemDto.description, itemDto.quantity, unitPrice, itemDto.taxRate, 
-                // Valores calculados por la Strategy
-                calc.subtotal, calc.taxAmount, calc.total);
+        console.log('[CreateInvoiceUseCase] Entrando en transacción');
+        const repo = this.uow.invoiceRepository;
+        console.log('[CreateInvoiceUseCase] Repo:', !!repo);
+        // 1. Mapear y Calcular los ítems (Strategy)
+        const items = input.items.map(itemDto => {
+            console.log('[CreateInvoiceUseCase] Mapeando ítem:', itemDto);
+            const unitPrice = core_1.Money.fromFloat(itemDto.unitPrice, 'EUR');
+            const calc = this.taxCalculationStrategy.calculate({
+                unitPrice,
+                quantity: itemDto.quantity,
+                taxRate: itemDto.taxRate
             });
-            // 2. Crear y guardar la factura (Domain layer)
-            const invoice = core_1.Invoice.create(core_1.CustomerId.fromString(input.customerId), new Date(input.issueDate), new Date(input.dueDate), items);
-            await repo.create(invoice);
-            this.outputPort.present(invoice);
+            // 1.3 Crear la entidad de dominio InvoiceItem con los valores fijos
+            return core_1.InvoiceItem.create(itemDto.description, itemDto.quantity, unitPrice, itemDto.taxRate, 
+            // Valores calculados por la Strategy
+            calc.subtotal, calc.taxAmount, calc.total);
         });
+        // 2. Crear y guardar la factura (Domain layer)
+        const invoice = core_1.Invoice.create(core_1.CustomerId.fromString(input.customerId), new Date(input.issueDate), new Date(input.dueDate), items);
+        console.log('[CreateInvoiceUseCase] Factura creada:', invoice);
+        await repo.create(invoice);
+        console.log('[CreateInvoiceUseCase] Factura guardada en repositorio');
+        this.outputPort.present(invoice);
+        console.log('[CreateInvoiceUseCase] Presentando factura:', invoice);
     }
 };
 exports.CreateInvoiceUseCase = CreateInvoiceUseCase;

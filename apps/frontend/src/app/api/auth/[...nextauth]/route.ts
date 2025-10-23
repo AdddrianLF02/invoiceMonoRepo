@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
                     const { email, pass } = parsedCredentials.data;
                     
                     // 2. Llamamos a nuestra API de backend para que haga el trabajo duro
-                    const res = await fetch('http://localhost:3000/auth/login', {
+                    const res = await fetch('http://localhost:4000/auth/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, pass }),

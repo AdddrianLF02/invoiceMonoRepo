@@ -28,12 +28,17 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
   ) {}
 
   async execute(input: CreateInvoiceDto): Promise<void> {
-      // Envolvemos la lógica de negocio en la transacción
+    console.log('[CreateInvoiceUseCase] Input recibido:', input);
+    
+    // Envolvemos la lógica de negocio en la transacción
       await this.uow.executeTransaction(async () => {
+        console.log('[CreateInvoiceUseCase] Entrando en transacción');
         const repo = this.uow.invoiceRepository;
+        console.log('[CreateInvoiceUseCase] Repo:', !!repo);
 
             // 1. Mapear y Calcular los ítems (Strategy)
               const items = input.items.map(itemDto => {
+                console.log('[CreateInvoiceUseCase] Mapeando ítem:', itemDto);
                       const unitPrice = Money.fromFloat(itemDto.unitPrice, 'EUR');
                       const calc = this.taxCalculationStrategy.calculate({
                         unitPrice,
@@ -61,9 +66,11 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
         new Date(input.dueDate),
         items
       );
+      console.log('[CreateInvoiceUseCase] Factura creada:', invoice);
 
       await repo.create(invoice);
-
+      console.log('[CreateInvoiceUseCase] Factura guardada en repositorio');
+      
       this.outputPort.present(invoice);
       })
   }

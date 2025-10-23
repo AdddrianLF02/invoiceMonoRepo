@@ -61,7 +61,7 @@ export class InvoiceController {
     type: InvoiceResponseSwaggerDto,
   })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
-  async create(@Body() dto: CreateInvoiceSwaggerRequestDto): Promise<void> {
+  async create(@Body() dto: CreateInvoiceSwaggerRequestDto) {
     await this.createInvoiceUseCase.execute(dto);
   }
 

@@ -36,9 +36,10 @@ export interface InvoiceDto extends CreateInvoiceDto {
 }
 
 // Base URL para la API
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-// Puerto del backend para las peticiones directas
-const BACKEND_URL = 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1/create';
+// URL del backend (según configuración CORS en main.ts)
+const BACKEND_URL = 'http://localhost:4000';
+
 
 // Función para manejar respuestas y errores
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -94,7 +95,7 @@ export async function createInvoiceAction(data: CreateInvoiceDto) {
     console.log('Datos transformados para el backend:', backendData);
     
     // Usamos directamente la URL del backend
-    const url = 'http://localhost:3000/api/v1/invoices';
+    const url = 'http://localhost:4000/api/v1/invoices';
     console.log('URL de la petición:', url);
     
     const response = await fetch(url, {
@@ -102,7 +103,6 @@ export async function createInvoiceAction(data: CreateInvoiceDto) {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`,
-        'Origin': 'http://localhost:3001' // Añadimos el origen esperado por el backend
       },
       body: JSON.stringify(backendData),
       cache: 'no-store'

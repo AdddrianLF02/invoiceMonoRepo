@@ -19,7 +19,7 @@ export interface FormState {
   };
 }
 
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'http://localhost:4000';
 
 export async function registerAction(
   prevState: FormState,

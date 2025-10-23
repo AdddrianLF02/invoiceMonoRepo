@@ -11,7 +11,12 @@ export class CreateInvoicePresenter implements CreateInvoiceOutputPort {
   ) {}
 
   present(invoice: Invoice): void {
-    const dto = InvoiceMapper.toResponse(invoice);
-    this.res.status(201).json(dto);
-  }
+    try {
+      const dto = InvoiceMapper.toResponse(invoice);
+      this.res.status(201).json(dto);
+    } catch (error) {
+      const err = error as Error
+      this.res.status(500).json({ message: 'Error creating invoice', error: err.message });
+    }
+}
 }

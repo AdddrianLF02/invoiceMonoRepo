@@ -19,9 +19,10 @@ process.on('uncaughtException', (err) => {
   // Configuración de Seguridad HTTP (Helmet y CORS estricto)
   app.use(helmet());
   app.enableCors({
-    origin: 'http://localhost:3001', // O la URL de tu frontend
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
+    allowedHeaders: 'Authorization,Content-Type',
   });
 
   // Validación Global (ZodValidationPipe)

@@ -1,5 +1,5 @@
-import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import {
     CustomerEntitySchema,
@@ -15,11 +15,13 @@ import {
     UpdateCustomerDto
 } from '@repo/application'
 import type { CreateCustomerInputPort, GetAllCustomersInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CreateCustomerSwaggerRequestDto } from './dtos/request/create-customer-swagger-request.dto';
 
-@ApiTags('Customers') // Agrupa los endpoints en Swagger
+@ApiTags('Customers')
 @Controller('api/v1/customers')
-// Usamos el interceptor para transformar automáticamente la entidad 'Customer' en un DTO plano
-@UseInterceptors(new ZodSerializerInterceptor(CustomerEntitySchema))
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class CustomerController {
   constructor(
     @Inject(CREATE_CUSTOMER_INPUT_TOKEN)
@@ -44,8 +46,9 @@ export class CustomerController {
   @ApiResponse({ status: 201, description: 'Cliente creado exitosamente', type: CustomerResponseDto })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   @ApiResponse({ status: 409, description: 'El email ya está en uso' })
-  async create(@Body() dto: CreateCustomerDto): Promise<void> {
-    await this.createCustomerUseCase.execute(dto);
+  @ApiBody({ type: CreateCustomerSwaggerRequestDto })
+  async create(@Body() dto: CreateCustomerDto, @Req() req: any): Promise<void> {
+    await this.createCustomerUseCase.execute({ ...dto, userId: req.user.userId });
   }
 
   @Get('all')

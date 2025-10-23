@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Customer, Invoice } from "@/lib/types";
 import { createInvoiceAction } from "@/app/create-invoice/actions/invoice.actions";
 import { getAllCustomers } from "@/lib/api-service";
+import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 
 
@@ -22,12 +23,13 @@ const InvoiceGenerator = () => {
   const [isPending, startTransition] = useTransition();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
-  const session =  getServerSession();
-  
+  const { data: session } = useSession();
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const fetchedCustomers = await getAllCustomers("");
+        if (!session?.accessToken) return;
+        const fetchedCustomers = await getAllCustomers(session.accessToken);
         setCustomers(fetchedCustomers);
       } catch (error) {
         toast.error("Error al cargar los clientes");
@@ -36,7 +38,7 @@ const InvoiceGenerator = () => {
     };
 
     fetchCustomers();
-  }, []);
+  }, [session?.accessToken]);
 
   const handleGeneratePDF = async () => {
     try {
@@ -148,7 +150,7 @@ const InvoiceGenerator = () => {
             <InvoiceForm 
               state={state} 
               dispatch={dispatch} 
-              customers={customers as any}
+              customers={customers}
               onCustomerChange={setSelectedCustomerId}
             />
 

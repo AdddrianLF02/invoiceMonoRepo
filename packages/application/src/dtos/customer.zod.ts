@@ -9,7 +9,9 @@ const CreateCustomerSchema = CustomerEntitySchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  userId: z.string().uuid()
+  userId: z.string().cuid().optional(),
+  number: z.string().optional(),
+  taxId: z.string().optional(),
 });
 export class CreateCustomerDto extends createZodDto(CreateCustomerSchema) {}
 

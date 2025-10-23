@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { Inject, Injectable, ConflictException } from '@nestjs/common';
+import { Inject, Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import {
   Customer,
   UNIT_OF_WORK,
@@ -27,27 +27,33 @@ export class CreateCustomerUseCase implements CreateCustomerInputPort {
     await this.uow.executeTransaction(async () => {
       const repo = this.uow.customerRepository;
       const email = Email.create(input.email);
-      
-      const existingCustomer = await repo.findByEmail(email);
-      if (existingCustomer) {
-        throw new ConflictException('Ya existe un cliente con este email');
-      }
 
       // Creamos el Value Object para el UserId
       const userId = UserId.fromString(input.userId);
 
+      // Verify that the user exists to avoid FK violation
+      const userExists = await this.uow.userRepository.findById(userId);
+      if (!userExists) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      // Guard against unique constraint: one customer per user
+      const existingForUser = await repo.findByUserId(userId);
+      if (existingForUser.length > 0) {
+        throw new ConflictException('El usuario ya tiene un cliente');
+      }
+
       const address = Address.create(
-        input.street || '',
-        input.city || '',
-        input.postalCode || '',
-        input.country || ''
+        input.address?.street,
+        input.address?.city,
+        input.address?.postalCode,
+        input.address?.country
       );
 
       const taxId = input.taxId 
         ? TaxId.create(input.taxId) 
         : undefined;
 
-      // Creamos el cliente
       const customer = Customer.create(
         userId,
         input.name,

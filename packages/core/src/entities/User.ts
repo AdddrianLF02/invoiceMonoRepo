@@ -67,7 +67,7 @@ export class User {
     const validatedProps = UserEntitySchema.omit({ id: true }).parse(props);
     return new User({
       ...validatedProps,
-      id: UserId.create().getValue(), // Usamos directamente `fromString` sin volver a validar
+      id: props.id, // usar el id real proveniente de la base de datos
     });
   }
 

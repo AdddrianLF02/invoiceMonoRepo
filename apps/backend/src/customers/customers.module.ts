@@ -32,8 +32,8 @@ import { UpdateCustomerPresenter } from './presenters/update-customer.presenter'
         {
             provide: 'EXPRESS_RESPONSE',
             scope: Scope.REQUEST,
-            useFactory: (context: any) => context.switchToHttp().getResponse(),
-            inject: []
+            useFactory: (req: any) => req.res,
+            inject: ['REQUEST']
         },
         // CREATE 
         { provide: CREATE_CUSTOMER_INPUT_TOKEN, useClass: CreateCustomerUseCase },

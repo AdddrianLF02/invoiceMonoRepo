@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "InvoiceFlow is a simple invoice generator that allows you to create invoices in a few simple steps.",
 };
 
+import Providers from "./providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,8 +28,10 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-     </body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

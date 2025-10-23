@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateCustomerDto } from '@repo/application';
 import { Type } from 'class-transformer';
 import { ValidateNested, IsOptional } from 'class-validator';
 
@@ -17,10 +16,7 @@ class AddressItemDto {
   country!: string;
 }
 
-export class CreateCustomerSwaggerRequestDto implements CreateCustomerDto {
-  @ApiProperty()
-  userId!: string;
-
+export class CreateCustomerSwaggerRequestDto {
   @ApiProperty()
   name!: string;
 
@@ -28,25 +24,13 @@ export class CreateCustomerSwaggerRequestDto implements CreateCustomerDto {
   email!: string;
 
   @ApiProperty({ required: false })
+  @IsOptional()
   number?: string;
 
-  @ApiProperty({ type: AddressItemDto, required: false })
+  @ApiProperty({ type: AddressItemDto, required: true })
   @ValidateNested()
   @Type(() => AddressItemDto)
-  @IsOptional()
-  street?: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  city?: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  postalCode?: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  country?: string;
+  address!: AddressItemDto;
 
   @ApiProperty({ required: false })
   @IsOptional()

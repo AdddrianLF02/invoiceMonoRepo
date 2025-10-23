@@ -28,17 +28,22 @@ let CreateCustomerUseCase = class CreateCustomerUseCase {
         await this.uow.executeTransaction(async () => {
             const repo = this.uow.customerRepository;
             const email = core_1.Email.create(input.email);
-            const existingCustomer = await repo.findByEmail(email);
-            if (existingCustomer) {
-                throw new common_1.ConflictException('Ya existe un cliente con este email');
-            }
             // Creamos el Value Object para el UserId
             const userId = core_1.UserId.fromString(input.userId);
-            const address = core_1.Address.create(input.street || '', input.city || '', input.postalCode || '', input.country || '');
+            // Verify that the user exists to avoid FK violation
+            const userExists = await this.uow.userRepository.findById(userId);
+            if (!userExists) {
+                throw new common_1.NotFoundException('Usuario no encontrado');
+            }
+            // Guard against unique constraint: one customer per user
+            const existingForUser = await repo.findByUserId(userId);
+            if (existingForUser.length > 0) {
+                throw new common_1.ConflictException('El usuario ya tiene un cliente');
+            }
+            const address = core_1.Address.create(input.address?.street, input.address?.city, input.address?.postalCode, input.address?.country);
             const taxId = input.taxId
                 ? core_1.TaxId.create(input.taxId)
                 : undefined;
-            // Creamos el cliente
             const customer = core_1.Customer.create(userId, input.name, email, address, input.number || '', taxId);
             await repo.create(customer);
             this.outputPort.present(customer);

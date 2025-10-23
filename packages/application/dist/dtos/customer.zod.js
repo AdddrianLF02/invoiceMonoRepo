@@ -11,7 +11,9 @@ const CreateCustomerSchema = core_1.CustomerEntitySchema.omit({
     createdAt: true,
     updatedAt: true,
 }).extend({
-    userId: zod_1.z.string().uuid()
+    userId: zod_1.z.string().cuid().optional(),
+    number: zod_1.z.string().optional(),
+    taxId: zod_1.z.string().optional(),
 });
 class CreateCustomerDto extends (0, nestjs_zod_1.createZodDto)(CreateCustomerSchema) {
 }

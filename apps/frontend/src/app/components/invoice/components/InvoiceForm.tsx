@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { Label } from '../../ui/label';
 import { Input } from '../../ui/input';
@@ -8,7 +8,7 @@ import { Textarea } from '../../ui/textarea';
 import { Button } from '../../ui/button';
 import { Card, CardContent } from '../../ui/card';
 import { InvoiceState, InvoiceAction } from '../hooks/useInvoiceState';
-import { Customer } from '@repo/core';
+import { Customer } from '@/lib/types';
 
 interface InvoiceFormProps {
   state: InvoiceState;
@@ -19,6 +19,7 @@ interface InvoiceFormProps {
 
 const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch, customers, onCustomerChange }) => {
   const { invoiceData, items } = state;
+  
 
   const handleInvoiceDataChange = (field: keyof typeof invoiceData, value: string) => {
     dispatch({ type: 'UPDATE_INVOICE_DATA', field, value });
@@ -39,11 +40,11 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch, customers, o
   const handleCustomerSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const customerId = e.target.value;
     onCustomerChange(customerId);
-    const selectedCustomer = customers.find(c => c.getId().getValue() === customerId);
+    const selectedCustomer = customers.find(c => c.id === customerId);
     if (selectedCustomer) {
-      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toName', value: selectedCustomer.getName() });
-      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toEmail', value: selectedCustomer.getEmail().getValue() });
-      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toAddress', value: selectedCustomer.getAddress().toString() });
+      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toName', value: selectedCustomer.name });
+      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toEmail', value: selectedCustomer.email });
+      dispatch({ type: 'UPDATE_INVOICE_DATA', field: 'toAddress', value: selectedCustomer.address || '' });
     }
   };
 
@@ -126,7 +127,10 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch, customers, o
       {/* Información del destinatario */}
       <Card>
         <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-4">Para (Cliente)</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium">Para (Cliente)</h3>
+            </div>
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="customer">Seleccionar Cliente</Label>
@@ -137,8 +141,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch, customers, o
               >
                 <option value="">Seleccione un cliente</option>
                 {customers.map((customer) => (
-                  <option key={customer.getId().getValue()} value={customer.getId().getValue()}>
-                    {customer.getName()}
+                  <option key={customer.id} value={customer.id}>
+                    {customer.name}
                   </option>
                 ))}
               </select>
@@ -163,7 +167,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ state, dispatch, customers, o
               />
             </div>
             <div>
-              <Label htmlFor="toAddress">Dirección</Label>geo
+              <Label htmlFor="toAddress">Dirección</Label>
               <Textarea
                 id="toAddress"
                 value={invoiceData.toAddress}

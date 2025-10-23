@@ -107,7 +107,7 @@ export async function getInvoiceById(accessToken: string, invoiceId: string): Pr
 // Función para obtener todos los clientes
 export async function getAllCustomers(accessToken: string): Promise<Customer[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/customers`, {
+        const response = await fetch(`${API_BASE_URL}/api/v1/customers/all`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
@@ -118,9 +118,67 @@ export async function getAllCustomers(accessToken: string): Promise<Customer[]> 
             throw new Error('Failed to fetch all customers');
         }
 
-        return await response.json();
+        const data = await response.json();
+        return data.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            email: c.email,
+            address: [c.street, c.city, c.postalCode, c.country].filter(Boolean).join(', ')
+        }));
     } catch(error) {
         console.error('Error fetching all customers:', error);
+        throw error;
+    }
+}
+
+export async function createCustomer(
+    accessToken: string,
+    payload: {
+        name: string;
+        email: string;
+        street: string;
+        city: string;
+        postalCode: string;
+        country: string;
+        number?: string;
+        taxId?: string;
+    }
+): Promise<Customer> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/customers`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: payload.name,
+                email: payload.email,
+                address: {
+                    street: payload.street,
+                    city: payload.city,
+                    postalCode: payload.postalCode,
+                    country: payload.country,
+                },
+                number: payload.number,
+                taxId: payload.taxId,
+            })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Failed to create customer: ${response.status} ${errText}`);
+        }
+
+        const c = await response.json();
+        return {
+            id: c.id,
+            name: c.name,
+            email: c.email,
+            address: [c.street, c.city, c.postalCode, c.country].filter(Boolean).join(', ')
+        };
+    } catch (error) {
+        console.error('Error creating customer:', error);
         throw error;
     }
 }

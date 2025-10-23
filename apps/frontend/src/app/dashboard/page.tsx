@@ -15,6 +15,8 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  console.log("Server Session Object:", JSON.stringify(session, null, 2));
+
   // Obtenemos los datos reales usando el accessToken
   const accessToken = session.accessToken as string;
   const stats = await getDashboardStats(accessToken);

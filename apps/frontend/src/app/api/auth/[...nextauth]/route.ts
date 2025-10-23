@@ -48,8 +48,21 @@ export const authOptions: NextAuthOptions = {
 
                 // 2. NESTJS te devuelve el usuario y el token de acceso (JWT)
                 const data = await res.json();
-
-                return data;
+                console.log("data from backend:", data);
+                if (data && data.access_token && data.user && data.user.id && data.user.email) {
+                    // Return an object matching the augmented User type in next-auth.d.ts
+                    return {
+                        id: data.user.id,
+                        email: data.user.email,
+                        // Convert snake_case to camelCase for consistency
+                        accessToken: data.access_token,
+                        // You can add other user properties if needed by your app
+                        name: data.user.name
+                    };
+                } else {
+                    console.error("Backend response missing expected fields (access_token, user.id, user.email)");
+                    return null;
+                }
             },
         }),
     ],
@@ -78,14 +91,14 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             
             // Forzamos el tipo del token para leer las propiedades añadidas
-            const sessionToken = token as CustomJWT;
+           session.accessToken = token.accessToken
 
             // Hacemos que los datos (ID y Token del backend) estén disponibles en el objeto de sesión
-            if (sessionToken && session.user) {
-                session.user.id = sessionToken.id;
-                session.user.email = sessionToken.email;
+            if (session.user) {
+                session.user.id = token.userId;
+                session.user.email = token.email;
                 // Usamos 'access_token' para ser coherentes con la definición de CustomJWT y el backend
-                session.accessToken = sessionToken.access_token; 
+                session.accessToken = token.accessToken; 
             }
             return session;
         },

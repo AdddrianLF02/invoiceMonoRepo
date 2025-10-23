@@ -9,9 +9,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     handleRequest(err, user , info) {
-        // Puedes lanzar una excepción basada en "info" o "err"
+        const reason = typeof info === 'string' ? info : info?.message;
         if(err || !user) {
-            throw err || new UnauthorizedException('No se ha podido autenticar');
+            throw err || new UnauthorizedException(reason || 'No se ha podido autenticar');
         }
         return user;
     }

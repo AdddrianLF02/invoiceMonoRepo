@@ -34,9 +34,11 @@ export default function NewCustomerPage() {
         toast.error("No autorizado");
         return;
       }
-      await createCustomer(session.accessToken, {
+      if(session?.user?.accessToken) {
+        await createCustomer(session.accessToken, {
         ...form,
       });
+      }
       toast.success("Cliente creado");
       router.push("/customers");
     } catch (err) {

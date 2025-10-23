@@ -1,22 +1,29 @@
-import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
-import { JWT, DefaultJWT } from "next-auth/jwt";
+import 'next-auth';
+import 'next-auth/jwt';
 
-declare module "next-auth" {
-  interface Session {
-    accessToken?: string;
-    user: {
-      id: string;
-    } & DefaultSession["user"];
+// 1. Aumentamos el tipo del objeto User que devuelve 'authorize'
+declare module 'next-auth' {
+  interface User {
+    // Estas son las propiedades que DEVUELVE tu backend de NestJS
+    id: string;
+    email: string;
+    accessToken: string; // <-- Asegúrate que sea 'accessToken' (camelCase)
   }
 
-  interface User extends DefaultUser {
-    accessToken?: string;
+  // 2. Aumentamos el objeto Session para que tenga el token
+  interface Session {
+    accessToken: string; // <-- Propiedad en la RAÍZ de la sesión
+    user: {
+      id: string;
+      // ... otras propiedades que quieras exponer
+    } & DefaultSession['user'];
   }
 }
 
-declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
-    id: string;
-    accessToken?: string;
+// 3. Aumentamos el tipo del JWT (el token que se guarda en la cookie)
+declare module 'next-auth/jwt' {
+  interface JWT {
+    userId: string;
+    accessToken: string;
   }
 }

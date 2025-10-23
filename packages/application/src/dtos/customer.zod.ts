@@ -9,7 +9,7 @@ const CreateCustomerSchema = CustomerEntitySchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  userId: z.string().cuid().optional(),
+  userId: z.cuid().optional(),
   number: z.string().optional(),
   taxId: z.string().optional(),
 });

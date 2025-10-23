@@ -34,40 +34,22 @@ export const authOptions: NextAuthOptions = {
                 pass: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
-                const parsedCredentials = LoginSchema.safeParse(credentials);
+                // 1. LLama a tu backend de NestJS para loguear al usuario
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: credentials?.email,
+                        pass: credentials?.pass
+                    }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
 
-                if (parsedCredentials.success) {
-                    const { email, pass } = parsedCredentials.data;
-                    
-                    // 2. Llamamos a nuestra API de backend para que haga el trabajo duro
-                    const res = await fetch('http://localhost:4000/auth/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, pass }),
-                    });
+                if(!res.ok) return null;
 
-                    if (!res.ok) {
-                        console.error("La autenticación en el backend ha fallado.");
-                        return null;
-                    }
+                // 2. NESTJS te devuelve el usuario y el token de acceso (JWT)
+                const data = await res.json();
 
-                    // 4. Si la API devuelve un usuario, lo pasamos a NextAuth para que cree la sesión
-                    // Recibimos: { access_token: string, user: { id: string, email: string } }
-                    const data = await res.json()
-                    
-                    if(data && data.user && data.access_token) {
-                        // Mapeamos la respuesta al tipo NextAuth User extendido
-                        const nextAuthUser: CustomUser = {
-                            id: data.user.id,
-                            email: data.user.email,
-                            name: data.user.email,
-                            access_token: data.access_token,
-                        }
-                        return nextAuthUser;
-                    }
-                }
-                
-                return null;
+                return data;
             },
         }),
     ],
@@ -82,23 +64,14 @@ export const authOptions: NextAuthOptions = {
         // SOLUCIÓN: Usamos la firma de función genérica esperada por NextAuth.
         // `user` será de tipo `CustomUser` SOLO en el primer sign-in, así que lo forzamos.
         // `token` es de tipo `JWT` (de next-auth/jwt) y lo forzamos a `CustomJWT`.
-        async jwt({ token, user, trigger, account, profile, isNewUser }) {
+        async jwt({ token, user,  }) {
             
-            // 1. Forzamos el tipo del token para acceder a nuestras propiedades personalizadas
-            const customToken = token as CustomJWT;
-
-            // 2. Si el usuario existe (inicio de sesión), añadimos el ID y el Token del backend
-            if (user && trigger === 'signIn') {
-                const customUser = user as CustomUser; // Forzamos el tipo del usuario al iniciar sesión
-                
-                customToken.id = customUser.id;
-                customToken.email = customUser.email;
-                customToken.access_token = customUser.access_token; // Almacenamos el JWT del backend (el que usaremos en las peticiones)
+            // 'user' lo que retornamos de authorize
+            if(user) {
+                token.accessToken = user.accessToken // Almacenamos el JWT de NestJS aquí
+                token.userId = user.id // Almacenamos el ID
             }
-            
-            // Justificación: NextAuth gestiona la rotación y el cifrado del token (session token).
-            // Nosotros inyectamos nuestro access_token del backend en ese token.
-            return token;
+            return token
         },
         
         // SOLUCIÓN: Mismo problema de tipado, usamos la firma genérica y type assertion.

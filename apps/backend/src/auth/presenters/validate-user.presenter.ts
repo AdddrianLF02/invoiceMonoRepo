@@ -16,15 +16,23 @@ export class ValidateUserPresenter implements ValidateUserOutputPort {
             return;
         }
 
-        const payload = { sub: safeUser.id, email: safeUser.email };
-        this.jwtService.signAsync(payload, {
-            secret: process.env.jwtSecretKey,
+        const payload = { 
+            sub: safeUser.id, 
+            email: safeUser.email 
+        };
+        const accessToken = this.jwtService.signAsync(payload, {
             expiresIn: '1h',
-        }).then((token) => {
-            this.res.status(200).json({
-                access_token: token,
-                user: safeUser
-            });
+            secret: process.env.jwtSecretKey
+        });
+        const refreshToken = this.jwtService.signAsync(payload, {
+            expiresIn: '7d',
+            secret: process.env.jwtRefreshSecretKey
+        });
+        
+        this.res.status(200).json({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            user: safeUser
         });
     }
 }

@@ -25,11 +25,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigMo
         // 👇 Use registerAsync to ensure ConfigService is ready
         JwtModule.registerAsync({
             imports: [ConfigModule], // Make sure ConfigModule is available
+            inject: [ConfigService], // Inject ConfigService
             useFactory: async (configService: ConfigService) => ({
                 secret: configService.get<string>('JWT_SECRET') || 'una-clave-secreta-muy-segura-en-desarrollo', // Use ConfigService
                 signOptions: { expiresIn: '60m' },
             }),
-            inject: [ConfigService], // Inject ConfigService
         }),
         ConfigModule, // Ensure ConfigModule is imported if not global
     ],

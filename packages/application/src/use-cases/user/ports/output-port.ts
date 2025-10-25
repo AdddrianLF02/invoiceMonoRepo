@@ -16,6 +16,14 @@ export interface ValidateUserOutputPort {
   present(result: SafeUser | null): void;
 }
 
+// GET
+export const GET_USER_PROFILE_OUTPUT_TOKEN = "GET_USER_PROFILE_OUTPUT_PORT";
+export interface GetUserProfileOutputPort {
+  present(result: SafeUser | null): void;
+}
+
+
+
 export const UPDATE_USER_OUTPUT_TOKEN = "UPDATE_USER_OUTPUT_PORT";
 export interface UpdateUserOutputPort {
   present(result: User): void;

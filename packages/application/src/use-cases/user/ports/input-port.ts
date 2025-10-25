@@ -6,6 +6,12 @@ export interface CreateUserInputPort {
   execute(input: CreateUserDto): Promise<void>;
 }
 
+// GET
+export const GET_USER_PROFILE_INPUT_TOKEN = "GET_USER_PROFILE_INPUT_TOKEN";
+export interface GetUserProfileInputPort {
+  execute(userId: string): Promise<void>;
+}
+
 // VALIDATE
 export const VALIDATE_USER_INPUT_TOKEN = "VALIDATE_USER_INPUT_TOKEN";
 export interface ValidateUserInputPort {

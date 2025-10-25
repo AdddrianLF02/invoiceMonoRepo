@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials"
 // Para asegurar que los tipos de la sesión son correctos
 // Importamos JWT de next-auth/jwt con un alias para evitar conflictos
 import { JWT } from "next-auth/jwt";
-import { LoginSchema } from "@repo/application";
 
 // Reutilizamos el schema de validación que ya tenemos en nuestro paquete core
 

@@ -8,7 +8,7 @@ declare const CreateCustomerDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDe
         postalCode: z.ZodString;
         country: z.ZodString;
     }, z.core.$strip>;
-    userId: z.ZodOptional<z.ZodString>;
+    userId: z.ZodOptional<z.ZodCUID>;
     number: z.ZodOptional<z.ZodString>;
     taxId: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>>;
@@ -23,7 +23,7 @@ declare const UpdateCustomerDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDe
         postalCode: z.ZodString;
         country: z.ZodString;
     }, z.core.$strip>>;
-    userId: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    userId: z.ZodOptional<z.ZodOptional<z.ZodCUID>>;
     number: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     taxId: z.ZodOptional<z.ZodOptional<z.ZodString>>;
 }, z.core.$strip>>;

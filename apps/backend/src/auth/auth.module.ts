@@ -9,17 +9,24 @@ import {
     CREATE_USER_OUTPUT_TOKEN,
     VALIDATE_USER_OUTPUT_TOKEN,
     CREATE_USER_INPUT_TOKEN,
-    VALIDATE_USER_INPUT_TOKEN
+    VALIDATE_USER_INPUT_TOKEN,
+    GET_USER_PROFILE_INPUT_TOKEN,
+    GetUserProfileUseCase,
+    GET_USER_PROFILE_OUTPUT_TOKEN,
 } from '@repo/application';
 import { CreateUserPresenter } from './presenters/create-user.presenter';
 import { ValidateUserPresenter } from './presenters/validate-user.presenter';
-import { REQUEST } from '@nestjs/core';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { APP_GUARD, REQUEST } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule and ConfigService
+import { AuthGuard } from './guards/auth.guard';
+
+import { GetProfileUserPresenter } from './presenters/get-profile-user.presenter';
+
 
 @Global()
 @Module({
     imports: [
+        
         ApplicationModule,
         PassportModule,
         // 👇 Use registerAsync to ensure ConfigService is ready
@@ -35,7 +42,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigMo
     ],
     controllers: [AuthController],
     providers: [
-        JwtStrategy,
+        {
+            provide: APP_GUARD,
+            useClass: AuthGuard
+        },
         // ... (other providers remain the same)
         {
             provide: 'EXPRESS_RESPONSE',
@@ -50,12 +60,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigMo
         // VALIDATE USER
         ValidateUserUseCase,
         { provide: VALIDATE_USER_INPUT_TOKEN, useClass: ValidateUserUseCase },
-        { provide: VALIDATE_USER_OUTPUT_TOKEN, useClass: ValidateUserPresenter }
+        { provide: VALIDATE_USER_OUTPUT_TOKEN, useClass: ValidateUserPresenter },
+        GetUserProfileUseCase,
+        { provide: GET_USER_PROFILE_INPUT_TOKEN, useClass: GetUserProfileUseCase },
+        { provide: GET_USER_PROFILE_OUTPUT_TOKEN, useClass: GetProfileUserPresenter },
     ],
     exports: [
         PassportModule,
         JwtModule,
-        JwtStrategy
+        
     ]
 })
 export class AuthModule {}

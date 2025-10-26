@@ -11,7 +11,7 @@ const CreateCustomerSchema = core_1.CustomerEntitySchema.omit({
     createdAt: true,
     updatedAt: true,
 }).extend({
-    userId: zod_1.z.string().cuid().optional(),
+    userId: zod_1.z.cuid().optional(),
     number: zod_1.z.string().optional(),
     taxId: zod_1.z.string().optional(),
 });

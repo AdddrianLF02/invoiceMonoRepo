@@ -5,7 +5,7 @@ import {
   Email,
 } from '@repo/core'
 import { ValidateUserInputPort } from './ports/input-port';
-import { VALIDATE_USER_OUTPUT_TOKEN, type ValidateUserOutputPort } from './ports/output-port';
+import { VALIDATE_USER_OUTPUT_TOKEN, type ValidateUserOutputPort, type SafeUser } from './ports/output-port';
 
 
 
@@ -23,10 +23,10 @@ export class ValidateUserUseCase implements ValidateUserInputPort {
     const user = await this.userRepository.findByEmail(Email.create(email));
 
     if (user && (await user.comparePassword(pass))) {
-      this.outputPort.present(user.toSafeObject());
+      await this.outputPort.present(user.toSafeObject());
       return;
     }
     
-    this.outputPort.present(null);
+    await this.outputPort.present(null);
   }
 }

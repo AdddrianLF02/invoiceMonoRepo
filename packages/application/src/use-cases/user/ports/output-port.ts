@@ -13,18 +13,18 @@ export type SafeUser = {
 
 export const VALIDATE_USER_OUTPUT_TOKEN = "VALIDATE_USER_OUTPUT_PORT";
 export interface ValidateUserOutputPort {
-  present(result: SafeUser | null): void;
+  present(result: SafeUser | null): Promise<void>;
 }
 
 // GET
 export const GET_USER_PROFILE_OUTPUT_TOKEN = "GET_USER_PROFILE_OUTPUT_PORT";
 export interface GetUserProfileOutputPort {
-  present(result: SafeUser | null): void;
+  present(result: SafeUser | null): Promise<void>;
 }
 
 
 
 export const UPDATE_USER_OUTPUT_TOKEN = "UPDATE_USER_OUTPUT_PORT";
 export interface UpdateUserOutputPort {
-  present(result: User): void;
+  present(result: User): Promise<void>;
 }

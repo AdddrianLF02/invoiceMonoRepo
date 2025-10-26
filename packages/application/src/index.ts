@@ -25,6 +25,7 @@ export * from './use-cases/invoice/update-invoice.use-case';
 export * from './use-cases/user/create-user.use-case';
 export * from './use-cases/user/validate-user.use-case';
 export * from './use-cases/user/update-user.use-case';
+export * from './use-cases/user/get-user-profile.use-case';
 
 // PORTS
 //// INVOICE

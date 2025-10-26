@@ -39,6 +39,7 @@ __exportStar(require("./use-cases/invoice/update-invoice.use-case"), exports);
 __exportStar(require("./use-cases/user/create-user.use-case"), exports);
 __exportStar(require("./use-cases/user/validate-user.use-case"), exports);
 __exportStar(require("./use-cases/user/update-user.use-case"), exports);
+__exportStar(require("./use-cases/user/get-user-profile.use-case"), exports);
 // PORTS
 //// INVOICE
 __exportStar(require("./use-cases/invoice/ports/input-port"), exports);

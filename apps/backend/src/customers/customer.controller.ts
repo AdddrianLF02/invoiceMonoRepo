@@ -15,13 +15,13 @@ import {
     UpdateCustomerDto
 } from '@repo/application'
 import type { CreateCustomerInputPort, GetAllCustomersInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CreateCustomerSwaggerRequestDto } from './dtos/request/create-customer-swagger-request.dto';
 
 @ApiTags('Customers')
 @Controller('api/v1/customers')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard)
 export class CustomerController {
   constructor(
     @Inject(CREATE_CUSTOMER_INPUT_TOKEN)

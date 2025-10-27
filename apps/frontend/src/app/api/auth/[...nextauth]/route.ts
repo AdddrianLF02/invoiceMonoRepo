@@ -33,36 +33,62 @@ export const authOptions: NextAuthOptions = {
                 pass: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
-                // 1. LLama a tu backend de NestJS para loguear al usuario
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        email: credentials?.email,
-                        pass: credentials?.pass
-                    }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: 'POST',
+        body: JSON.stringify({
+            email: credentials?.email,
+            pass: credentials?.pass
+        }),
+        headers: { 'Content-Type': 'application/json' }
+    });
 
-                if(!res.ok) return null;
+    if (!res.ok) {
+         console.error("Backend request failed with status:", res.status, res.statusText);
+         // Intenta leer el cuerpo del error como texto si existe
+         try {
+            const errorBody = await res.text();
+            console.error("Backend error body:", errorBody);
+         } catch (e) {
+            console.error("Could not read error body as text.");
+         }
+         return null; // Retorna null si la respuesta no es OK
+    }
 
-                // 2. NESTJS te devuelve el usuario y el token de acceso (JWT)
-                const data = await res.json();
-                console.log("data from backend:", data);
-                if (data && data.access_token && data.user && data.user.id && data.user.email) {
-                    // Return an object matching the augmented User type in next-auth.d.ts
-                    return {
-                        id: data.user.id,
-                        email: data.user.email,
-                        // Convert snake_case to camelCase for consistency
-                        accessToken: data.access_token,
-                        // You can add other user properties if needed by your app
-                        name: data.user.name
-                    };
-                } else {
-                    console.error("Backend response missing expected fields (access_token, user.id, user.email)");
-                    return null;
-                }
-            },
+    // Si la respuesta es OK (2xx), intenta leer y parsear el cuerpo
+    try {
+        // Primero, intenta leer el cuerpo como texto para ver qué devuelve realmente
+        const responseBodyText = await res.text();
+        console.log("Raw backend response body (text):", responseBodyText);
+
+        // Ahora, intenta parsear ese texto como JSON
+        const data = JSON.parse(responseBodyText);
+        console.log("Data from backend (parsed JSON):", data); // <--- Ahora debería llegar aquí si el JSON es válido
+
+        // ... (el resto de tu lógica if/else para data) ...
+         if (data && data.access_token && data.user && data.user.id && data.user.email) {
+             return {
+                 id: data.user.id,
+                 email: data.user.email,
+                 access_token: data.access_token, // Usar snake_case como viene del backend
+                 name: data.user.name
+             };
+         } else {
+             console.error("Parsed backend response missing expected fields.");
+             console.log("Detailed checks:");
+             console.log("Check data:", !!data);
+             console.log("Check data.access_token:", !!data?.access_token);
+             console.log("Check data.user:", !!data?.user);
+             console.log("Check data.user.id:", !!data?.user?.id);
+             console.log("Check data.user.email:", !!data?.user?.email);
+             return null;
+         }
+
+    } catch (error) {
+        console.error('Error parsing backend response JSON:', error);
+        // Considera loguear responseBodyText aquí también si ya lo leíste
+        return null; // Retorna null si el parseo falla
+    }
+},
         }),
     ],
     session : {
@@ -80,7 +106,7 @@ export const authOptions: NextAuthOptions = {
             
             // 'user' lo que retornamos de authorize
             if(user) {
-                token.accessToken = user.accessToken // Almacenamos el JWT de NestJS aquí
+                token.accessToken = user.access_token // Almacenamos el JWT de NestJS aquí
                 token.userId = user.id // Almacenamos el ID
             }
             return token

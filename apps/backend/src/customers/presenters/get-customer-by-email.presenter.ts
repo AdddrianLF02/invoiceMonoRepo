@@ -11,6 +11,8 @@ export class GetCustomerByEmailPresenter implements GetCustomerByEmailOutputPort
     ) {}
 
     present(customer: Customer): void {
+        // Evitar enviar respuesta si ya fue enviada
+        if (this.res.headersSent) return;
         const dto = CustomerMapper.toResponse(customer);
         this.res.status(201).json(dto);
     }

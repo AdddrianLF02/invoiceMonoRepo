@@ -15,11 +15,12 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         // Verificar si la ruta es pública
+        
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
         ]);
-        
+        console.log('Is Public:', isPublic);
         if (isPublic) {
             return true;
         }
@@ -27,19 +28,28 @@ export class AuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
         
+        console.log('[AuthGuard] Authorization header:', request.headers.authorization);
+        console.log('[AuthGuard] Extracted token:', token ? 'Token present' : 'No token');
+        
         if (!token) {
             throw new UnauthorizedException('No se ha proporcionado un token');
         }
 
         try {
-            // ✅ Corregido: Agregar await y usar configuración consistente
+            const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'una-clave-secreta-muy-segura-en-desarrollo';
+            console.log('[AuthGuard] Using JWT secret for verification:', jwtSecret.substring(0, 10) + '...');
+            
             const payload = await this.jwtService.verifyAsync(token, {
-                secret: this.configService.get<string>('JWT_SECRET') || 'una-clave-secreta-muy-segura-en-desarrollo'
+                secret: jwtSecret
             });
+            
+            console.log('[AuthGuard] Token verified successfully, payload:', { sub: payload.sub, email: payload.email });
             
             // Asignar el payload del usuario a la request
             request['user'] = payload;
         } catch (error) {
+            const err = error as Error;
+            console.log('[AuthGuard] Token verification failed:', err.message);
             throw new UnauthorizedException('Token inválido');
         }
 

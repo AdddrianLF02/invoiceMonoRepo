@@ -11,6 +11,8 @@ export class GetCustomerInvoicesPresenter implements GetCustomerInvoicesOutputPo
     ) {}
    
     present(result: Invoice[]): void {
+        // Evitar enviar respuesta si ya fue enviada
+        if (this.res.headersSent) return;
         const dtos = result.map((i) => InvoiceMapper.toResponse(i));
         this.res.status(200).json(dtos);
     }

@@ -11,7 +11,9 @@ export class CreateCustomerPresenter implements CreateCustomerOutputPort {
     ) {}
 
     present(customer: Customer): void {
+        // Evitar enviar respuesta si ya fue enviada por algún middleware/interceptor
+        if (this.res.headersSent) return;
         const dto = CustomerMapper.toResponse(customer);
-        this.res.status(201).json(dto)
+        this.res.status(201).json(dto);
     }
 }

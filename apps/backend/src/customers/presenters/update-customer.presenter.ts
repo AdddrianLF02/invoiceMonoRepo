@@ -11,7 +11,9 @@ export class UpdateCustomerPresenter implements UpdateCustomerOutputPort {
     ) {}
 
     present(customer: Customer): void {
-        const dto = CustomerMapper.toResponse(customer)
-        this.res.status(201).json(dto)
+        // Evitar enviar respuesta si ya fue enviada
+        if (this.res.headersSent) return;
+        const dto = CustomerMapper.toResponse(customer);
+        this.res.status(201).json(dto);
     }
 }

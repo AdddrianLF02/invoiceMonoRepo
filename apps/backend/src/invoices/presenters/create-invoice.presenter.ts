@@ -12,11 +12,15 @@ export class CreateInvoicePresenter implements CreateInvoiceOutputPort {
 
   present(invoice: Invoice): void {
     try {
+      // Evitar enviar respuesta si ya fue enviada
+      if (this.res.headersSent) return;
       const dto = InvoiceMapper.toResponse(invoice);
       this.res.status(201).json(dto);
     } catch (error) {
       const err = error as Error
-      this.res.status(500).json({ message: 'Error creating invoice', error: err.message });
+      if (!this.res.headersSent) {
+        this.res.status(500).json({ message: 'Error creating invoice', error: err.message });
+      }
     }
 }
 }

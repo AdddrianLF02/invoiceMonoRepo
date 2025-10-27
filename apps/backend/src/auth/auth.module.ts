@@ -19,7 +19,6 @@ import { ValidateUserPresenter } from './presenters/validate-user.presenter';
 import { APP_GUARD, REQUEST } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule and ConfigService
 import { AuthGuard } from './guards/auth.guard';
-
 import { GetProfileUserPresenter } from './presenters/get-profile-user.presenter';
 
 
@@ -46,13 +45,13 @@ import { GetProfileUserPresenter } from './presenters/get-profile-user.presenter
             provide: APP_GUARD,
             useClass: AuthGuard
         },
-        // ... (other providers remain the same)
         {
             provide: 'EXPRESS_RESPONSE',
             scope: Scope.REQUEST,
             useFactory: (req) => req.res,
             inject: [REQUEST]
         },
+       
         // CREATE USER
         CreateUserUseCase,
         { provide: CREATE_USER_INPUT_TOKEN, useClass: CreateUserUseCase },

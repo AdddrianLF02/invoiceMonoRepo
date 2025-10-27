@@ -1,4 +1,5 @@
-import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes, UseGuards, Req, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import {
@@ -47,14 +48,14 @@ export class CustomerController {
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   @ApiResponse({ status: 409, description: 'El email ya está en uso' })
   @ApiBody({ type: CreateCustomerSwaggerRequestDto })
-  async create(@Body() dto: CreateCustomerDto, @Req() req: any): Promise<void> {
+  async create(@Body() dto: CreateCustomerDto, @Req() req: any, @Res() _res: Response): Promise<void> {
     await this.createCustomerUseCase.execute({ ...dto, userId: req.user.userId });
   }
 
   @Get('all')
   @ApiOperation({ summary: 'Obtener todos los clientes' })
   @ApiResponse({ status: 200, description: 'Clientes encontrados', type: [CustomerResponseDto] })
-  async findAll(): Promise<void> {
+  async findAll(@Res() _res: Response): Promise<void> {
     await this.getAllCustomersUseCase.execute();
   }
 
@@ -63,7 +64,7 @@ export class CustomerController {
   @ApiParam({ name: 'id', description: 'ID del cliente (UUID)' })
   @ApiResponse({ status: 200, description: 'Cliente encontrado', type: CustomerResponseDto })
   @ApiResponse({ status: 404, description: 'Cliente no encontrado' })
-  async findById(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+  async findById(@Param('id', ParseUUIDPipe) id: string, @Res() _res: Response): Promise<void> {
     await this.getCustomerByIdUseCase.execute(id);
   }
 
@@ -72,7 +73,7 @@ export class CustomerController {
   @ApiParam({ name: 'email', description: 'Email del cliente' })
   @ApiResponse({ status: 200, description: 'Cliente encontrado', type: CustomerResponseDto })
   @ApiResponse({ status: 404, description: 'Cliente no encontrado' })
-  async findByEmail(@Param('email') email: string): Promise<void> {
+  async findByEmail(@Param('email') email: string, @Res() _res: Response): Promise<void> {
     await this.getCustomerByEmailUseCase.execute(email);
   }
 
@@ -86,6 +87,7 @@ export class CustomerController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateCustomerDto,
+    @Res() _res: Response,
   ): Promise<void> {
     await this.updateCustomerUseCase.execute({ ...dto, id })
   }

@@ -7,7 +7,7 @@ declare module 'next-auth' {
     // Estas son las propiedades que DEVUELVE tu backend de NestJS
     id: string;
     email: string;
-    accessToken: string; // <-- Asegúrate que sea 'accessToken' (camelCase)
+    access_token: string; // <-- Asegúrate que sea 'accessToken' (camelCase)
   }
 
   // 2. Aumentamos el objeto Session para que tenga el token

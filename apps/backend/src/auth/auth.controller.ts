@@ -1,4 +1,5 @@
-import { Controller, Post, Body, UsePipes, Inject, Get, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, Inject, Get, Request, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod'
 import {
@@ -12,6 +13,7 @@ import {
   type GetUserProfileInputPort
   } from '@repo/application';
 import { Public } from './decorators/public.decorator';
+// import { ResponseInterceptor } from '../shared/response.interceptor';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -33,9 +35,9 @@ export class AuthController {
   @ApiOperation({ summary: 'Registrar un nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario creado con éxito' })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
-  async register(@Body() createUserDto: CreateUserDto) {
+  async register(@Body() createUserDto: CreateUserDto, @Res() _res: Response) {
     await this.createUserUseCase.execute(createUserDto);
-    // No retornamos nada porque el presenter se encarga de la respuesta
+      // No retornamos nada porque el presenter se encarga de la respuesta
   }
 
   @Public()
@@ -44,18 +46,19 @@ export class AuthController {
   @ApiOperation({ summary: 'Iniciar sesión' })
   @ApiResponse({ status: 200, description: 'Login exitoso' })
   @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto, @Res() _res: Response) {
     // El controlador solo orquesta, el presenter maneja la respuesta
     await this.validateUserUseCase.execute(loginDto.email, loginDto.pass);
-    // No retornamos nada porque el presenter se encarga de la respuesta
+    // Retornamos la respuesta que ya fue manejada por el presenter
+    
   }
 
   @Get('profile')
   @ApiOperation({ summary: 'Obtener perfil de usuario' })
   @ApiResponse({ status: 200, description: 'Perfil de usuario obtenido con éxito' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
-  async getProfile(@Request() req) {
-    return await this.getUserProfileUseCase.execute(req.user.id);
+  async getProfile(@Request() req, @Res() _res: Response) {
+     await this.getUserProfileUseCase.execute(req.user.id);
   }
 
   @Public()

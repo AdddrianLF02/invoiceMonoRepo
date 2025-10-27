@@ -10,6 +10,8 @@ export class CreateUserPresenter implements CreateUserOutputPort {
     ) {}
 
     present(user: User): void {
+        // Evitar enviar respuesta si ya fue enviada
+        if (this.res.headersSent) return;
         const safeUser = user.toSafeObject();
         this.res.status(201).json(safeUser);
     }

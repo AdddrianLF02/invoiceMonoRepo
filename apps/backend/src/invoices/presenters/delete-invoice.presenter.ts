@@ -9,6 +9,8 @@ export class DeleteInvoicePresenter implements DeleteInvoiceOutputPort {
     ) {}
 
      present(id: string): void {
+        // Evitar enviar respuesta si ya fue enviada
+        if (this.res.headersSent) return;
         this.res.status(200).json({
         message: `Invoice ${id} deleted successfully`,
         });

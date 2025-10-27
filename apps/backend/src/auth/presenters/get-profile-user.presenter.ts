@@ -8,6 +8,8 @@ export class GetProfileUserPresenter implements GetUserProfileOutputPort {
     ) {}
 
   async present(result: SafeUser | null): Promise<void> {
+     // Evitar enviar respuesta si ya fue enviada
+     if (this.res.headersSent) return;
      this.res.status(200).json(result);
   } 
 }

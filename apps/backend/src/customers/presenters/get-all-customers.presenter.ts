@@ -11,6 +11,8 @@ export class GetAllCustomersPresenter implements GetAllCustomersOutputPort {
     ) {}
 
     present(customers: Customer[]): void {
+        // Evitar enviar respuesta si ya fue enviada
+        if (this.res.headersSent) return;
         const dtos = customers.map(customer => CustomerMapper.toResponse(customer));
         this.res.status(200).json(dtos);
     }

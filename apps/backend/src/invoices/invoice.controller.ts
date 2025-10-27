@@ -10,7 +10,9 @@ import {
   UsePipes,
   UseInterceptors,
   Inject,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 import {
@@ -58,7 +60,7 @@ export class InvoiceController {
     type: InvoiceResponseSwaggerDto,
   })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
-  async create(@Body() dto: CreateInvoiceSwaggerRequestDto) {
+  async create(@Body() dto: CreateInvoiceSwaggerRequestDto, @Res() _res: Response): Promise<void> {
     await this.createInvoiceUseCase.execute(dto);
   }
 
@@ -72,7 +74,7 @@ export class InvoiceController {
     type: InvoiceResponseSwaggerDto,
   })
   @ApiResponse({ status: 404, description: 'Factura no encontrada' })
-  async findById(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+  async findById(@Param('id', ParseUUIDPipe) id: string, @Res() _res: Response): Promise<void> {
     await this.getInvoiceUseCase.execute(id);
   }
 
@@ -85,7 +87,7 @@ export class InvoiceController {
     description: 'Lista de facturas del cliente',
     type: [InvoiceResponseSwaggerDto],
   })
-  async findByCustomerId(@Param('customerId', ParseUUIDPipe) customerId: string): Promise<void> {
+  async findByCustomerId(@Param('customerId', ParseUUIDPipe) customerId: string, @Res() _res: Response): Promise<void> {
     await this.getCustomerInvoicesUseCase.execute(customerId);
   }
 
@@ -105,6 +107,7 @@ export class InvoiceController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateInvoiceSwaggerRequestDto,
+    @Res() _res: Response,
   ): Promise<void> {
     await this.updateInvoiceUseCase.execute(id, dto);
   }
@@ -115,7 +118,7 @@ export class InvoiceController {
   @ApiParam({ name: 'id', description: 'ID de la factura a eliminar (UUID)' })
   @ApiResponse({ status: 200, description: 'Factura eliminada con éxito' })
   @ApiResponse({ status: 404, description: 'Factura no encontrada' })
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+  async remove(@Param('id', ParseUUIDPipe) id: string, @Res() _res: Response): Promise<void> {
     await this.deleteInvoiceUseCase.execute(id);
   }
 }

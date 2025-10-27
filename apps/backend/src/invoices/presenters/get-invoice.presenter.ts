@@ -9,6 +9,8 @@ export class GetInvoicePresenter implements GetInvoiceOutPutPort {
     constructor(@Inject('EXPRESS_RESPONSE') private readonly res: Response) {}
 
     present(invoice: Invoice): void {
+        // Evitar enviar respuesta si ya fue enviada
+        if (this.res.headersSent) return;
         const dto = InvoiceMapper.toResponse(invoice);
         this.res.status(200).json(dto);
     }

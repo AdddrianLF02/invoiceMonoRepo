@@ -15,26 +15,29 @@ enum InvoiceStatus {
 }
 
 model User {
-  id        String     @id @default(cuid())
-  name      String?
-  email     String     @unique
-  password  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  customer  Customer?
+  id        String     @id @default(cuid())
+  name      String?
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  customers Customer[]
 }
 
 model Customer {
-  id        String    @id @default(cuid())
-  name      String
-  email     String    @unique
-  phone     String?
-  address   String?
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String    @unique
-  invoices  Invoice[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String    @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  address   String?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Unicidad por inquilino: cada usuario no puede repetir email entre sus clientes
+  @@unique([userId, email])
 }
 
 model Invoice {

@@ -4,7 +4,8 @@ import { CreateInvoiceDto, UpdateInvoiceDto } from "../../../dtos/invoice.zod";
 // CREATE
 export const CREATE_INVOICE_INPUT_TOKEN = "CREATE_INVOICE_INPUT_TOKEN";
 export interface CreateInvoiceInputPort {
-    execute(input: CreateInvoiceDto): Promise<void>;
+    // Multi-tenancy: the create operation must be scoped to the authenticated user
+    execute(userId: string, input: CreateInvoiceDto): Promise<void>;
 }
 
 // UPDATE

@@ -17,6 +17,6 @@ export interface UpdateCustomerInputPort {
 }
 export declare const GET_ALL_CUSTOMERS_INPUT_TOKEN = "GET_ALL_CUSTOMERS_INPUT_TOKEN";
 export interface GetAllCustomersInputPort {
-    execute(): Promise<void>;
+    execute(userId: string): Promise<void>;
 }
 //# sourceMappingURL=input-port.d.ts.map

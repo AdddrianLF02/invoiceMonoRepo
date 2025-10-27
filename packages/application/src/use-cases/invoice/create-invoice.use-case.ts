@@ -12,6 +12,8 @@ import {
 import { CreateInvoiceDto } from '../../dtos/invoice.zod';
 import { CreateInvoiceInputPort } from './ports/input-port';
 import { CREATE_INVOICE_OUTPUT_TOKEN, type CreateInvoiceOutputPort } from './ports/output-port';
+import { ForbiddenException } from '@nestjs/common';
+import { UserId } from '@repo/core';
 
 
 @Injectable()
@@ -27,14 +29,23 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
     private readonly outputPort: CreateInvoiceOutputPort
   ) {}
 
-  async execute(input: CreateInvoiceDto): Promise<void> {
+  async execute(userId: string, input: CreateInvoiceDto): Promise<void> {
     console.log('[CreateInvoiceUseCase] Input recibido:', input);
-    
+
     // Envolvemos la lógica de negocio en la transacción
       await this.uow.executeTransaction(async () => {
         console.log('[CreateInvoiceUseCase] Entrando en transacción');
         const repo = this.uow.invoiceRepository;
         console.log('[CreateInvoiceUseCase] Repo:', !!repo);
+
+        // 0. Validar ownership del customerId respecto al usuario autenticado
+        const ownerId = UserId.fromString(userId);
+        const customersOfUser = await this.uow.customerRepository.findByUserId(ownerId);
+        const requestedCustomerId = CustomerId.fromString(input.customerId);
+        const customerBelongsToUser = customersOfUser.some(c => c.getId().equals(requestedCustomerId));
+        if (!customerBelongsToUser) {
+          throw new ForbiddenException('El cliente no pertenece al usuario autenticado');
+        }
 
             // 1. Mapear y Calcular los ítems (Strategy)
               const items = input.items.map(itemDto => {
@@ -61,7 +72,7 @@ export class CreateInvoiceUseCase implements CreateInvoiceInputPort {
 
       // 2. Crear y guardar la factura (Domain layer)
       const invoice = Invoice.create(
-        CustomerId.fromString(input.customerId),
+        requestedCustomerId,
         new Date(input.issueDate),
         new Date(input.dueDate),
         items

@@ -49,14 +49,15 @@ export class CustomerController {
   @ApiResponse({ status: 409, description: 'El email ya está en uso' })
   @ApiBody({ type: CreateCustomerSwaggerRequestDto })
   async create(@Body() dto: CreateCustomerDto, @Req() req: any, @Res() _res: Response): Promise<void> {
-    await this.createCustomerUseCase.execute({ ...dto, userId: req.user.userId });
+    // El payload del JWT establece el identificador del usuario en 'sub'
+    await this.createCustomerUseCase.execute({ ...dto, userId: req.user.sub });
   }
 
   @Get('all')
   @ApiOperation({ summary: 'Obtener todos los clientes' })
   @ApiResponse({ status: 200, description: 'Clientes encontrados', type: [CustomerResponseDto] })
-  async findAll(@Res() _res: Response): Promise<void> {
-    await this.getAllCustomersUseCase.execute();
+  async findAll(@Req() req: any, @Res() _res: Response): Promise<void> {
+    await this.getAllCustomersUseCase.execute(req.user.sub);
   }
 
   @Get(':id')

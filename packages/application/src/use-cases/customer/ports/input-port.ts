@@ -24,5 +24,5 @@ export interface UpdateCustomerInputPort {
 
 export const GET_ALL_CUSTOMERS_INPUT_TOKEN = "GET_ALL_CUSTOMERS_INPUT_TOKEN";
 export interface GetAllCustomersInputPort {
-  execute(): Promise<void>;
+  execute(userId: string): Promise<void>;
 }

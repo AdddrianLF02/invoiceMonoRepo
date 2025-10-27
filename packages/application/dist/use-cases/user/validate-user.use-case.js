@@ -26,10 +26,10 @@ let ValidateUserUseCase = class ValidateUserUseCase {
     async execute(email, pass) {
         const user = await this.userRepository.findByEmail(core_1.Email.create(email));
         if (user && (await user.comparePassword(pass))) {
-            this.outputPort.present(user.toSafeObject());
+            await this.outputPort.present(user.toSafeObject());
             return;
         }
-        this.outputPort.present(null);
+        await this.outputPort.present(null);
     }
 };
 exports.ValidateUserUseCase = ValidateUserUseCase;

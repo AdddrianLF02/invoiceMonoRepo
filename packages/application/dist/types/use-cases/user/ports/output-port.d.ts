@@ -10,7 +10,7 @@ export type SafeUser = {
 };
 export declare const VALIDATE_USER_OUTPUT_TOKEN = "VALIDATE_USER_OUTPUT_PORT";
 export interface ValidateUserOutputPort {
-    present(result: SafeUser | null): void;
+    present(result: SafeUser | null): Promise<void>;
 }
 export declare const GET_USER_PROFILE_OUTPUT_TOKEN = "GET_USER_PROFILE_OUTPUT_PORT";
 export interface GetUserProfileOutputPort {

@@ -77,7 +77,10 @@ export class PrismaCustomerRepository implements CustomerRepository {
   } 
 
   async findByEmail(email: Email): Promise<Customer | null> { 
-    const customer = await this.prisma.customer.findUnique({ 
+    // Nota: tras habilitar multi-tenancy, el email ya no es único globalmente.
+    // Este método ahora devuelve el primer cliente que coincida con el email (independientemente del usuario).
+    // Para comprobaciones de unicidad por usuario, usar findByUserId(...) y filtrar por email en la capa de aplicación.
+    const customer = await this.prisma.customer.findFirst({ 
       where: { email: email.getValue() }, 
     }); 
 

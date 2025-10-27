@@ -35,10 +35,11 @@ let CreateCustomerUseCase = class CreateCustomerUseCase {
             if (!userExists) {
                 throw new common_1.NotFoundException('Usuario no encontrado');
             }
-            // Guard against unique constraint: one customer per user
+            // Validar que el email no esté ya en uso dentro del mismo usuario (multi-tenant)
             const existingForUser = await repo.findByUserId(userId);
-            if (existingForUser.length > 0) {
-                throw new common_1.ConflictException('El usuario ya tiene un cliente');
+            const emailInUse = existingForUser.some(c => c.getEmail().equals(email));
+            if (emailInUse) {
+                throw new common_1.ConflictException('El email ya está en uso por otro cliente de este usuario');
             }
             const address = core_1.Address.create(input.address?.street, input.address?.city, input.address?.postalCode, input.address?.country);
             const taxId = input.taxId

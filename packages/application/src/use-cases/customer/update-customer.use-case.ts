@@ -46,10 +46,11 @@ export class UpdateCustomerUseCase implements UpdateCustomerInputPort {
 
       if (input.email !== undefined) {
         const newEmail = Email.create(input.email);
-        // Verificamos que el nuevo email no esté en uso por otro cliente
-        const existing = await repo.findByEmail(newEmail);
-        if (existing && !existing.getId().equals(customerId)) {
-          throw new ConflictException('El email ya está en uso por otro cliente');
+        // Verificamos que el nuevo email no esté en uso por otro cliente del mismo usuario
+        const customersOfUser = await repo.findByUserId(customer.getUserId());
+        const emailInUseByAnother = customersOfUser.some(c => c.getEmail().equals(newEmail) && !c.getId().equals(customerId));
+        if (emailInUseByAnother) {
+          throw new ConflictException('El email ya está en uso por otro cliente de este usuario');
         }
         customer = customer.updateEmail(newEmail);
       }

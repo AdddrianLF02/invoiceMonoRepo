@@ -11,9 +11,11 @@ import {
   UseInterceptors,
   Inject,
   Res,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 import {
   CREATE_INVOICE_INPUT_TOKEN,
@@ -30,10 +32,13 @@ import {
 import { CreateInvoiceSwaggerRequestDto } from './dtos';
 import { InvoiceResponseSwaggerDto } from './dtos/response/invoice-swagger-response.dto';
 import { UpdateInvoiceSwaggerRequestDto } from './dtos/request/update-invoice-swagger-request.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 
 @ApiTags('Invoices')
 @Controller('api/v1/invoices')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 
 export class InvoiceController {
   constructor(
@@ -60,8 +65,8 @@ export class InvoiceController {
     type: InvoiceResponseSwaggerDto,
   })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
-  async create(@Body() dto: CreateInvoiceSwaggerRequestDto, @Res() _res: Response): Promise<void> {
-    await this.createInvoiceUseCase.execute(dto);
+  async create(@Body() dto: CreateInvoiceSwaggerRequestDto, @Req() req: any, @Res() _res: Response): Promise<void> {
+    await this.createInvoiceUseCase.execute(req.user.sub, dto);
   }
 
   // 🔍 GET BY ID

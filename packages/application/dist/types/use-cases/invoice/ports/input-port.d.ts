@@ -1,7 +1,7 @@
 import { CreateInvoiceDto, UpdateInvoiceDto } from "../../../dtos/invoice.zod";
 export declare const CREATE_INVOICE_INPUT_TOKEN = "CREATE_INVOICE_INPUT_TOKEN";
 export interface CreateInvoiceInputPort {
-    execute(input: CreateInvoiceDto): Promise<void>;
+    execute(userId: string, input: CreateInvoiceDto): Promise<void>;
 }
 export declare const UPDATE_INVOICE_INPUT_TOKEN = "UPDATE_INVOICE_INPUT_TOKEN";
 export interface UpdateInvoiceInputPort {

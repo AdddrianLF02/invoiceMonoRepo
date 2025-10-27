@@ -23,8 +23,9 @@ let GetAllCustomersUseCase = class GetAllCustomersUseCase {
         this.uow = uow;
         this.outputPort = outputPort;
     }
-    async execute() {
-        const customers = await this.uow.customerRepository.findAll();
+    async execute(userId) {
+        const uid = core_1.UserId.fromString(userId);
+        const customers = await this.uow.customerRepository.findByUserId(uid);
         this.outputPort.present(customers);
     }
 };

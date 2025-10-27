@@ -58,7 +58,8 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Perfil de usuario obtenido con éxito' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   async getProfile(@Request() req, @Res() _res: Response) {
-     await this.getUserProfileUseCase.execute(req.user.id);
+     // El payload del JWT establece el identificador del usuario en 'sub'
+     await this.getUserProfileUseCase.execute(req.user.sub);
   }
 
   @Public()

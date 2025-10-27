@@ -7,6 +7,6 @@ export declare class CreateInvoiceUseCase implements CreateInvoiceInputPort {
     private readonly taxCalculationStrategy;
     private readonly outputPort;
     constructor(uow: IUnitOfWork, taxCalculationStrategy: ITaxCalculationStrategy, outputPort: CreateInvoiceOutputPort);
-    execute(input: CreateInvoiceDto): Promise<void>;
+    execute(userId: string, input: CreateInvoiceDto): Promise<void>;
 }
 //# sourceMappingURL=create-invoice.use-case.d.ts.map

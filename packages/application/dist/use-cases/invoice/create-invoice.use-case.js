@@ -16,6 +16,8 @@ exports.CreateInvoiceUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@repo/core");
 const output_port_1 = require("./ports/output-port");
+const common_2 = require("@nestjs/common");
+const core_2 = require("@repo/core");
 let CreateInvoiceUseCase = class CreateInvoiceUseCase {
     uow;
     taxCalculationStrategy;
@@ -25,13 +27,21 @@ let CreateInvoiceUseCase = class CreateInvoiceUseCase {
         this.taxCalculationStrategy = taxCalculationStrategy;
         this.outputPort = outputPort;
     }
-    async execute(input) {
+    async execute(userId, input) {
         console.log('[CreateInvoiceUseCase] Input recibido:', input);
         // Envolvemos la lógica de negocio en la transacción
         await this.uow.executeTransaction(async () => {
             console.log('[CreateInvoiceUseCase] Entrando en transacción');
             const repo = this.uow.invoiceRepository;
             console.log('[CreateInvoiceUseCase] Repo:', !!repo);
+            // 0. Validar ownership del customerId respecto al usuario autenticado
+            const ownerId = core_2.UserId.fromString(userId);
+            const customersOfUser = await this.uow.customerRepository.findByUserId(ownerId);
+            const requestedCustomerId = core_1.CustomerId.fromString(input.customerId);
+            const customerBelongsToUser = customersOfUser.some(c => c.getId().equals(requestedCustomerId));
+            if (!customerBelongsToUser) {
+                throw new common_2.ForbiddenException('El cliente no pertenece al usuario autenticado');
+            }
             // 1. Mapear y Calcular los ítems (Strategy)
             const items = input.items.map(itemDto => {
                 console.log('[CreateInvoiceUseCase] Mapeando ítem:', itemDto);
@@ -47,7 +57,7 @@ let CreateInvoiceUseCase = class CreateInvoiceUseCase {
                 calc.subtotal, calc.taxAmount, calc.total);
             });
             // 2. Crear y guardar la factura (Domain layer)
-            const invoice = core_1.Invoice.create(core_1.CustomerId.fromString(input.customerId), new Date(input.issueDate), new Date(input.dueDate), items);
+            const invoice = core_1.Invoice.create(requestedCustomerId, new Date(input.issueDate), new Date(input.dueDate), items);
             console.log('[CreateInvoiceUseCase] Factura creada:', invoice);
             await repo.create(invoice);
             console.log('[CreateInvoiceUseCase] Factura guardada en repositorio');

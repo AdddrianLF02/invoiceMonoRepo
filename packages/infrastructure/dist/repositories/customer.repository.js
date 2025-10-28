@@ -56,10 +56,13 @@ let PrismaCustomerRepository = class PrismaCustomerRepository {
             address = core_1.Address.create(addressParts[0] || '', addressParts[1] || '', addressParts[2] || '', addressParts[3] || '');
         }
         return core_1.Customer.reconstitute(customerId, userId, // <-- AÑADIDO
-        customer.name, email, customer.phone || '', address || core_1.Address.create('', '', '', ''), core_1.TaxId.create(''), true, customer.createdAt, customer.updatedAt);
+        customer.name, email, customer.phone || '', address || core_1.Address.create('', '', '', ''), undefined, true, customer.createdAt, customer.updatedAt);
     }
     async findByEmail(email) {
-        const customer = await this.prisma.customer.findUnique({
+        // Nota: tras habilitar multi-tenancy, el email ya no es único globalmente.
+        // Este método ahora devuelve el primer cliente que coincida con el email (independientemente del usuario).
+        // Para comprobaciones de unicidad por usuario, usar findByUserId(...) y filtrar por email en la capa de aplicación.
+        const customer = await this.prisma.customer.findFirst({
             where: { email: email.getValue() },
         });
         if (!customer)
@@ -73,7 +76,7 @@ let PrismaCustomerRepository = class PrismaCustomerRepository {
             address = core_1.Address.create(addressParts[0] || '', addressParts[1] || '', addressParts[2] || '', addressParts[3] || '');
         }
         return core_1.Customer.reconstitute(customerId, userId, // <-- AÑADIDO
-        customer.name, customerEmail, customer.phone || '', address || core_1.Address.create('', '', '', ''), core_1.TaxId.create(''), true, customer.createdAt, customer.updatedAt);
+        customer.name, customerEmail, customer.phone || '', address || core_1.Address.create('', '', '', ''), undefined, true, customer.createdAt, customer.updatedAt);
     }
     async update(customer) {
         let addressStr = '';
@@ -111,7 +114,7 @@ let PrismaCustomerRepository = class PrismaCustomerRepository {
                 const addressParts = customer.address.split(', ');
                 address = core_1.Address.create(addressParts[0] || '', addressParts[1] || '', addressParts[2] || '', addressParts[3] || '');
             }
-            return core_1.Customer.reconstitute(customerId, userIdObj, customer.name, email, customer.phone || '', address || core_1.Address.create('', '', '', ''), core_1.TaxId.create(''), true, customer.createdAt, customer.updatedAt);
+            return core_1.Customer.reconstitute(customerId, userIdObj, customer.name, email, customer.phone || '', address || core_1.Address.create('', '', '', ''), undefined, true, customer.createdAt, customer.updatedAt);
         }));
     }
     async delete(id) {
@@ -136,7 +139,7 @@ let PrismaCustomerRepository = class PrismaCustomerRepository {
                 const addressParts = customer.address.split(', ');
                 address = core_1.Address.create(addressParts[0] || '', addressParts[1] || '', addressParts[2] || '', addressParts[3] || '');
             }
-            return core_1.Customer.reconstitute(customerId, userId, customer.name, email, customer.phone || '', address || core_1.Address.create('', '', '', ''), core_1.TaxId.create(''), true, customer.createdAt, customer.updatedAt);
+            return core_1.Customer.reconstitute(customerId, userId, customer.name, email, customer.phone || '', address || core_1.Address.create('', '', '', ''), undefined, true, customer.createdAt, customer.updatedAt);
         }));
     }
 };

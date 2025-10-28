@@ -111,18 +111,25 @@ export class PrismaInvoiceRepository implements InvoiceRepository {
   }
 
   private mapToDomain(invoiceData: any): Invoice {
-    const invoiceItems = invoiceData.items.map((item: any) =>
-      InvoiceItem.reconstitute(
+    const invoiceItems = invoiceData.items.map((item: any) => {
+      // unitPrice, subtotal, taxAmount y total vienen de la base de datos en céntimos (BigInt)
+      // Convertimos explícitamente a número y a valor decimal donde corresponde.
+      const unitPriceMoney = Money.fromFloat(Number(item.unitPrice) / 100, 'EUR');
+      const subtotalInCents = Number(item.subtotal);
+      const taxAmountInCents = Number(item.taxAmount);
+      const totalInCents = Number(item.total);
+
+      return InvoiceItem.reconstitute(
         item.id,
         item.description,
         item.quantity,
-        Money.fromFloat(item.unitPrice, 'EUR'),
+        unitPriceMoney,
         item.taxRate,
-        item.subtotal,
-        item.taxAmount,
-        item.total
-      ),
-    );
+        subtotalInCents,
+        taxAmountInCents,
+        totalInCents
+      );
+    });
 
     if (!invoiceData.dueDate) {
       throw new Error(

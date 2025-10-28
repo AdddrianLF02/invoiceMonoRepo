@@ -30,19 +30,22 @@ export default function NewCustomerPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Validamos que exista el token y el id de usuario
       if (!session?.accessToken || !session?.user?.id) {
         toast.error("No autorizado");
         return;
       }
-      if(session?.user?.accessToken) {
-        await createCustomer(session.accessToken, {
+
+      // Importante: usar session.accessToken (no session.user.accessToken)
+      await createCustomer(session.accessToken, {
         ...form,
       });
-      }
+
       toast.success("Cliente creado");
       router.push("/customers");
     } catch (err) {
-      toast.error("Error al crear el cliente");
+      const message = err instanceof Error ? err.message : "Error al crear el cliente";
+      toast.error(message);
       console.error(err);
     }
   };

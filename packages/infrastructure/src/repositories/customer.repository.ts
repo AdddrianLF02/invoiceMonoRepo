@@ -69,7 +69,7 @@ export class PrismaCustomerRepository implements CustomerRepository {
       email, 
       customer.phone || '', 
       address || Address.create('', '', '', ''),
-      TaxId.create(''),
+      undefined,
       true, 
       customer.createdAt,
       customer.updatedAt
@@ -108,7 +108,7 @@ export class PrismaCustomerRepository implements CustomerRepository {
       customerEmail, 
       customer.phone || '', 
       address || Address.create('', '', '', ''),
-      TaxId.create(''),
+      undefined,
       true, 
       customer.createdAt,
       customer.updatedAt
@@ -169,7 +169,7 @@ export class PrismaCustomerRepository implements CustomerRepository {
         email,
         customer.phone || '',
         address || Address.create('', '', '', ''),
-        TaxId.create(''),
+        undefined,
         true,
         customer.createdAt,
         customer.updatedAt
@@ -216,7 +216,7 @@ export class PrismaCustomerRepository implements CustomerRepository {
         email,
         customer.phone || '',
         address || Address.create('', '', '', ''),
-        TaxId.create(''),
+        undefined,
         true,
         customer.createdAt,
         customer.updatedAt

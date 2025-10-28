@@ -98,7 +98,15 @@ let PrismaInvoiceRepository = class PrismaInvoiceRepository {
         });
     }
     mapToDomain(invoiceData) {
-        const invoiceItems = invoiceData.items.map((item) => core_1.InvoiceItem.reconstitute(item.id, item.description, item.quantity, core_1.Money.fromFloat(item.unitPrice, 'EUR'), item.taxRate, item.subtotal, item.taxAmount, item.total));
+        const invoiceItems = invoiceData.items.map((item) => {
+            // unitPrice, subtotal, taxAmount y total vienen de la base de datos en céntimos (BigInt)
+            // Convertimos explícitamente a número y a valor decimal donde corresponde.
+            const unitPriceMoney = core_1.Money.fromFloat(Number(item.unitPrice) / 100, 'EUR');
+            const subtotalInCents = Number(item.subtotal);
+            const taxAmountInCents = Number(item.taxAmount);
+            const totalInCents = Number(item.total);
+            return core_1.InvoiceItem.reconstitute(item.id, item.description, item.quantity, unitPriceMoney, item.taxRate, subtotalInCents, taxAmountInCents, totalInCents);
+        });
         if (!invoiceData.dueDate) {
             throw new Error(`La factura con ID ${invoiceData.id} no tiene fecha de vencimiento en la base de datos.`);
         }

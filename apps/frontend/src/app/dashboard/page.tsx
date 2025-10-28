@@ -54,12 +54,20 @@ export default async function DashboardPage() {
               <FileText className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900">InvoiceFlow</span>
             </div>
-            <Link href="/create-invoice">
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-4 w-4 mr-2" />
-                New Invoice
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/create-invoice">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Invoice
+                </Button>
+              </Link>
+              <Link href="/customers/new">
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Crear cliente
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

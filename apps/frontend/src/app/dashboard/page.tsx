@@ -6,6 +6,9 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import Link from "next/link";
 import { getDashboardStats, getRecentInvoices, InvoiceSummary } from "@/lib/api-service";
+import UserMenu from "../components/auth/UserMenu";
+import InvoiceActions from "../components/invoice/InvoiceActions";
+
 
 
 export default async function DashboardPage() {
@@ -67,6 +70,7 @@ export default async function DashboardPage() {
                   Crear cliente
                 </Button>
               </Link>
+              <UserMenu />
             </div>
           </div>
         </div>
@@ -128,9 +132,12 @@ export default async function DashboardPage() {
                       <td className="py-2">{getStatusBadge(invoice.status)}</td>
                       <td className="py-2">{invoice.date}</td>
                       <td className="py-2 text-right">
-                        <Link href={`/invoices/${invoice.id}`}>
-                          <Button variant="ghost" size="sm">Ver</Button>
-                        </Link>
+                        <div className="flex justify-end gap-2">
+                          <Link href={`/invoices/${invoice.id}`}>
+                            <Button variant="ghost" size="sm">Ver</Button>
+                          </Link>
+                          <InvoiceActions invoiceId={invoice.id} currentStatus={invoice.status} />
+                        </div>
                       </td>
                     </tr>
                   ))}

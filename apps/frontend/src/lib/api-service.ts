@@ -182,3 +182,39 @@ export async function createCustomer(
         throw error;
     }
 }
+
+// Actualiza el estado de una factura
+export async function updateInvoiceStatus(
+    accessToken: string,
+    invoiceId: string,
+    status: 'paid' | 'pending' | 'overdue' | 'cancelled'
+): Promise<Invoice> {
+    // El backend espera los estados en MAYÚSCULAS
+    const statusMap: Record<string, string> = {
+        paid: 'PAID',
+        pending: 'PENDING',
+        overdue: 'OVERDUE',
+        cancelled: 'CANCELLED',
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/invoices/${invoiceId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: statusMap[status] ?? status.toUpperCase() })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Failed to update invoice status: ${response.status} ${errText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating invoice status:', error);
+        throw error;
+    }
+}

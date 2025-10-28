@@ -22,7 +22,9 @@ const CreateInvoiceSchema = z.object({
 export class CreateInvoiceDto extends createZodDto(CreateInvoiceSchema) {}
 
 // --- Actualizar Factura ---
-const UpdateInvoiceSchema = CreateInvoiceSchema.partial();
+const UpdateInvoiceSchema = CreateInvoiceSchema.partial().extend({
+  status: z.enum(['DRAFT', 'PENDING', 'PAID', 'CANCELLED', 'OVERDUE']).optional(),
+});
 
 export class UpdateInvoiceDto extends createZodDto(UpdateInvoiceSchema) {}
 

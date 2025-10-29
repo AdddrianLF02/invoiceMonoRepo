@@ -36,22 +36,37 @@ export class UpdateInvoiceUseCase {
       throw new NotFoundException(`Invoice with ID ${id} not found`);
     }
 
-    const currentInvoice = invoice;
-
+    // Estrategias de actualización basadas en el estado actual del agregado (inmutables)
     const updateStrategies = {
-      customerId: (val: string) => currentInvoice.updateCustomerId(CustomerId.fromString(val)),
-      status: (val: string) => currentInvoice.updateStatus(InvoiceStatus.fromString(val)),
-      issueDate: (val: Date) => currentInvoice.updateIssueDate(val),
-      dueDate: (val: Date) => currentInvoice.updateDueDate(val),
-    };
+      customerId: (inv: Invoice, val: string) => inv.updateCustomerId(CustomerId.fromString(val)),
+      status: (inv: Invoice, val: string) => {
+        // Usamos los métodos de dominio para respetar las invariantes de negocio
+        switch (val) {
+          case 'PAID':
+            return inv.markAsPaid();
+          case 'PENDING':
+            return inv.markAsPending();
+          case 'CANCELLED':
+            return inv.cancel();
+          case 'OVERDUE':
+            return inv.markAsOverdue();
+          case 'DRAFT':
+            // Vuelta a borrador (poco habitual). Si se permite, usamos updateStatus directo.
+            return inv.updateStatus(InvoiceStatus.fromString(val));
+          default:
+            return inv.updateStatus(InvoiceStatus.fromString(val));
+        }
+      },
+      issueDate: (inv: Invoice, val: Date) => inv.updateIssueDate(val),
+      dueDate: (inv: Invoice, val: Date) => inv.updateDueDate(val),
+    } as const;
 
     for (const key of Object.keys(input) as Array<keyof UpdateInvoiceDto>) {
-      if (key in updateStrategies) {
-        const strategy = updateStrategies[key as keyof typeof updateStrategies];
-        const value = input[key];
-        if (strategy && value !== undefined) {
-          invoice = strategy(value as any);
-        }
+      const value = input[key];
+      if (value === undefined) continue;
+      const strategy = updateStrategies[key as keyof typeof updateStrategies];
+      if (strategy) {
+        invoice = strategy(invoice!, value as any);
       }
     }
 

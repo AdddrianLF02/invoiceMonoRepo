@@ -34,15 +34,19 @@ export default async function DashboardPage() {
 
   // Función para mostrar el estado de la factura con el color adecuado
   const getStatusBadge = (status: InvoiceSummary['status']) => {
-    const statusClasses = {
+    const statusClasses: Record<InvoiceSummary['status'], string> = {
       paid: "bg-green-100 text-green-800",
       pending: "bg-yellow-100 text-yellow-800",
-      overdue: "bg-red-100 text-red-800"
+      overdue: "bg-red-100 text-red-800",
+      cancelled: "bg-gray-200 text-gray-700",
+      draft: "bg-blue-100 text-blue-800",
     };
-    
+
+    const label = status.charAt(0).toUpperCase() + status.slice(1);
+    const cls = statusClasses[status] ?? "bg-gray-100 text-gray-800";
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusClasses[status]}`}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${cls}`}>
+        {label}
       </span>
     );
   };

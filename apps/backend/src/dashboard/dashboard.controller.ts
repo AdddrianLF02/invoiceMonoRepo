@@ -79,11 +79,16 @@ export class DashboardController {
       const clientName = customerNameById.get(inv.getCustomerId().getValue()) ?? 'Unknown';
       const amount = inv.getTotal().getAmountAsFloat();
       const date = inv.getIssueDate().toISOString().slice(0, 10);
-      const status = inv.getStatus().isPaid()
+      const s = inv.getStatus();
+      const status = s.isPaid()
         ? 'paid'
-        : inv.getStatus().isOverdue()
+        : s.isOverdue()
           ? 'overdue'
-          : 'pending';
+          : s.isCancelled()
+            ? 'cancelled'
+            : s.isDraft()
+              ? 'draft'
+              : 'pending';
 
       return { id, number, clientName, amount, status, date };
     });

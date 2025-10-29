@@ -4,15 +4,17 @@ import { Button } from "../../components/ui/button";
 import { useSession } from "next-auth/react";
 import { updateInvoiceStatus } from "@/lib/api-service";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Props {
   invoiceId: string;
-  currentStatus: 'paid' | 'pending' | 'overdue' | 'draft';
+  currentStatus: 'paid' | 'pending' | 'overdue' | 'draft' | 'cancelled';
 }
 
 export default function InvoiceActions({ invoiceId, currentStatus }: Props) {
   const { data: session } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
+  const router = useRouter();
 
   const accessToken = (session as any)?.accessToken ?? (session as any)?.token?.accessToken;
 
@@ -24,7 +26,11 @@ export default function InvoiceActions({ invoiceId, currentStatus }: Props) {
     try {
       setLoading(next);
       const updated = await updateInvoiceStatus(accessToken, invoiceId, next);
-      toast.success(`Factura ${updated.invoiceNumber ?? invoiceId} actualizada a ${updated.status}`);
+      const status = String(updated.status).toLowerCase();
+      const statusLabel = status === 'paid' ? 'pagada' : status === 'cancelled' ? 'cancelada' : status;
+      toast.success(`Factura ${updated.invoiceNumber ?? invoiceId} actualizada: ${statusLabel}`);
+      // Forzar refresco de datos del Server Component para reflejar el nuevo estado
+      router.refresh();
     } catch (e: any) {
       toast.error(e?.message ?? "Error actualizando estado");
     } finally {
@@ -33,7 +39,7 @@ export default function InvoiceActions({ invoiceId, currentStatus }: Props) {
   };
 
   const canMarkPaid = currentStatus === 'pending' || currentStatus === 'overdue';
-  const canCancel = currentStatus === 'pending' || currentStatus === 'overdue' || currentStatus === 'draft';
+  const canCancel = (currentStatus === 'pending' || currentStatus === 'overdue' || currentStatus === 'draft');
 
   return (
     <div className="flex gap-2">

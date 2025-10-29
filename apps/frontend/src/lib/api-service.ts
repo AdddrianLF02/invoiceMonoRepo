@@ -16,7 +16,7 @@ export interface InvoiceSummary {
     number: string;
     clientName: string;
     amount: number;
-    status: 'paid' | 'pending' | 'overdue';
+    status: 'paid' | 'pending' | 'overdue' | 'cancelled' | 'draft';
     date: string;
 }
 
@@ -24,6 +24,7 @@ export interface InvoiceSummary {
 export async function getDashboardStats(accessToken: string): Promise<DashboardStats> {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
+            cache: 'no-store',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
@@ -31,19 +32,33 @@ export async function getDashboardStats(accessToken: string): Promise<DashboardS
         });
 
         if(!response.ok) {
-            throw new Error('Failed to fetch dashboard stats');
+            console.warn(`Failed to fetch dashboard stats: ${response.status} ${response.statusText}`);
+            // Fallback seguro para permitir renderizar el dashboard sin romper la página
+            return {
+                totalRevenue: 0,
+                totalInvoices: 0,
+                totalCustomers: 0,
+                growthRate: 0,
+            };
         }
 
         return await response.json();
     } catch(error) {
         console.error('Error fetching dashboard stats:', error);
-        throw error;
+        // Fallback en caso de error de red/servidor
+        return {
+            totalRevenue: 0,
+            totalInvoices: 0,
+            totalCustomers: 0,
+            growthRate: 0,
+        };
     }
 }
 
 export async function getRecentInvoices(accessToken: string): Promise<InvoiceSummary[]> {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard/recent-invoices`, {
+            cache: 'no-store',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'

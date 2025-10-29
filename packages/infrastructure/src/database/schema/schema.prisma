@@ -8,10 +8,11 @@ datasource db {
 }
 
 enum InvoiceStatus {
-  DRAFT
-  SENT
-  PAID
-  VOID
+  DRAFT
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
 }
 
 model User {

@@ -24,7 +24,10 @@ const getTemplateComponent = (templateName: string) => {
 // --- Props para la página ---
 interface PrintInvoicePageProps {
   params: { id: string };
-  searchParams: { template?: string }; // Recibimos el nombre de la plantilla como query param
+  searchParams: { 
+    template?: string 
+    token?: string
+  }; // Recibimos el nombre de la plantilla como query param
 }
 
 // --- El Server Component ---
@@ -32,22 +35,16 @@ export default async function PrintInvoicePage({ params, searchParams }: PrintIn
   const { id } = params;
   const templateName = searchParams.template || 'classic'; // Plantilla por defecto
 
-  // 1. Autenticación (¡Importante!) - El backend (Puppeteer) necesitará enviar un token válido
-  //    Considera un mecanismo seguro, como un token de corta duración específico para esta tarea.
-  //    Por ahora, usaremos la sesión del usuario que solicita, pero esto debe revisarse.
-  const session = await getServerSession(authOptions);
-  const accessToken = (session as any)?.accessToken ?? (session as any)?.token?.accessToken;
-
-  if (!accessToken) {
-     // Si Puppeteer no está autenticado, no debería poder ver la factura
-     // Podrías devolver un 401 aquí, pero notFound (404) oculta la existencia de la ruta
-     notFound();
+  const printToken = searchParams.token || '';
+  if (!printToken) {
+    console.warn('Acceso denegado a ruta de impresión: Sin token.')
+    notFound();
   }
 
   // 2. Obtener datos de la factura
   let invoiceData: Invoice | null = null;
   try {
-    invoiceData = await getInvoiceById(accessToken, id);
+    invoiceData = await getInvoiceById(printToken, id);
   } catch (error) {
     console.error("Error fetching invoice for print:", error);
     // Si hay un error (ej: factura no encontrada o problema de permisos), devuelve 404

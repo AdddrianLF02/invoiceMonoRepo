@@ -17,6 +17,7 @@ import { PdfGenerationModule } from './pdf-generation/pdf-generation.module';
         port: 6379
       }
     }),
+    
     InvoicesModule,  
     CustomersModule,  
     AuthModule,

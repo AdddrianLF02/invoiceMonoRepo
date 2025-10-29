@@ -51,7 +51,7 @@ function useMappedInvoiceState(invoice: Invoice) {
 
 export default function InvoiceDetailClient({ invoice }: Props) {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType>('modern');
-  const { isGenerating, generatePDF } = useInvoicePDF();
+  const { isGenerating, requestPDFGeneration } = useInvoicePDF();
   const { data: session } = useSession();
   const router = useRouter();
   const accessToken = (session as any)?.accessToken ?? (session as any)?.token?.accessToken;
@@ -72,7 +72,7 @@ export default function InvoiceDetailClient({ invoice }: Props) {
   const previewState = { ...state, selectedTemplate } as typeof state;
 
   const onGenerate = async () => {
-    await generatePDF(invoice, 'invoice-preview', selectedTemplate);
+    await requestPDFGeneration(invoice.id, selectedTemplate);
   };
 
   const onEditToggle = () => setEditing((v) => !v);

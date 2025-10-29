@@ -39,9 +39,10 @@ import { InvoiceResponseSwaggerDto } from './dtos/response/invoice-swagger-respo
 import { UpdateInvoiceSwaggerRequestDto } from './dtos/request/update-invoice-swagger-request.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { InjectQueue } from '@nestjs/bullmq';
-import { PDF_GENERATION_QUEUE } from '../pdf-generation/pdf-generation.module'; // <-- CORRECTO
+
 import { Queue } from 'bullmq';
 import { GeneratePdfRequestDto } from './dtos/request/generate-pdf-swagger-request.dto';
+import { PDF_GENERATION_QUEUE } from 'src/pdf-generation/pdf-generation.token';
 
 
 @ApiTags('Invoices')
@@ -156,7 +157,7 @@ export class InvoiceController {
     @Req() req: any,
     body: GeneratePdfRequestDto,
   ): Promise<{ jobId: string }> { // Devuelve el ID del trabajo encolado
-    const userId = req.user.sub;
+    const userId = req.user;
     if (!userId) {
       throw new InternalServerErrorException('No se pudo obtener el ID del usuario.');
     }

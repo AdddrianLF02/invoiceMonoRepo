@@ -3,10 +3,10 @@ import { BullModule } from '@nestjs/bullmq'; // Importa BullModule para manejar 
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Importa ConfigModule y ConfigService
 import { PdfGenerationProcessor } from './pdf-generation.processor';
 import { AuthModule } from 'src/auth/auth.module';
+import { PDF_GENERATION_QUEUE } from './pdf-generation.token';
 // Importaremos el Processor más adelante cuando lo creemos
 // import { PdfGenerationProcessor } from './pdf-generation.processor';
 
-export const PDF_GENERATION_QUEUE = 'pdf-generation'; // Nombre de la cola
 
 @Module({
   imports: [

@@ -12,6 +12,7 @@
   "dependencies": {
     "@repo/core": "*",
     "nestjs-zod": "^1.0.0",
+    "merge-deep": "^3.0.3",
     "zod": "^4.1.11"
     
   },

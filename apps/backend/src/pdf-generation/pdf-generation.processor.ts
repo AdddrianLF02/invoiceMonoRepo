@@ -1,4 +1,4 @@
-import { Processor, OnWorkerEvent } from '@nestjs/bullmq';
+import { Processor, OnWorkerEvent, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { Logger, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config'; // Para leer URLs, etc.
@@ -7,8 +7,8 @@ import * as fs from 'fs/promises'; // Para guardar localmente (ejemplo)
 import * as path from 'path'; // Para construir rutas de archivo
 
 // Importamos el nombre de la cola
-import { PDF_GENERATION_QUEUE } from "./pdf-generation.module";
 import { JwtService } from '@nestjs/jwt';
+import { PDF_GENERATION_QUEUE } from './pdf-generation.token';
 
 
 // Interfaz para la data esperada en el Job
@@ -22,7 +22,7 @@ interface PdfJobData {
 @Processor(PDF_GENERATION_QUEUE, {
     concurrency: 2, // Procesar máximo 2 trabajos a la vez (ajusta según tus necesidades)
 })
-export class PdfGenerationProcessor {
+export class PdfGenerationProcessor extends WorkerHost {
     private readonly logger = new Logger(PdfGenerationProcessor.name);
 
     constructor(
@@ -31,10 +31,12 @@ export class PdfGenerationProcessor {
         // Aquí podrías inyectar otros servicios si los necesitas, ej:
         // private readonly invoiceService: InvoiceService, // Para obtener datos de factura si es necesario
         // private readonly storageService: StorageService, // Para subir a S3
-    ) {}
+    ) {
+        super();
+    }
 
     // Este método procesará los trabajos con el nombre 'generate-invoice-pdf'
-    async handleGeneratePdf(job: Job<PdfJobData>) {
+    async process(job: Job<PdfJobData>) {
         const { invoiceId, templateName, userId } = job.data;
         this.logger.log(`Processing job ${job.id} for invoice ${invoiceId} with template ${templateName}`);
 

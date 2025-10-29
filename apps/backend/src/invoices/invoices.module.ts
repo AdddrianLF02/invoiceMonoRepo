@@ -27,11 +27,13 @@ import { UpdateInvoicePresenter } from './presenters/update-invoice.presenter';
 import { InfrastructureModule } from 'src/modules/infrastructure.module';
 import { ApplicationModule } from 'src/modules/application.module';
 import {  REQUEST } from '@nestjs/core';
+import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
 
 @Module({
   imports: [
     InfrastructureModule,
     ApplicationModule,
+    PdfGenerationModule
   ],
   controllers: [InvoiceController],
   providers: [
@@ -42,7 +44,7 @@ import {  REQUEST } from '@nestjs/core';
       useFactory: (req) => req.res,
       inject: [REQUEST],
     },
-
+    
     // --- CREATE ---
     CreateInvoiceUseCase,
     {

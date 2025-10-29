@@ -1,16 +1,19 @@
-version: '3.8'
 services:
-  postgres:
-    image: postgres:13
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: invoice_db
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    redis:
+      image: redis:7-alpine # Imagen oficial ligera de Redis
+      container_name: invoicemonorepo-redis # Nombre descriptivo
+      ports:
+        - "6379:6379" # Mapea el puerto 6379 del contenedor al puerto 6379 del host
+      volumes:
+        - redis_data:/data # (Opcional) Persiste los datos de Redis en un volumen Docker
+      restart: unless-stopped # Reinicia Redis automáticamente si se detiene
+      networks:
+        - default # Asegúrate de que el servicio de Redis esté en la misma red que el de PostgreSQL	
 
 volumes:
-  postgres_data:
+  redis_data: # (Opcional) Persiste los datos de Redis en un volumen Docker
+
+# Definición de Redes ( opcional pero recomendado )
+networks:
+  default: # Define una red por defecto si no tienes una ya
+    driver: bridge # Utiliza el driver bridge para crear una red simple y fácil de usar

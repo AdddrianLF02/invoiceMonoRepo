@@ -1,6 +1,6 @@
-import { Processor, Process, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bullmq';
+import { Processor, OnWorkerEvent } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { Logger, Injectable, NotFoundException } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config'; // Para leer URLs, etc.
 import * as puppeteer from 'puppeteer';
 import * as fs from 'fs/promises'; // Para guardar localmente (ejemplo)
@@ -34,7 +34,6 @@ export class PdfGenerationProcessor {
     ) {}
 
     // Este método procesará los trabajos con el nombre 'generate-invoice-pdf'
-    @Process('generate-invoice-pdf')
     async handleGeneratePdf(job: Job<PdfJobData>) {
         const { invoiceId, templateName, userId } = job.data;
         this.logger.log(`Processing job ${job.id} for invoice ${invoiceId} with template ${templateName}`);
@@ -53,7 +52,7 @@ export class PdfGenerationProcessor {
             })
             // Construimos la URL del frontend 
             const frontendBaseUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000'); // Lee desde .env
-            const printUrl = `${frontendBaseUrl}/print/invoice/${invoiceId}?template=${templateName}`;
+            const printUrl = `${frontendBaseUrl}/print/invoice/${invoiceId}?template=${templateName}&token=${printToken}`;
             this.logger.debug(`URL a renderizar: ${printUrl}`);
 
             // Lanzamos Puppeteer
@@ -125,11 +124,11 @@ export class PdfGenerationProcessor {
 
     // HANDLERS DE EVENTOS DE LA COLA ( OPCIONAL PERO ÚTIL )
 
-    @OnQueueActive()
+    @OnWorkerEvent('active')
     onActive(job: Job) {
         this.logger.log(`Job ${job.id} para factura ${job.data.invoiceId} ha comenzado`);
     }
-    @OnQueueCompleted()
+    @OnWorkerEvent('completed')
     onCompleted(job: Job, result: any) {
         this.logger.log(`Job ${job.id} completado con resultado: ${JSON.stringify(result)}`);
         // Aquí podrías:
@@ -138,9 +137,9 @@ export class PdfGenerationProcessor {
         //    Ej: this.notificationService.notifyUser(job.data.userId, `Tu PDF ${result.filePath} está listo.`);
     }
 
-  @OnQueueFailed()
-  onFailed(job: Job, err: Error) {
-    this.logger.error(`Job ${job.id} falló después de ${job.attemptsMade} intentos con error: ${err.message}`, err.stack);
-    // Aquí podrías enviar una notificación de error al usuario o a un sistema de monitoreo.
-  }
+    @OnWorkerEvent('failed')
+    onFailed(job: Job, err: Error) {
+        this.logger.error(`Job ${job.id} falló después de ${job.attemptsMade} intentos con error: ${err.message}`, err.stack);
+        // Aquí podrías enviar una notificación de error al usuario o a un sistema de monitoreo.
+    }
 }

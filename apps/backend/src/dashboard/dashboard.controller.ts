@@ -79,6 +79,8 @@ export class DashboardController {
       const clientName = customerNameById.get(inv.getCustomerId().getValue()) ?? 'Unknown';
       const amount = inv.getTotal().getAmountAsFloat();
       const date = inv.getIssueDate().toISOString().slice(0, 10);
+      const createdAt = inv.getCreatedAt().toISOString().slice(0, 10);
+      const dueDate = inv.getDueDate().toISOString().slice(0, 10);
       const s = inv.getStatus();
       const status = s.isPaid()
         ? 'paid'
@@ -90,7 +92,7 @@ export class DashboardController {
               ? 'draft'
               : 'pending';
 
-      return { id, number, clientName, amount, status, date };
+      return { id, number, clientName, amount, status, date, createdAt, dueDate };
     });
 
     return recent;

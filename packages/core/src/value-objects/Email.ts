@@ -1,6 +1,7 @@
-import z from "zod";
+import { z } from "zod";
 
-export const EmailSchema = z.email({ message: "El formato del email es inválido" });
+// Zod no expone un método z.email(); debe ser z.string().email()
+export const EmailSchema = z.string().email({ message: "El formato del email es inválido" });
 
 export class Email {
     private readonly value: string;

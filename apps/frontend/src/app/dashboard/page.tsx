@@ -123,7 +123,8 @@ export default async function DashboardPage() {
                     <th className="py-3 text-left">Client</th>
                     <th className="py-3 text-left">Amount</th>
                     <th className="py-3 text-left">Status</th>
-                    <th className="py-3 text-left">Date</th>
+                    <th className="py-3 text-left">Created</th>
+                    <th className="py-3 text-left">Due</th>
                     <th className="py-3 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -134,7 +135,8 @@ export default async function DashboardPage() {
                       <td className="py-2">{invoice.clientName}</td>
                       <td className="py-2">${invoice.amount.toFixed(2)}</td>
                       <td className="py-2">{getStatusBadge(invoice.status)}</td>
-                      <td className="py-2">{invoice.date}</td>
+                      <td className="py-2">{invoice.createdAt ? new Date(invoice.createdAt).toLocaleDateString() : '-'}</td>
+                      <td className="py-2">{invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : '-'}</td>
                       <td className="py-2 text-right">
                         <div className="flex justify-end gap-2">
                           <Link href={`/invoices/${invoice.id}`}>

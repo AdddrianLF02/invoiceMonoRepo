@@ -18,7 +18,7 @@ export interface Invoice {
   id: string;
   invoiceNumber: string;
   customerId: string;
-  customer: Customer;
+  customer?: Customer;
   status: 'paid' | 'pending' | 'overdue' | 'draft' | 'cancelled';
   issueDate: string;
   dueDate: string;

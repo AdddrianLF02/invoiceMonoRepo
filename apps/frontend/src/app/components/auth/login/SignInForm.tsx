@@ -63,11 +63,11 @@ export function SignInForm() {
         />
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Button type="submit" disabled={isSubmitting}>
+      <Button className='my-2' type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Iniciando sesión...' : 'Sign In'}
       </Button>
       <p>
-        Don't have an account? <Link href="/register">Sign up</Link>
+        Don't have an account? <Link href="/register"><span className='text-purple-500'>Sign up</span></Link>
       </p>
     </form>
   );

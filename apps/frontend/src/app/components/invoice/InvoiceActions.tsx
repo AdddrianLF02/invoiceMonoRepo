@@ -18,7 +18,7 @@ export default function InvoiceActions({ invoiceId, currentStatus }: Props) {
 
   const accessToken = (session as any)?.accessToken ?? (session as any)?.token?.accessToken;
 
-  const handle = async (next: 'paid' | 'cancelled') => {
+  const handle = async (next: 'paid' | 'cancelled' | 'pending') => {
     if (!accessToken) {
       toast.error("No estás autenticado");
       return;
@@ -40,9 +40,20 @@ export default function InvoiceActions({ invoiceId, currentStatus }: Props) {
 
   const canMarkPaid = currentStatus === 'pending' || currentStatus === 'overdue';
   const canCancel = (currentStatus === 'pending' || currentStatus === 'overdue' || currentStatus === 'draft');
+  const canConfirm = currentStatus === 'draft';
 
   return (
     <div className="flex gap-2">
+      {canConfirm && (
+        <Button
+          variant="default"
+          size="sm"
+          disabled={!canConfirm || !!loading}
+          onClick={() => handle('pending')}
+        >
+          {loading === 'pending' ? 'Guardando...' : 'Confirmar'}
+        </Button>
+      )}
       <Button
         variant="secondary"
         size="sm"

@@ -103,27 +103,24 @@ export const authOptions: NextAuthOptions = {
         // `user` será de tipo `CustomUser` SOLO en el primer sign-in, así que lo forzamos.
         // `token` es de tipo `JWT` (de next-auth/jwt) y lo forzamos a `CustomJWT`.
         async jwt({ token, user,  }) {
-            
-            // 'user' lo que retornamos de authorize
-            if(user) {
-                token.accessToken = user.access_token // Almacenamos el JWT de NestJS aquí
-                token.userId = user.id // Almacenamos el ID
+            // 'user' es lo que retornamos de authorize en el primer login
+            if (user) {
+                token.accessToken = (user as any).access_token; // JWT del backend
+                token.userId = user.id; // ID del usuario
+                token.email = user.email; // Email para asegurar disponibilidad en la sesión
             }
-            return token
+            return token;
         },
         
         // SOLUCIÓN: Mismo problema de tipado, usamos la firma genérica y type assertion.
         async session({ session, token }) {
-            
-            // Forzamos el tipo del token para leer las propiedades añadidas
-           session.accessToken = token.accessToken
+            // Propagamos el token del backend
+            (session as any).accessToken = (token as any).accessToken;
 
-            // Hacemos que los datos (ID y Token del backend) estén disponibles en el objeto de sesión
             if (session.user) {
-                session.user.id = token.userId;
-                session.user.email = token.email;
-                // Usamos 'access_token' para ser coherentes con la definición de CustomJWT y el backend
-                session.accessToken = token.accessToken; 
+                (session.user as any).id = (token as any).userId;
+                session.user.email = (token as any).email || session.user.email;
+                (session as any).accessToken = (token as any).accessToken;
             }
             return session;
         },

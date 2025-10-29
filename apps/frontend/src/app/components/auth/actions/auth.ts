@@ -1,7 +1,6 @@
 'use server';
 
 import { RegisterSchema } from "@repo/application";
-import { z } from "zod";
 
 // Tipo compartido
 export interface FormState {

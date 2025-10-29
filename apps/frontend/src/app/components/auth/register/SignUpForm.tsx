@@ -30,9 +30,10 @@ export function SignUpForm() {
     if (state.success && state.data) {
       const result = await signIn("credentials", {
         email: state.data.email,
-        password: state.data.password,
+        // NextAuth CredentialsProvider espera el campo 'pass' (no 'password')
+        pass: state.data.password,
         redirect: true,
-        callbackUrl: "/dashboard"
+        callbackUrl: "/dashboard",
       });
 
       if (!result?.ok) {

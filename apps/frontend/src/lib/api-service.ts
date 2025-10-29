@@ -18,6 +18,9 @@ export interface InvoiceSummary {
     amount: number;
     status: 'paid' | 'pending' | 'overdue' | 'cancelled' | 'draft';
     date: string;
+    // Nuevos campos opcionales expuestos por el backend
+    createdAt?: string;
+    dueDate?: string;
 }
 
 // Función para obtener las estadísticas del dashboard
@@ -78,43 +81,98 @@ export async function getRecentInvoices(accessToken: string): Promise<InvoiceSum
 }
 
 // Función para obtener todas las facturas
-export async function getAllInvoices(accessToken: string): Promise<Invoice[]> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/invoices/all`, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if(!response.ok) {
-            throw new Error('Failed to fetch all invoices');
-        }
-
-        return await response.json();
-    } catch(error) {
-        console.error('Error fetching all invoices:', error);
-        throw error;
-    }
-}
+// Nota: actualmente el backend no expone un endpoint "all" para facturas.
+// Si se necesita un listado, usar getRecentInvoices o implementar un endpoint específico.
 
 // Función para obtener una factura por ID
 export async function getInvoiceById(accessToken: string, invoiceId: string): Promise<Invoice> {
     try {
-        const response = await fetch(`${API_BASE_URL}/invoices/${invoiceId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/v1/invoices/${invoiceId}`, {
+            cache: 'no-store',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             }
         });
 
-        if(!response.ok) {
-            throw new Error('Failed to fetch invoice');
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Failed to fetch invoice: ${response.status} ${errText}`);
+        }
+
+        const raw = await response.json();
+        // Normalizamos el payload del backend (status en mayúsculas, items sin total, etc.)
+        const items = (raw.items ?? []).map((it: any) => ({
+            id: it.id,
+            description: it.description,
+            quantity: Number(it.quantity),
+            unitPrice: Number(it.unitPrice),
+            total: Number(it.quantity) * Number(it.unitPrice),
+        }));
+
+        const subtotal = items.reduce((sum: number, i: any) => sum + i.total, 0);
+        // Calculamos impuesto aproximado a partir de taxRate de cada item si existe (asumimos porcentaje 0-100)
+        const tax = (raw.items ?? []).reduce((sum: number, it: any) => {
+            const q = Number(it.quantity) || 0;
+            const p = Number(it.unitPrice) || 0;
+            const r = Number(it.taxRate) || 0;
+            return sum + (q * p * (r / 100));
+        }, 0);
+        const total = subtotal + tax;
+
+        const normalized: Invoice = {
+            id: raw.id,
+            invoiceNumber: raw.invoiceNumber,
+            customerId: raw.customerId,
+            // customer: puede no venir en la respuesta; mantenemos lo recibido si existe
+            customer: raw.customer ?? undefined,
+            status: String(raw.status).toLowerCase(),
+            issueDate: raw.issueDate,
+            dueDate: raw.dueDate,
+            items,
+            subtotal,
+            tax,
+            total,
+            notes: raw.notes ?? undefined,
+        } as Invoice;
+
+        return normalized;
+    } catch (error) {
+        console.error('Error fetching invoice:', error);
+        throw error;
+    }
+}
+
+// Actualizar una factura (parcial)
+export async function updateInvoice(
+    accessToken: string,
+    invoiceId: string,
+    payload: Partial<{
+        customerId: string;
+        issueDate: string; // ISO datetime
+        dueDate: string;   // ISO datetime
+        items: Array<{ description: string; quantity: number; unitPrice: number; taxRate: number }>;
+        status: 'DRAFT' | 'PENDING' | 'PAID' | 'CANCELLED' | 'OVERDUE';
+    }>
+): Promise<Invoice> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/invoices/${invoiceId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Failed to update invoice: ${response.status} ${errText}`);
         }
 
         return await response.json();
-    } catch(error) {
-        console.error('Error fetching invoice:', error);
+    } catch (error) {
+        console.error('Error updating invoice:', error);
         throw error;
     }
 }

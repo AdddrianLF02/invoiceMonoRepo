@@ -1,7 +1,6 @@
 export * from './dtos/customer.zod';
 export * from './dtos/invoice.zod';
 export * from './dtos/user.zod';
-export * from './dtos/generic';
 export * from './mappers/customer.mapper';
 export * from './mappers/invoice.mapper';
 export * from './use-cases/customer/create-customer.use-case';

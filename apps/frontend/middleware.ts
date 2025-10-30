@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // ✅ Esta es la función requerida
-export function middleware(request: NextRequest) {
+export function middleware(request: NextRequest, response: NextResponse) {
   return NextResponse.next()
 }
 

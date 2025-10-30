@@ -26,7 +26,9 @@ class CreateInvoiceDto extends (0, nestjs_zod_1.createZodDto)(CreateInvoiceSchem
 }
 exports.CreateInvoiceDto = CreateInvoiceDto;
 // --- Actualizar Factura ---
-const UpdateInvoiceSchema = CreateInvoiceSchema.partial();
+const UpdateInvoiceSchema = CreateInvoiceSchema.partial().extend({
+    status: zod_1.z.enum(['DRAFT', 'PENDING', 'PAID', 'CANCELLED', 'OVERDUE']).optional(),
+});
 exports.UpdateInvoiceSchema = UpdateInvoiceSchema;
 class UpdateInvoiceDto extends (0, nestjs_zod_1.createZodDto)(UpdateInvoiceSchema) {
 }

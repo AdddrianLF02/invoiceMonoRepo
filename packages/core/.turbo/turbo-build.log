@@ -1,4 +1,12 @@
 
 > @repo/core@1.0.0 build
-> tsc -p tsconfig.json
+> tsc -p tsconfig.json --no-lint
 
+error TS5023: Unknown compiler option '--no-lint'.
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\LofgDev\invoiceMonoRepo\packages\core
+npm error workspace @repo/core@1.0.0
+npm error location C:\Users\LofgDev\invoiceMonoRepo\packages\core
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c tsc -p tsconfig.json --no-lint

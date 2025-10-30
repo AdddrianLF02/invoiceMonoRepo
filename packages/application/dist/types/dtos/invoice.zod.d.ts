@@ -47,6 +47,13 @@ declare const UpdateInvoiceSchema: z.ZodObject<{
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
     }, z.core.$strip>>>;
+    status: z.ZodOptional<z.ZodEnum<{
+        DRAFT: "DRAFT";
+        PENDING: "PENDING";
+        PAID: "PAID";
+        CANCELLED: "CANCELLED";
+        OVERDUE: "OVERDUE";
+    }>>;
 }, z.core.$strip>;
 declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
     customerId: z.ZodOptional<z.ZodUUID>;
@@ -58,6 +65,13 @@ declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
     }, z.core.$strip>>>;
+    status: z.ZodOptional<z.ZodEnum<{
+        DRAFT: "DRAFT";
+        PENDING: "PENDING";
+        PAID: "PAID";
+        CANCELLED: "CANCELLED";
+        OVERDUE: "OVERDUE";
+    }>>;
 }, z.core.$strip>>;
 export declare class UpdateInvoiceDto extends UpdateInvoiceDto_base {
 }

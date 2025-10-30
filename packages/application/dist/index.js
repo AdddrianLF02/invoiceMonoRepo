@@ -18,7 +18,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./dtos/customer.zod"), exports);
 __exportStar(require("./dtos/invoice.zod"), exports);
 __exportStar(require("./dtos/user.zod"), exports);
-__exportStar(require("./dtos/generic"), exports);
 // Mappers
 __exportStar(require("./mappers/customer.mapper"), exports);
 __exportStar(require("./mappers/invoice.mapper"), exports);

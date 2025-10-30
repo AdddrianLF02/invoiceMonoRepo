@@ -1,5 +1,5 @@
-import z from "zod";
-export declare const EmailSchema: z.ZodEmail;
+import { z } from "zod";
+export declare const EmailSchema: z.ZodString;
 export declare class Email {
     private readonly value;
     private constructor();

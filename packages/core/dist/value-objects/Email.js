@@ -1,11 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Email = exports.EmailSchema = void 0;
-const zod_1 = __importDefault(require("zod"));
-exports.EmailSchema = zod_1.default.email({ message: "El formato del email es inválido" });
+const zod_1 = require("zod");
+// Zod no expone un método z.email(); debe ser z.string().email()
+exports.EmailSchema = zod_1.z.string().email({ message: "El formato del email es inválido" });
 class Email {
     value;
     constructor(email) {

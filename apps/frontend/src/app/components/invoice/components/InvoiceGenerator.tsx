@@ -18,7 +18,7 @@ import { getServerSession } from "next-auth";
 
 const InvoiceGenerator = () => {
   const { state, dispatch, calculations } = useInvoiceState();
-  const { isGenerating, generatePDF } = useInvoicePDF();
+  const { isGenerating, requestPDFGeneration } = useInvoicePDF();
   const { subtotal, tax, total } = calculations;
   const [isPending, startTransition] = useTransition();
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -70,7 +70,7 @@ const InvoiceGenerator = () => {
       };
 
       // PDF en cliente
-      await generatePDF(invoice, "invoice-preview", state.selectedTemplate);
+      await requestPDFGeneration(invoice.id, state.selectedTemplate);
       toast.success("PDF generado correctamente");
     } catch (error) {
       toast.error("Error al generar el PDF");

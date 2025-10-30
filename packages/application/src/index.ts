@@ -2,7 +2,6 @@
 export * from './dtos/customer.zod';
 export * from './dtos/invoice.zod';
 export * from './dtos/user.zod';
-export * from './dtos/generic'
 
 // Mappers
 export * from './mappers/customer.mapper';

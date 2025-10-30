@@ -30,20 +30,37 @@ let UpdateInvoiceUseCase = class UpdateInvoiceUseCase {
         if (!invoice) {
             throw new common_1.NotFoundException(`Invoice with ID ${id} not found`);
         }
-        const currentInvoice = invoice;
+        // Estrategias de actualización basadas en el estado actual del agregado (inmutables)
         const updateStrategies = {
-            customerId: (val) => currentInvoice.updateCustomerId(core_1.CustomerId.fromString(val)),
-            status: (val) => currentInvoice.updateStatus(core_1.InvoiceStatus.fromString(val)),
-            issueDate: (val) => currentInvoice.updateIssueDate(val),
-            dueDate: (val) => currentInvoice.updateDueDate(val),
+            customerId: (inv, val) => inv.updateCustomerId(core_1.CustomerId.fromString(val)),
+            status: (inv, val) => {
+                // Usamos los métodos de dominio para respetar las invariantes de negocio
+                switch (val) {
+                    case 'PAID':
+                        return inv.markAsPaid();
+                    case 'PENDING':
+                        return inv.markAsPending();
+                    case 'CANCELLED':
+                        return inv.cancel();
+                    case 'OVERDUE':
+                        return inv.markAsOverdue();
+                    case 'DRAFT':
+                        // Vuelta a borrador (poco habitual). Si se permite, usamos updateStatus directo.
+                        return inv.updateStatus(core_1.InvoiceStatus.fromString(val));
+                    default:
+                        return inv.updateStatus(core_1.InvoiceStatus.fromString(val));
+                }
+            },
+            issueDate: (inv, val) => inv.updateIssueDate(val),
+            dueDate: (inv, val) => inv.updateDueDate(val),
         };
         for (const key of Object.keys(input)) {
-            if (key in updateStrategies) {
-                const strategy = updateStrategies[key];
-                const value = input[key];
-                if (strategy && value !== undefined) {
-                    invoice = strategy(value);
-                }
+            const value = input[key];
+            if (value === undefined)
+                continue;
+            const strategy = updateStrategies[key];
+            if (strategy) {
+                invoice = strategy(invoice, value);
             }
         }
         if (input.items) {

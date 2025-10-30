@@ -4,7 +4,7 @@ import { Email } from '../value-objects/Email';
 export declare const UserEntitySchema: z.ZodObject<{
     id: z.ZodCUID;
     name: z.ZodNullable<z.ZodOptional<z.ZodString>>;
-    email: z.ZodEmail;
+    email: z.ZodString;
     password: z.ZodString;
     createdAt: z.ZodDate;
     updatedAt: z.ZodDate;

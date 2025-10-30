@@ -2,7 +2,7 @@ import { z } from 'zod';
 export declare const CustomerEntitySchema: z.ZodObject<{
     id: z.ZodString;
     name: z.ZodString;
-    email: z.ZodEmail;
+    email: z.ZodString;
     address: z.ZodObject<{
         street: z.ZodString;
         city: z.ZodString;

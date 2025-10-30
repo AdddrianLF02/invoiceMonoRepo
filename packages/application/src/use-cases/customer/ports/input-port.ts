@@ -1,4 +1,3 @@
-import { Customer } from "@repo/core";
 import { CreateCustomerDto, UpdateCustomerDto } from "../../../dtos/customer.zod";
 
 export const CREATE_CUSTOMER_INPUT_TOKEN = "CREATE_CUSTOMER_INPUT_TOKEN";

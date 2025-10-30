@@ -23,7 +23,7 @@ const getTemplateComponent = (templateName: string) => {
 
 // --- Props para la página (actualizadas) ---
 interface PrintInvoicePageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
   searchParams: { 
     template?: string;
     token?: string; // <-- ¡Aquí recibiremos el token!
@@ -32,7 +32,7 @@ interface PrintInvoicePageProps {
 
 // --- El Server Component (Modificado) ---
 export default async function PrintInvoicePage({ params, searchParams }: PrintInvoicePageProps) {
-  const { id } = params;
+  const { id } = await params;
   const templateName = searchParams.template || 'classic';
   
   // --- 1. NUEVA Autenticación (basada en el token de la URL) ---

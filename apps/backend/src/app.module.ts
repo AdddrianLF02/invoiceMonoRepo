@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config'
 import { DashboardModule } from './dashboard/dashboard.module';
 import { BullModule } from '@nestjs/bullmq';
 import { PdfGenerationModule } from './pdf-generation/pdf-generation.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guards/auth.guard';
 
 @Module({
   imports: 
@@ -25,6 +27,11 @@ import { PdfGenerationModule } from './pdf-generation/pdf-generation.module';
     PdfGenerationModule
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    }
+  ],
 })
 export class AppModule {}

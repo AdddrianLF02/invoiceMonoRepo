@@ -8,10 +8,8 @@ import {
   Post,
   Put,
   UsePipes,
-  UseInterceptors,
   Inject,
   Res,
-  UseGuards,
   Req,
   Logger,
   HttpCode,
@@ -37,7 +35,6 @@ import {
 import { CreateInvoiceSwaggerRequestDto } from './dtos';
 import { InvoiceResponseSwaggerDto } from './dtos/response/invoice-swagger-response.dto';
 import { UpdateInvoiceSwaggerRequestDto } from './dtos/request/update-invoice-swagger-request.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { InjectQueue } from '@nestjs/bullmq';
 
 import { Queue } from 'bullmq';
@@ -48,7 +45,6 @@ import { PDF_GENERATION_QUEUE } from 'src/pdf-generation/pdf-generation.token';
 @ApiTags('Invoices')
 @Controller('api/v1/invoices')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 
 export class InvoiceController {
   private readonly logger = new Logger(InvoiceController.name); // Logger para trazabilidad
@@ -141,55 +137,59 @@ export class InvoiceController {
     await this.deleteInvoiceUseCase.execute(id);
   }
 
-  @Post(':id/generate-pdf') // Define la ruta POST
-  @HttpCode(HttpStatus.ACCEPTED) // Establece el código de estado HTTP a 202 Accepted
+  @Post(':id/generate-pdf')
+  @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ summary: 'Solicita la generación asíncrona de un PDF para una factura' })
   @ApiParam({ name: 'id', description: 'ID de la factura (UUID)', type: String })
   @ApiBody({ type: GeneratePdfRequestDto }) // Documenta el cuerpo esperado
-  @ApiResponse({ status: 202, description: 'La solicitud de generación de PDF ha sido aceptada y encolada.', schema: { example: { jobId: '123' } } })
-  @ApiResponse({ status: 400, description: 'Solicitud inválida (ej: ID no es UUID, templateName inválido).' })
-  @ApiResponse({ status: 401, description: 'No autorizado.' })
-  @ApiResponse({ status: 404, description: 'Factura no encontrada (esto se validará en el worker).' }) // Nota: El controlador no verifica si la factura existe, eso lo hará el worker
-  @ApiResponse({ status: 500, description: 'Error interno al añadir el trabajo a la cola.' })
+  @ApiResponse({ status: 202, description: 'Solicitud encolada' })
+  @ApiResponse({ status: 400, description: 'Solicitud inválida' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 500, description: 'Error interno' })
   async requestPdfGeneration(
-    @Param('id', ParseUUIDPipe) invoiceId: string, // Valida que el ID sea un UUID
-    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) // Valida el DTO del cuerpo
-    @Req() req: any,
-    body: GeneratePdfRequestDto,
-  ): Promise<{ jobId: string }> { // Devuelve el ID del trabajo encolado
-    const userId = req.user;
-    if (!userId) {
-      throw new InternalServerErrorException('No se pudo obtener el ID del usuario.');
-    }
-    const { templateName } = body;
-    this.logger.log(`Solicitud recibida para generar PDF de factura ${invoiceId} con plantilla ${templateName}`);
+    @Param('id', ParseUUIDPipe) invoiceId: string,
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) 
+    body: GeneratePdfRequestDto, // <-- Parámetro de body CORREGIDO
+    @Req() req: any, // <-- @Req() viene DESPUÉS de @Body()
+  ): Promise<{ jobId: string }> {
 
+    // --- LÓGICA CORREGIDA ---
+    // El AuthGuard pone el payload en req.user. El ID es req.user.sub
+    const userId = req.user?.sub; 
+    
+    if (!userId) {
+      // Este error ahora sí tiene sentido. Si el guardián fallara, nunca llegaría aquí.
+      // Si llega aquí sin userId, es un problema de configuración.
+      this.logger.error('Fallo crítico: El AuthGuard se ejecutó pero req.user.sub no está disponible.', req.user);
+      throw new InternalServerErrorException('No se pudo obtener el ID del usuario desde el token.');
+    }
+    // --- FIN DE LA CORRECCIÓN ---
+
+    const { templateName } = body;
+    this.logger.log(`Solicitud recibida de [User: ${userId}] para generar PDF de factura ${invoiceId} con plantilla ${templateName}`);
+
+    interface PdfJob {
+      invoiceId: string;
+      templateName: string;
+      userId: string;
+    }
     try {
-      // Define los datos que necesita el worker
-      const jobData = {
+      const jobData: PdfJob = { // Tipado fuerte
         invoiceId,
         templateName,
-        userId
-        // Podrías añadir aquí el ID del usuario que solicitó, si es necesario para permisos en el worker
-        // userId: req.user.id // (Necesitarías inyectar @Req y obtener el usuario)
+        userId: userId, // Pasamos el ID (string), no el objeto req.user
       };
 
-      // Añade el trabajo a la cola 'pdf-generation'
-      // El primer argumento es el *nombre* del tipo de trabajo (lo usará el Processor)
       const job = await this.pdfQueue.add('generate-invoice-pdf', jobData, {
-         // Opciones específicas para este trabajo (opcional, sobrescriben los defaults)
-         jobId: `pdf-${invoiceId}-${Date.now()}` // Genera un ID de trabajo predecible/único (opcional)
+         jobId: `pdf-${invoiceId}-${userId}-${Date.now()}` // ID de trabajo único
       });
 
       this.logger.log(`Trabajo de generación de PDF encolado con ID: ${job.id}`);
-
-      // Devuelve el ID del trabajo al cliente
-      return { jobId: job?.id || 'unknown' };
+      return { jobId: job.id as string };
 
     } catch (error) {
       const err = error as Error;
       this.logger.error(`Error al añadir trabajo de generación de PDF a la cola para factura ${invoiceId}: ${err.message}`, err.stack);
-      // Lanza una excepción HTTP estándar si falla el encolado
       throw new InternalServerErrorException('No se pudo iniciar la generación del PDF. Inténtalo de nuevo más tarde.');
     }
   }

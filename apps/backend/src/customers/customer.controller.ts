@@ -1,10 +1,7 @@
-import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UseInterceptors, UsePipes, UseGuards, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UsePipes, Req, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
-import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
-import {
-    CustomerEntitySchema,
-} from '@repo/core'
+import { ZodValidationPipe } from 'nestjs-zod';
 import {
   CREATE_CUSTOMER_INPUT_TOKEN,
     CreateCustomerDto,
@@ -16,13 +13,11 @@ import {
     UpdateCustomerDto
 } from '@repo/application'
 import type { CreateCustomerInputPort, GetAllCustomersInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CreateCustomerSwaggerRequestDto } from './dtos/request/create-customer-swagger-request.dto';
 
 @ApiTags('Customers')
 @Controller('api/v1/customers')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 export class CustomerController {
   constructor(
     @Inject(CREATE_CUSTOMER_INPUT_TOKEN)

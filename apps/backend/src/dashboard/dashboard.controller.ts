@@ -1,6 +1,5 @@
 import { Controller, Get, UseGuards, Inject, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
 import type { IUnitOfWork } from '@repo/core';
 import { UNIT_OF_WORK, UserId } from '@repo/core';
 
@@ -8,7 +7,6 @@ import { UNIT_OF_WORK, UserId } from '@repo/core';
 @ApiTags('Dashboard')
 @Controller('dashboard')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 export class DashboardController {
   constructor(
     @Inject(UNIT_OF_WORK) private readonly uow: IUnitOfWork,

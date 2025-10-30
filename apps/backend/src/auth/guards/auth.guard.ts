@@ -4,9 +4,11 @@ import { Request } from "express";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from '@nestjs/config';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { Logger } from '@nestjs/common'; // <-- Importa Logger
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+    private readonly logger = new Logger(AuthGuard.name); // <-- Añade una instancia de Logger
     constructor(
         private jwtService: JwtService,
         private reflector: Reflector,
@@ -20,33 +22,28 @@ export class AuthGuard implements CanActivate {
             context.getHandler(),
             context.getClass(),
         ]);
-        console.log('Is Public:', isPublic);
+        const request = context.switchToHttp().getRequest();
+        this.logger.debug(`Ruta: ${request.url} - ¿Es Pública?: ${isPublic}`);
+
         if (isPublic) {
             return true;
         }
 
-        const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
-        
-        console.log('[AuthGuard] Authorization header:', request.headers.authorization);
-        console.log('[AuthGuard] Extracted token:', token ? 'Token present' : 'No token');
-        
         if (!token) {
+            this.logger.warn('No se ha proporcionado un token en la solicitud');
             throw new UnauthorizedException('No se ha proporcionado un token');
         }
+        
 
         try {
-            const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'una-clave-secreta-muy-segura-en-desarrollo';
-            console.log('[AuthGuard] Using JWT secret for verification:', jwtSecret.substring(0, 10) + '...');
-            
+           
             const payload = await this.jwtService.verifyAsync(token, {
-                secret: jwtSecret
+                secret: this.configService.get<string>('JWT_SECRET') || 'una-clave-secreta-muy-segura-en-desarrollo'
             });
             
-            console.log('[AuthGuard] Token verified successfully, payload:', { sub: payload.sub, email: payload.email });
-            
-            // Asignar el payload del usuario a la request
             request['user'] = payload;
+            this.logger.debug('[AuthGuard] Token verified successfully, payload:', { sub: payload.sub, email: payload.email });
         } catch (error) {
             const err = error as Error;
             console.log('[AuthGuard] Token verification failed:', err.message);

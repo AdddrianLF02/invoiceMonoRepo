@@ -1,27 +1,5 @@
-import NextAuth, { NextAuthOptions, User } from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-// Para asegurar que los tipos de la sesión son correctos
-// Importamos JWT de next-auth/jwt con un alias para evitar conflictos
-import { JWT } from "next-auth/jwt";
-
-// Reutilizamos el schema de validación que ya tenemos en nuestro paquete core
-
-
-// **Definiciones de Tipos Personalizadas (Correctas)**
-// Nota: NextAuth ya tiene su propia definición de User y JWT. 
-// Las mantenemos aquí para que la lógica interna sea legible,
-// pero usamos type assertion en los callbacks.
-interface CustomUser extends User {
-    id: string;
-    email: string;
-    access_token: string;
-}
-
-interface CustomJWT extends JWT {
-    id: string;
-    email: string;
-    access_token: string; // Coherente con el backend (snake_case)
-}
 
 
 export const authOptions: NextAuthOptions = {
@@ -33,14 +11,14 @@ export const authOptions: NextAuthOptions = {
                 pass: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: 'POST',
-        body: JSON.stringify({
-            email: credentials?.email,
-            pass: credentials?.pass
-        }),
-        headers: { 'Content-Type': 'application/json' }
-    });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: credentials?.email,
+                    pass: credentials?.pass
+                }),
+                headers: { 'Content-Type': 'application/json' }
+        });
 
     if (!res.ok) {
          console.error("Backend request failed with status:", res.status, res.statusText);

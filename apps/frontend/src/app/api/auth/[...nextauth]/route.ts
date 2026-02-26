@@ -11,65 +11,48 @@ export const authOptions: NextAuthOptions = {
                 pass: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    email: credentials?.email,
-                    pass: credentials?.pass
-                }),
-                headers: { 'Content-Type': 'application/json' }
-        });
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000/api/v1';
+                // Backend expects /auth/login, not /api/v1/auth/login, let's target port 3000
+                const baseUrl = apiUrl.includes('4000') ? 'http://localhost:4000' : apiUrl.replace('/api/v1', '');
 
-    if (!res.ok) {
-         console.error("Backend request failed with status:", res.status, res.statusText);
-         // Intenta leer el cuerpo del error como texto si existe
-         try {
-            const errorBody = await res.text();
-            console.error("Backend error body:", errorBody);
-         } catch (e) {
-            console.error("Could not read error body as text.");
-         }
-         return null; // Retorna null si la respuesta no es OK
-    }
+                try {
+                    const res = await fetch(`${baseUrl}/auth/login`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            email: credentials?.email,
+                            pass: credentials?.pass
+                        }),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
 
-    // Si la respuesta es OK (2xx), intenta leer y parsear el cuerpo
-    try {
-        // Primero, intenta leer el cuerpo como texto para ver qué devuelve realmente
-        const responseBodyText = await res.text();
-        console.log("Raw backend response body (text):", responseBodyText);
+                    if (!res.ok) {
+                        const errorText = await res.text();
+                        console.error("Backend login failed:", res.status, errorText);
+                        return null;
+                    }
 
-        // Ahora, intenta parsear ese texto como JSON
-        const data = JSON.parse(responseBodyText);
-        console.log("Data from backend (parsed JSON):", data); // <--- Ahora debería llegar aquí si el JSON es válido
+                    const data = await res.json();
 
-        // ... (el resto de tu lógica if/else para data) ...
-         if (data && data.access_token && data.user && data.user.id && data.user.email) {
-             return {
-                 id: data.user.id,
-                 email: data.user.email,
-                 access_token: data.access_token, // Usar snake_case como viene del backend
-                 name: data.user.name
-             };
-         } else {
-             console.error("Parsed backend response missing expected fields.");
-             console.log("Detailed checks:");
-             console.log("Check data:", !!data);
-             console.log("Check data.access_token:", !!data?.access_token);
-             console.log("Check data.user:", !!data?.user);
-             console.log("Check data.user.id:", !!data?.user?.id);
-             console.log("Check data.user.email:", !!data?.user?.email);
-             return null;
-         }
+                    // NestJS clean architecture auth use case returns user and access_token
+                    if (data && data.access_token && data.user) {
+                        return {
+                            id: data.user.id,
+                            email: data.user.email,
+                            name: data.user.name,
+                            access_token: data.access_token
+                        };
+                    }
 
-    } catch (error) {
-        console.error('Error parsing backend response JSON:', error);
-        // Considera loguear responseBodyText aquí también si ya lo leíste
-        return null; // Retorna null si el parseo falla
-    }
-},
+                    console.error("Invalid login response format:", data);
+                    return null;
+                } catch (error) {
+                    console.error("Login fetch error:", error);
+                    return null;
+                }
+            }
         }),
     ],
-    session : {
+    session: {
         strategy: 'jwt',
     },
     pages: {
@@ -80,7 +63,7 @@ export const authOptions: NextAuthOptions = {
         // SOLUCIÓN: Usamos la firma de función genérica esperada por NextAuth.
         // `user` será de tipo `CustomUser` SOLO en el primer sign-in, así que lo forzamos.
         // `token` es de tipo `JWT` (de next-auth/jwt) y lo forzamos a `CustomJWT`.
-        async jwt({ token, user,  }) {
+        async jwt({ token, user, }) {
             // 'user' es lo que retornamos de authorize en el primer login
             if (user) {
                 token.accessToken = (user as any).access_token; // JWT del backend
@@ -89,7 +72,7 @@ export const authOptions: NextAuthOptions = {
             }
             return token;
         },
-        
+
         // SOLUCIÓN: Mismo problema de tipado, usamos la firma genérica y type assertion.
         async session({ session, token }) {
             // Propagamos el token del backend

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+// CreateUserUseCase (Clean Architecture)
 import {
   UNIT_OF_WORK,
   type IUnitOfWork,
@@ -10,15 +10,11 @@ import {
 import { CreateUserInputPort } from './ports/input-port';
 import { CREATE_USER_OUTPUT_TOKEN, type CreateUserOutputPort } from './ports/output-port';
 
-@Injectable()
 export class CreateUserUseCase implements CreateUserInputPort {
   constructor(
-    @Inject(UNIT_OF_WORK)
     private readonly uow: IUnitOfWork,
-    
-    @Inject(CREATE_USER_OUTPUT_TOKEN)
     private readonly outputPort: CreateUserOutputPort
-  ) {}
+  ) { }
 
   async execute(input: CreateUserDto): Promise<void> {
     await this.uow.executeTransaction(async () => {

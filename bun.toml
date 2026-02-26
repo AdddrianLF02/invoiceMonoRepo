@@ -1,0 +1,8 @@
+[install]
+# Prevent hoisting issues across the monorepo workspaces
+# Esto asegura que cada package declare sus propias dependencias mitigando bugs de 'fantasma'
+hoist = false
+
+[install.cache]
+# Directorio de caché global de bun para acelerar builds
+disable = false

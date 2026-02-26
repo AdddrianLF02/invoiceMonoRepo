@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { type IUnitOfWork } from '@repo/core';
 import { CreateCustomerDto } from '../../dtos/customer.zod';
 import { CreateCustomerInputPort } from './ports/input-port';

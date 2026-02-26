@@ -11,7 +11,7 @@ import {
   CreateUserDto,
   LoginDto,
   type GetUserProfileInputPort
-  } from '@repo/application';
+} from '@repo/application';
 import { Public } from './decorators/public.decorator';
 // import { ResponseInterceptor } from '../shared/response.interceptor';
 
@@ -21,13 +21,13 @@ export class AuthController {
   constructor(
     @Inject(CREATE_USER_INPUT_TOKEN)
     private readonly createUserUseCase: CreateUserInputPort,
-    
+
     @Inject(VALIDATE_USER_INPUT_TOKEN)
     private readonly validateUserUseCase: ValidateUserInputPort,
 
     @Inject(GET_USER_PROFILE_INPUT_TOKEN)
     private readonly getUserProfileUseCase: GetUserProfileInputPort,
-  ) {}
+  ) { }
 
   @Public()
   @Post('register')
@@ -37,7 +37,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   async register(@Body() createUserDto: CreateUserDto, @Res() _res: Response) {
     await this.createUserUseCase.execute(createUserDto);
-      // No retornamos nada porque el presenter se encarga de la respuesta
+    // No retornamos nada porque el presenter se encarga de la respuesta
   }
 
   @Public()
@@ -48,9 +48,9 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
   async login(@Body() loginDto: LoginDto, @Res() _res: Response) {
     // El controlador solo orquesta, el presenter maneja la respuesta
-    await this.validateUserUseCase.execute(loginDto.email, loginDto.pass);
+    await this.validateUserUseCase.execute(loginDto.email as string, loginDto.pass as string);
     // Retornamos la respuesta que ya fue manejada por el presenter
-    
+
   }
 
   @Get('profile')
@@ -58,8 +58,8 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Perfil de usuario obtenido con éxito' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   async getProfile(@Request() req, @Res() _res: Response) {
-     // El payload del JWT establece el identificador del usuario en 'sub'
-     await this.getUserProfileUseCase.execute(req.user.sub);
+    // El payload del JWT establece el identificador del usuario en 'sub'
+    await this.getUserProfileUseCase.execute(req.user.sub);
   }
 
   @Public()

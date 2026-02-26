@@ -21,19 +21,19 @@ class InvoiceItemSwaggerDto {
 // DTO de crear factura para Swagger, extendiendo DTO del paquete de dominio
 export class CreateInvoiceSwaggerDto extends CreateInvoiceDto {
   @ApiProperty()
-  customerId!: string;
+  declare customerId: string;
 
   @ApiProperty()
-  issueDate!: string;
+  declare issueDate: string;
 
   @ApiProperty()
-  dueDate!: string;
+  declare dueDate: string;
 
   @ApiProperty({ type: [InvoiceItemSwaggerDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => InvoiceItemSwaggerDto)
-  items!: InvoiceItemSwaggerDto[];
+  declare items: InvoiceItemSwaggerDto[];
 }
 
 // DTO de respuesta

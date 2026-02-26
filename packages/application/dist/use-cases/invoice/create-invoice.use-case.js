@@ -1,24 +1,9 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateInvoiceUseCase = void 0;
-const common_1 = require("@nestjs/common");
+// CreateInvoiceUseCase (Clean Architecture)
 const core_1 = require("@repo/core");
-const output_port_1 = require("./ports/output-port");
-const common_2 = require("@nestjs/common");
-const core_2 = require("@repo/core");
-let CreateInvoiceUseCase = class CreateInvoiceUseCase {
+class CreateInvoiceUseCase {
     uow;
     taxCalculationStrategy;
     outputPort;
@@ -35,12 +20,12 @@ let CreateInvoiceUseCase = class CreateInvoiceUseCase {
             const repo = this.uow.invoiceRepository;
             console.log('[CreateInvoiceUseCase] Repo:', !!repo);
             // 0. Validar ownership del customerId respecto al usuario autenticado
-            const ownerId = core_2.UserId.fromString(userId);
+            const ownerId = core_1.UserId.fromString(userId);
             const customersOfUser = await this.uow.customerRepository.findByUserId(ownerId);
             const requestedCustomerId = core_1.CustomerId.fromString(input.customerId);
             const customerBelongsToUser = customersOfUser.some(c => c.getId().equals(requestedCustomerId));
             if (!customerBelongsToUser) {
-                throw new common_2.ForbiddenException('El cliente no pertenece al usuario autenticado');
+                throw new Error('FORBIDDEN: El cliente no pertenece al usuario autenticado');
             }
             // 1. Mapear y Calcular los ítems (Strategy)
             const items = input.items.map(itemDto => {
@@ -64,13 +49,6 @@ let CreateInvoiceUseCase = class CreateInvoiceUseCase {
             this.outputPort.present(invoice);
         });
     }
-};
+}
 exports.CreateInvoiceUseCase = CreateInvoiceUseCase;
-exports.CreateInvoiceUseCase = CreateInvoiceUseCase = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(core_1.UNIT_OF_WORK)),
-    __param(1, (0, common_1.Inject)(core_1.TAX_CALCULATION_STRATEGY)),
-    __param(2, (0, common_1.Inject)(output_port_1.CREATE_INVOICE_OUTPUT_TOKEN)),
-    __metadata("design:paramtypes", [Object, Object, Object])
-], CreateInvoiceUseCase);
 //# sourceMappingURL=create-invoice.use-case.js.map

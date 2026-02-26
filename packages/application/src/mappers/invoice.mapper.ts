@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+// InvoiceMapper (Clean Architecture)
 import { Invoice } from '@repo/core';
 import { InvoiceResponseDto } from '../dtos/invoice.zod';
 
-@Injectable()
 export class InvoiceMapper {
   toDto(invoice: Invoice): InvoiceResponseDto {
     return {
@@ -16,7 +15,7 @@ export class InvoiceMapper {
         id: item.getId(),
         description: item.getDescription(),
         quantity: item.getQuantity(),
-        unitPrice: item.getUnitPrice(),
+        unitPrice: item.getUnitPrice().getAmountAsFloat(),
         taxRate: item.getTaxRate(),
       })),
       createdAt: invoice.getCreatedAt().toISOString(),

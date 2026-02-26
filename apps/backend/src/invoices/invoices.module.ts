@@ -1,4 +1,5 @@
 import { Module, Scope } from '@nestjs/common';
+import { INVOICE_REPOSITORY, TAX_CALCULATION_STRATEGY, UNIT_OF_WORK } from '@repo/core';
 import { InvoiceController } from './invoice.controller';
 import {
   CREATE_INVOICE_INPUT_TOKEN,
@@ -26,7 +27,7 @@ import { UpdateInvoicePresenter } from './presenters/update-invoice.presenter';
 
 import { InfrastructureModule } from 'src/modules/infrastructure.module';
 import { ApplicationModule } from 'src/modules/application.module';
-import {  REQUEST } from '@nestjs/core';
+import { REQUEST } from '@nestjs/core';
 import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
 
 @Module({
@@ -44,12 +45,12 @@ import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
       useFactory: (req) => req.res,
       inject: [REQUEST],
     },
-    
+
     // --- CREATE ---
-    CreateInvoiceUseCase,
     {
       provide: CREATE_INVOICE_INPUT_TOKEN,
-      useClass: CreateInvoiceUseCase,
+      useFactory: (uow, taxCalc, output) => new CreateInvoiceUseCase(uow, taxCalc, output),
+      inject: [UNIT_OF_WORK, TAX_CALCULATION_STRATEGY, CREATE_INVOICE_OUTPUT_TOKEN],
     },
     {
       provide: CREATE_INVOICE_OUTPUT_TOKEN,
@@ -60,7 +61,8 @@ import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
     // --- UPDATE ---
     {
       provide: UPDATE_INVOICE_INPUT_TOKEN,
-      useClass: UpdateInvoiceUseCase,
+      useFactory: (repo, taxCalc, output) => new UpdateInvoiceUseCase(repo, taxCalc, output),
+      inject: [INVOICE_REPOSITORY, TAX_CALCULATION_STRATEGY, UPDATE_INVOICE_OUTPUT_TOKEN],
     },
     {
       provide: UPDATE_INVOICE_OUTPUT_TOKEN,
@@ -71,7 +73,8 @@ import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
     // --- DELETE ---
     {
       provide: DELETE_INVOICE_INPUT_TOKEN,
-      useClass: DeleteInvoiceUseCase,
+      useFactory: (repo, output) => new DeleteInvoiceUseCase(repo, output),
+      inject: [INVOICE_REPOSITORY, DELETE_INVOICE_OUTPUT_TOKEN],
     },
     {
       provide: DELETE_INVOICE_OUTPUT_TOKEN,
@@ -82,7 +85,8 @@ import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
     // --- GET ONE ---
     {
       provide: GET_INVOICE_INPUT_TOKEN,
-      useClass: GetInvoiceUseCase,
+      useFactory: (repo, output) => new GetInvoiceUseCase(repo, output),
+      inject: [INVOICE_REPOSITORY, GET_INVOICE_OUTPUT_TOKEN],
     },
     {
       provide: GET_INVOICE_OUTPUT_TOKEN,
@@ -93,7 +97,8 @@ import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
     // --- GET BY CUSTOMER ---
     {
       provide: GET_CUSTOMER_INVOICES_INPUT_TOKEN,
-      useClass: GetCustomerInvoicesUseCase,
+      useFactory: (repo, output) => new GetCustomerInvoicesUseCase(repo, output),
+      inject: [INVOICE_REPOSITORY, GET_CUSTOMER_INVOICES_OUTPUT_TOKEN],
     },
     {
       provide: GET_CUSTOMER_INVOICES_OUTPUT_TOKEN,
@@ -102,4 +107,4 @@ import { PdfGenerationModule } from 'src/pdf-generation/pdf-generation.module';
     },
   ],
 })
-export class InvoicesModule {}
+export class InvoicesModule { }

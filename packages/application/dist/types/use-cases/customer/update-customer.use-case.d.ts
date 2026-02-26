@@ -6,6 +6,6 @@ export declare class UpdateCustomerUseCase implements UpdateCustomerInputPort {
     private readonly uow;
     private readonly outputPort;
     constructor(uow: IUnitOfWork, outputPort: UpdateCustomerOutputPort);
-    execute(input: UpdateCustomerDto): Promise<void>;
+    execute(id: string, input: UpdateCustomerDto): Promise<void>;
 }
 //# sourceMappingURL=update-customer.use-case.d.ts.map

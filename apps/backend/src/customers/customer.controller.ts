@@ -1,18 +1,24 @@
-import { Body, Controller, Get,   Inject, Param, ParseUUIDPipe, Post, Put, UsePipes, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, UsePipes, Req, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 import {
   CREATE_CUSTOMER_INPUT_TOKEN,
-    CreateCustomerDto,
-    CustomerResponseDto,
-    GET_ALL_CUSTOMERS_INPUT_TOKEN,
-    GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN,
-    GET_CUSTOMER_BY_ID_INPUT_TOKEN,
-    UPDATE_CUSTOMER_INPUT_TOKEN,
-    UpdateCustomerDto
+  CreateCustomerDto,
+  CustomerResponseDto,
+  GET_ALL_CUSTOMERS_INPUT_TOKEN,
+  GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN,
+  GET_CUSTOMER_BY_ID_INPUT_TOKEN,
+  UPDATE_CUSTOMER_INPUT_TOKEN,
+  UpdateCustomerDto
 } from '@repo/application'
-import type { CreateCustomerInputPort, GetAllCustomersInputPort, GetCustomerByEmailInputPort, GetCustomerByIdInputPort, UpdateCustomerInputPort } from '@repo/application/dist/types/use-cases/customer/ports/input-port';
+import type {
+  CreateCustomerInputPort,
+  GetAllCustomersInputPort,
+  GetCustomerByEmailInputPort,
+  GetCustomerByIdInputPort,
+  UpdateCustomerInputPort
+} from '@repo/application';
 import { CreateCustomerSwaggerRequestDto } from './dtos/request/create-customer-swagger-request.dto';
 
 @ApiTags('Customers')
@@ -22,19 +28,19 @@ export class CustomerController {
   constructor(
     @Inject(CREATE_CUSTOMER_INPUT_TOKEN)
     private readonly createCustomerUseCase: CreateCustomerInputPort,
-    
+
     @Inject(GET_CUSTOMER_BY_ID_INPUT_TOKEN)
     private readonly getCustomerByIdUseCase: GetCustomerByIdInputPort,
-    
+
     @Inject(GET_CUSTOMER_BY_EMAIL_INPUT_TOKEN)
     private readonly getCustomerByEmailUseCase: GetCustomerByEmailInputPort,
-    
+
     @Inject(UPDATE_CUSTOMER_INPUT_TOKEN)
     private readonly updateCustomerUseCase: UpdateCustomerInputPort,
 
     @Inject(GET_ALL_CUSTOMERS_INPUT_TOKEN)
     private readonly getAllCustomersUseCase: GetAllCustomersInputPort,
-  ) {}
+  ) { }
 
   @Post()
   @UsePipes(ZodValidationPipe)
@@ -85,6 +91,6 @@ export class CustomerController {
     @Body() dto: UpdateCustomerDto,
     @Res() _res: Response,
   ): Promise<void> {
-    await this.updateCustomerUseCase.execute({ ...dto, id })
+    await this.updateCustomerUseCase.execute(id, dto);
   }
 }

@@ -1,0 +1,46 @@
+erDiagram
+    %% User y Customer como Agregados Raíz
+    USER ||--o{ CUSTOMER : "owns"
+    
+    USER {
+        string id PK
+        string email UK
+        string password
+    }
+
+    CUSTOMER {
+        string id PK
+        string userId FK
+        string name
+        string email UK
+        string taxId
+    }
+
+    %% Invoice es Agregado Raíz, Items son parte del Agregado
+    CUSTOMER ||--o{ INVOICE : "invoices"
+
+    INVOICE {
+        string id PK
+        string customerId FK
+        string invoiceNumber UK
+        string status
+        date issueDate
+        date dueDate
+        Money total_calculated
+    }
+    
+    INVOICE ||--o{ INVOICE_ITEM : "contains"
+
+    INVOICE_ITEM {
+    string id PK
+    string invoiceId FK
+    string description
+    int quantity
+    BigInt unitPrice_cents
+    BigInt subtotal_cents
+    BigInt taxAmount_cents
+    BigInt total_cents
+    float taxRate
+}
+
+

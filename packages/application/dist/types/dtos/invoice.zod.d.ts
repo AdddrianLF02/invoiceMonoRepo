@@ -4,17 +4,37 @@ declare const InvoiceItemSchema: z.ZodObject<{
     quantity: z.ZodNumber;
     unitPrice: z.ZodNumber;
     taxRate: z.ZodNumber;
-}, z.core.$strip>;
-declare const InvoiceItemDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
+}, "strip", z.ZodTypeAny, {
+    description?: string;
+    quantity?: number;
+    unitPrice?: number;
+    taxRate?: number;
+}, {
+    description?: string;
+    quantity?: number;
+    unitPrice?: number;
+    taxRate?: number;
+}>;
+declare const InvoiceItemDto_base: import("nestjs-zod").ZodDto<{
+    description?: string;
+    quantity?: number;
+    unitPrice?: number;
+    taxRate?: number;
+}, z.ZodObjectDef<{
     description: z.ZodString;
     quantity: z.ZodNumber;
     unitPrice: z.ZodNumber;
     taxRate: z.ZodNumber;
-}, z.core.$strip>>;
+}, "strip", z.ZodTypeAny>, {
+    description?: string;
+    quantity?: number;
+    unitPrice?: number;
+    taxRate?: number;
+}>;
 export declare class InvoiceItemDto extends InvoiceItemDto_base {
 }
 declare const CreateInvoiceSchema: z.ZodObject<{
-    customerId: z.ZodUUID;
+    customerId: z.ZodString;
     issueDate: z.ZodString;
     dueDate: z.ZodString;
     items: z.ZodArray<z.ZodObject<{
@@ -22,10 +42,50 @@ declare const CreateInvoiceSchema: z.ZodObject<{
         quantity: z.ZodNumber;
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
-    }, z.core.$strip>>;
-}, z.core.$strip>;
-declare const CreateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
-    customerId: z.ZodUUID;
+    }, "strip", z.ZodTypeAny, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }>, "many">;
+}, "strip", z.ZodTypeAny, {
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}, {
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}>;
+declare const CreateInvoiceDto_base: import("nestjs-zod").ZodDto<{
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}, z.ZodObjectDef<{
+    customerId: z.ZodString;
     issueDate: z.ZodString;
     dueDate: z.ZodString;
     items: z.ZodArray<z.ZodObject<{
@@ -33,12 +93,32 @@ declare const CreateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef
         quantity: z.ZodNumber;
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
-    }, z.core.$strip>>;
-}, z.core.$strip>>;
+    }, "strip", z.ZodTypeAny, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }>, "many">;
+}, "strip", z.ZodTypeAny>, {
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}>;
 export declare class CreateInvoiceDto extends CreateInvoiceDto_base {
 }
 declare const UpdateInvoiceSchema: z.ZodObject<{
-    customerId: z.ZodOptional<z.ZodUUID>;
+    customerId: z.ZodOptional<z.ZodString>;
     issueDate: z.ZodOptional<z.ZodString>;
     dueDate: z.ZodOptional<z.ZodString>;
     items: z.ZodOptional<z.ZodArray<z.ZodObject<{
@@ -46,17 +126,55 @@ declare const UpdateInvoiceSchema: z.ZodObject<{
         quantity: z.ZodNumber;
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
-    }, z.core.$strip>>>;
-    status: z.ZodOptional<z.ZodEnum<{
-        DRAFT: "DRAFT";
-        PENDING: "PENDING";
-        PAID: "PAID";
-        CANCELLED: "CANCELLED";
-        OVERDUE: "OVERDUE";
-    }>>;
-}, z.core.$strip>;
-declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
-    customerId: z.ZodOptional<z.ZodUUID>;
+    }, "strip", z.ZodTypeAny, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }>, "many">>;
+} & {
+    status: z.ZodOptional<z.ZodEnum<["DRAFT", "PENDING", "PAID", "CANCELLED", "OVERDUE"]>>;
+}, "strip", z.ZodTypeAny, {
+    status?: "DRAFT" | "PENDING" | "PAID" | "CANCELLED" | "OVERDUE";
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}, {
+    status?: "DRAFT" | "PENDING" | "PAID" | "CANCELLED" | "OVERDUE";
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}>;
+declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<{
+    status?: "DRAFT" | "PENDING" | "PAID" | "CANCELLED" | "OVERDUE";
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}, z.ZodObjectDef<{
+    customerId: z.ZodOptional<z.ZodString>;
     issueDate: z.ZodOptional<z.ZodString>;
     dueDate: z.ZodOptional<z.ZodString>;
     items: z.ZodOptional<z.ZodArray<z.ZodObject<{
@@ -64,15 +182,31 @@ declare const UpdateInvoiceDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef
         quantity: z.ZodNumber;
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
-    }, z.core.$strip>>>;
-    status: z.ZodOptional<z.ZodEnum<{
-        DRAFT: "DRAFT";
-        PENDING: "PENDING";
-        PAID: "PAID";
-        CANCELLED: "CANCELLED";
-        OVERDUE: "OVERDUE";
-    }>>;
-}, z.core.$strip>>;
+    }, "strip", z.ZodTypeAny, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }>, "many">>;
+} & {
+    status: z.ZodOptional<z.ZodEnum<["DRAFT", "PENDING", "PAID", "CANCELLED", "OVERDUE"]>>;
+}, "strip", z.ZodTypeAny>, {
+    status?: "DRAFT" | "PENDING" | "PAID" | "CANCELLED" | "OVERDUE";
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+    }[];
+}>;
 export declare class UpdateInvoiceDto extends UpdateInvoiceDto_base {
 }
 declare const InvoiceItemResponseSchema: z.ZodObject<{
@@ -81,7 +215,19 @@ declare const InvoiceItemResponseSchema: z.ZodObject<{
     quantity: z.ZodNumber;
     unitPrice: z.ZodNumber;
     taxRate: z.ZodNumber;
-}, z.core.$strip>;
+}, "strip", z.ZodTypeAny, {
+    description?: string;
+    quantity?: number;
+    unitPrice?: number;
+    taxRate?: number;
+    id?: string;
+}, {
+    description?: string;
+    quantity?: number;
+    unitPrice?: number;
+    taxRate?: number;
+    id?: string;
+}>;
 declare const InvoiceResponseSchema: z.ZodObject<{
     id: z.ZodString;
     customerId: z.ZodString;
@@ -95,11 +241,71 @@ declare const InvoiceResponseSchema: z.ZodObject<{
         quantity: z.ZodNumber;
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
-    }, z.core.$strip>>;
+    }, "strip", z.ZodTypeAny, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }>, "many">;
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
-}, z.core.$strip>;
-declare const InvoiceResponseDto_base: import("nestjs-zod").ZodDto<any, ZodTypeDef, z.core.$ZodObjectInternals<{
+}, "strip", z.ZodTypeAny, {
+    status?: string;
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }[];
+    id?: string;
+    invoiceNumber?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}, {
+    status?: string;
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }[];
+    id?: string;
+    invoiceNumber?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}>;
+declare const InvoiceResponseDto_base: import("nestjs-zod").ZodDto<{
+    status?: string;
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }[];
+    id?: string;
+    invoiceNumber?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}, z.ZodObjectDef<{
     id: z.ZodString;
     customerId: z.ZodString;
     invoiceNumber: z.ZodString;
@@ -112,10 +318,38 @@ declare const InvoiceResponseDto_base: import("nestjs-zod").ZodDto<any, ZodTypeD
         quantity: z.ZodNumber;
         unitPrice: z.ZodNumber;
         taxRate: z.ZodNumber;
-    }, z.core.$strip>>;
+    }, "strip", z.ZodTypeAny, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }, {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }>, "many">;
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
-}, z.core.$strip>>;
+}, "strip", z.ZodTypeAny>, {
+    status?: string;
+    customerId?: string;
+    issueDate?: string;
+    dueDate?: string;
+    items?: {
+        description?: string;
+        quantity?: number;
+        unitPrice?: number;
+        taxRate?: number;
+        id?: string;
+    }[];
+    id?: string;
+    invoiceNumber?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}>;
 export declare class InvoiceResponseDto extends InvoiceResponseDto_base {
 }
 export { InvoiceItemSchema, CreateInvoiceSchema, UpdateInvoiceSchema, InvoiceItemResponseSchema, InvoiceResponseSchema, };

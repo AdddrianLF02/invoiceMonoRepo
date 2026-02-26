@@ -13,7 +13,7 @@ export interface GetCustomerByIdInputPort {
 }
 export declare const UPDATE_CUSTOMER_INPUT_TOKEN = "UPDATE_CUSTOMER_INPUT_TOKEN";
 export interface UpdateCustomerInputPort {
-    execute(input: UpdateCustomerDto): Promise<void>;
+    execute(id: string, input: UpdateCustomerDto): Promise<void>;
 }
 export declare const GET_ALL_CUSTOMERS_INPUT_TOKEN = "GET_ALL_CUSTOMERS_INPUT_TOKEN";
 export interface GetAllCustomersInputPort {

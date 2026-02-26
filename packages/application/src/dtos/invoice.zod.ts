@@ -9,24 +9,24 @@ const InvoiceItemSchema = z.object({
   taxRate: z.number().min(0),
 });
 
-export class InvoiceItemDto extends createZodDto(InvoiceItemSchema) {}
+export class InvoiceItemDto extends createZodDto(InvoiceItemSchema) { }
 
 // --- Crear Factura ---
 const CreateInvoiceSchema = z.object({
-  customerId: z.uuid(),
+  customerId: z.string().uuid(),
   issueDate: z.string().datetime(),
   dueDate: z.string().datetime(),
   items: z.array(InvoiceItemSchema).min(1),
 });
 
-export class CreateInvoiceDto extends createZodDto(CreateInvoiceSchema) {}
+export class CreateInvoiceDto extends createZodDto(CreateInvoiceSchema) { }
 
 // --- Actualizar Factura ---
 const UpdateInvoiceSchema = CreateInvoiceSchema.partial().extend({
   status: z.enum(['DRAFT', 'PENDING', 'PAID', 'CANCELLED', 'OVERDUE']).optional(),
 });
 
-export class UpdateInvoiceDto extends createZodDto(UpdateInvoiceSchema) {}
+export class UpdateInvoiceDto extends createZodDto(UpdateInvoiceSchema) { }
 
 // --- Respuesta de Factura ---
 const InvoiceItemResponseSchema = z.object({
@@ -49,7 +49,7 @@ const InvoiceResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
-export class InvoiceResponseDto extends createZodDto(InvoiceResponseSchema) {}
+export class InvoiceResponseDto extends createZodDto(InvoiceResponseSchema) { }
 
 // --- Exports opcionales si necesitas los schemas por separado ---
 export {

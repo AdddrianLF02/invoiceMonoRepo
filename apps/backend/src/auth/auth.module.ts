@@ -1,4 +1,5 @@
 import { Module, Scope, Global } from '@nestjs/common';
+import { USER_REPOSITORY, UNIT_OF_WORK } from '@repo/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
@@ -25,7 +26,7 @@ import { GetProfileUserPresenter } from './presenters/get-profile-user.presenter
 @Global()
 @Module({
     imports: [
-        
+
         ApplicationModule,
         PassportModule,
         // 👇 Use registerAsync to ensure ConfigService is ready
@@ -51,23 +52,33 @@ import { GetProfileUserPresenter } from './presenters/get-profile-user.presenter
             useFactory: (req) => req.res,
             inject: [REQUEST]
         },
-       
+
         // CREATE USER
-        CreateUserUseCase,
-        { provide: CREATE_USER_INPUT_TOKEN, useClass: CreateUserUseCase },
+        {
+            provide: CREATE_USER_INPUT_TOKEN,
+            useFactory: (uow, output) => new CreateUserUseCase(uow, output),
+            inject: [UNIT_OF_WORK, CREATE_USER_OUTPUT_TOKEN]
+        },
         { provide: CREATE_USER_OUTPUT_TOKEN, useClass: CreateUserPresenter },
         // VALIDATE USER
-        ValidateUserUseCase,
-        { provide: VALIDATE_USER_INPUT_TOKEN, useClass: ValidateUserUseCase },
+        {
+            provide: VALIDATE_USER_INPUT_TOKEN,
+            useFactory: (repo, output) => new ValidateUserUseCase(repo, output),
+            inject: [USER_REPOSITORY, VALIDATE_USER_OUTPUT_TOKEN]
+        },
         { provide: VALIDATE_USER_OUTPUT_TOKEN, useClass: ValidateUserPresenter },
-        GetUserProfileUseCase,
-        { provide: GET_USER_PROFILE_INPUT_TOKEN, useClass: GetUserProfileUseCase },
+        // GET USER PROFILE
+        {
+            provide: GET_USER_PROFILE_INPUT_TOKEN,
+            useFactory: (repo, output) => new GetUserProfileUseCase(repo, output),
+            inject: [USER_REPOSITORY, GET_USER_PROFILE_OUTPUT_TOKEN]
+        },
         { provide: GET_USER_PROFILE_OUTPUT_TOKEN, useClass: GetProfileUserPresenter },
     ],
     exports: [
         PassportModule,
         JwtModule,
-        
+
     ]
 })
-export class AuthModule {}
+export class AuthModule { }

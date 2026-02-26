@@ -19,17 +19,17 @@ class InvoiceItemSwaggerRequestDto {
 
 export class CreateInvoiceSwaggerRequestDto extends CreateInvoiceDto {
   @ApiProperty({ example: 'uuid-del-cliente' })
-  customerId!: string;
+  declare customerId: string;
 
   @ApiProperty({ example: '2025-10-01T00:00:00.000Z' })
-  issueDate!: string;
+  declare issueDate: string;
 
   @ApiProperty({ example: '2025-11-01T00:00:00.000Z' })
-  dueDate!: string;
+  declare dueDate: string;
 
   @ApiProperty({ type: [InvoiceItemSwaggerRequestDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => InvoiceItemSwaggerRequestDto)
-  items!: InvoiceItemSwaggerRequestDto[];
+  declare items: InvoiceItemSwaggerRequestDto[];
 }

@@ -1,0 +1,46 @@
+import { CustomerId } from "../value-objects/CustomerId";
+import { InvoiceId } from "../value-objects/InvoiceId";
+import { InvoiceItem } from "./InvoiceItem";
+import { InvoiceNumber } from "../value-objects/InvoiceNumber";
+import { InvoiceStatus } from "../value-objects/InvoiceStatus";
+import { Money } from "../value-objects/Money";
+export declare class Invoice {
+    private readonly id;
+    private readonly customerId;
+    private invoiceNumber;
+    private status;
+    private issueDate;
+    private dueDate;
+    private items;
+    private createdAt;
+    private updatedAt;
+    private constructor();
+    static create(customerId: CustomerId, issueDate: Date, dueDate: Date, items?: InvoiceItem[]): Invoice;
+    static reconstitute(id: InvoiceId, customerId: CustomerId, invoiceNumber: InvoiceNumber, status: InvoiceStatus, issueDate: Date, dueDate: Date, items?: InvoiceItem[], createdAt?: Date, updatedAt?: Date): Invoice;
+    private copyWith;
+    getId(): InvoiceId;
+    getCustomerId(): CustomerId;
+    getInvoiceNumber(): InvoiceNumber;
+    getStatus(): InvoiceStatus;
+    getIssueDate(): Date;
+    getDueDate(): Date;
+    getItems(): InvoiceItem[];
+    getCreatedAt(): Date;
+    getUpdatedAt(): Date;
+    updateCustomerId(customerId: CustomerId): Invoice;
+    updateStatus(status: InvoiceStatus): Invoice;
+    updateIssueDate(issueDate: Date): Invoice;
+    updateDueDate(dueDate: Date): Invoice;
+    updateInvoiceNumber(invoiceNumber: InvoiceNumber): Invoice;
+    addItem(item: InvoiceItem): Invoice;
+    removeItem(itemId: string): Invoice;
+    clearItems(): Invoice;
+    markAsPending(): Invoice;
+    markAsPaid(): Invoice;
+    markAsOverdue(): Invoice;
+    cancel(): Invoice;
+    getSubtotal(): Money;
+    getTaxAmount(): Money;
+    getTotal(): Money;
+}
+//# sourceMappingURL=Invoice.d.ts.map

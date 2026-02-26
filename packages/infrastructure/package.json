@@ -1,6 +1,12 @@
 {
   "name": "@repo/infrastructure",
   "version": "1.0.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
@@ -8,7 +14,6 @@
     "build": "tsc -p tsconfig.json",
     "generate": "prisma generate",
     "clean": "rimraf dist",
-    
     "db:migrate": "dotenv -e ../../apps/backend/.env -- prisma migrate dev --schema ./src/database/schema/schema.prisma",
     "db:push": "dotenv -e ../../apps/backend/.env -- prisma db push --schema ./src/database/schema/schema.prisma"
   },
@@ -22,10 +27,8 @@
   "devDependencies": {
     "@nestjs/common": "^11.0.1",
     "@repo/typescript-config": "*",
-    "prisma": "^6.16.3",
-    "typescript": "^5.7.3",
-    "rimraf": "^6.0.1",
-    "dotenv-cli": "^7.4.2" 
+    "dotenv-cli": "^7.4.2",
+    "prisma": "^6.16.3"
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.1"

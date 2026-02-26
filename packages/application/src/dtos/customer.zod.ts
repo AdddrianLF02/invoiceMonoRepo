@@ -9,22 +9,24 @@ const CreateCustomerSchema = CustomerEntitySchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  userId: z.cuid().optional(),
+  userId: z.string().cuid().optional(),
   number: z.string().optional(),
   taxId: z.string().optional(),
 });
-export class CreateCustomerDto extends createZodDto(CreateCustomerSchema) {}
+export class CreateCustomerDto extends createZodDto(CreateCustomerSchema) { }
 
 
 // --- DTO para Actualizar un Cliente (Entrada) ---
-const UpdateCustomerSchema = CreateCustomerSchema.partial();
-export class UpdateCustomerDto extends createZodDto(UpdateCustomerSchema) {}
+const UpdateCustomerSchema = CreateCustomerSchema.partial().extend({
+  active: z.boolean().optional(),
+});
+export class UpdateCustomerDto extends createZodDto(UpdateCustomerSchema) { }
 
 
 // --- DTO para las Respuestas de la API (Salida) ---
 // Este es el DTO que describe la forma de un cliente que devolvemos al frontend
 const CustomerResponseSchema = CustomerEntitySchema.extend({
-    createdAt: z.string(), // Las fechas se serializan como strings
-    updatedAt: z.string(),
+  createdAt: z.string(), // Las fechas se serializan como strings
+  updatedAt: z.string(),
 });
-export class CustomerResponseDto extends createZodDto(CustomerResponseSchema) {}
+export class CustomerResponseDto extends createZodDto(CustomerResponseSchema) { }

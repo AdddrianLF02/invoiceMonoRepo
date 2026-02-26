@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+// UpdateInvoiceUseCase (Clean Architecture)
 import {
   INVOICE_REPOSITORY,
   type InvoiceRepository,
@@ -12,28 +12,24 @@ import {
   type ITaxCalculationStrategy
 } from '@repo/core'
 import {
-  UpdateInvoiceDto 
+  UpdateInvoiceDto
 } from '../../dtos/invoice.zod'
 import {
   type UpdateInvoiceOutputPort,
   UPDATE_INVOICE_OUTPUT_TOKEN
 } from './ports/output-port'
 
-@Injectable()
 export class UpdateInvoiceUseCase {
   constructor(
-    @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepository: InvoiceRepository,
-    @Inject(TAX_CALCULATION_STRATEGY)
     private readonly taxCalculationStrategy: ITaxCalculationStrategy,
-    @Inject(UPDATE_INVOICE_OUTPUT_TOKEN)
     private readonly outputPort: UpdateInvoiceOutputPort
-  ) {}
+  ) { }
 
   async execute(id: string, input: UpdateInvoiceDto): Promise<void> {
     let invoice: Invoice | null = await this.invoiceRepository.findById(InvoiceId.fromString(id));
     if (!invoice) {
-      throw new NotFoundException(`Invoice with ID ${id} not found`);
+      throw new Error(`NOT_FOUND: Invoice with ID ${id} not found`);
     }
 
     // Estrategias de actualización basadas en el estado actual del agregado (inmutables)
@@ -72,18 +68,18 @@ export class UpdateInvoiceUseCase {
 
     if (input.items) {
       invoice = invoice.clearItems();
-      for (const itemDto of input.items) {
-        const unitPrice = Money.fromFloat(itemDto.unitPrice, 'EUR');
+      for (const itemDto of (input.items as any[])) {
+        const unitPrice = Money.fromFloat(itemDto.unitPrice as number, 'EUR');
         const calculated = this.taxCalculationStrategy.calculate({
           unitPrice,
-          quantity: itemDto.quantity,
-          taxRate: itemDto.taxRate,
+          quantity: itemDto.quantity as number,
+          taxRate: itemDto.taxRate as number,
         });
         const item = InvoiceItem.create(
-          itemDto.description,
-          itemDto.quantity,
+          itemDto.description as string,
+          itemDto.quantity as number,
           unitPrice,
-          itemDto.taxRate,
+          itemDto.taxRate as number,
           calculated.subtotal,
           calculated.taxAmount,
           calculated.total

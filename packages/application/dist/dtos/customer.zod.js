@@ -11,7 +11,7 @@ const CreateCustomerSchema = core_1.CustomerEntitySchema.omit({
     createdAt: true,
     updatedAt: true,
 }).extend({
-    userId: zod_1.z.cuid().optional(),
+    userId: zod_1.z.string().cuid().optional(),
     number: zod_1.z.string().optional(),
     taxId: zod_1.z.string().optional(),
 });
@@ -19,7 +19,9 @@ class CreateCustomerDto extends (0, nestjs_zod_1.createZodDto)(CreateCustomerSch
 }
 exports.CreateCustomerDto = CreateCustomerDto;
 // --- DTO para Actualizar un Cliente (Entrada) ---
-const UpdateCustomerSchema = CreateCustomerSchema.partial();
+const UpdateCustomerSchema = CreateCustomerSchema.partial().extend({
+    active: zod_1.z.boolean().optional(),
+});
 class UpdateCustomerDto extends (0, nestjs_zod_1.createZodDto)(UpdateCustomerSchema) {
 }
 exports.UpdateCustomerDto = UpdateCustomerDto;

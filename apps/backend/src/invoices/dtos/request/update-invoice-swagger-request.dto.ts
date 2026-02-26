@@ -3,8 +3,8 @@ import { UpdateInvoiceDto } from '@repo/application';
 
 export class UpdateInvoiceSwaggerRequestDto extends UpdateInvoiceDto {
   @ApiPropertyOptional({ example: 'PAID' })
-  status?: string;
+  declare status?: 'DRAFT' | 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELLED';
 
   @ApiPropertyOptional({ example: '2025-11-20T00:00:00.000Z' })
-  dueDate?: string;
+  declare dueDate?: string;
 }

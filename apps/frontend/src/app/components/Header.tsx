@@ -12,28 +12,28 @@ const Header = () => {
     { href: "#contact", label: "Contact" },
   ];
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
-            <FileText className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">InvoiceFlow</span>
+            <FileText className="h-8 w-8 text-primary" />
+            <span className="text-xl font-bold text-foreground">InvoiceFlow</span>
           </div>
-          
+
           <nav className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="text-gray-600 hover:text-gray-900 transition-colors">
+              <a key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground transition-colors font-medium">
                 {link.label}
               </a>
             ))}
           </nav>
-          
-      
+
+
           <div className="flex items-center space-x-4">
             <Button variant="ghost" className="hidden md:block">
               Login
             </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="shadow-sm">
               Empezar
             </Button>
             <Button variant="ghost" size="sm" className="md:hidden">

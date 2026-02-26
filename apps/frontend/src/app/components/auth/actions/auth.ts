@@ -1,6 +1,6 @@
 'use server';
 
-import { RegisterSchema } from "@repo/application";
+import { RegisterSchema } from "@repo/core";
 
 // Tipo compartido
 export interface FormState {
@@ -71,7 +71,7 @@ export async function registerAction(
     // ✅ Devuelve la data al componente cliente para que haga el signIn
     return {
       success: true,
-      data: { email, password }
+      data: { email: email ?? '', password: password ?? '' }
     };
 
   } catch (error) {

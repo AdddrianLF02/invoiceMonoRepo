@@ -6,32 +6,29 @@ import { ConfigModule } from '@nestjs/config'
 import { DashboardModule } from './dashboard/dashboard.module';
 import { BullModule } from '@nestjs/bullmq';
 import { PdfGenerationModule } from './pdf-generation/pdf-generation.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/guards/auth.guard';
+
+// ⚠️ AuthGuard se registra como APP_GUARD dentro de AuthModule (@Global)
+//    No hace falta duplicarlo aquí. Tenerlo dos veces haría que el guard
+//    se ejecute dos veces por cada request.
 
 @Module({
-  imports: 
-  [
-    ConfigModule.forRoot({ isGlobal: true }),
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost',
-        port: 6379
-      }
-    }),
-    
-    InvoicesModule,  
-    CustomersModule,  
-    AuthModule,
-    DashboardModule,
-    PdfGenerationModule
-  ],
+  imports:
+    [
+      ConfigModule.forRoot({ isGlobal: true }),
+      BullModule.forRoot({
+        connection: {
+          host: 'localhost',
+          port: 6379
+        }
+      }),
+
+      InvoicesModule,
+      CustomersModule,
+      AuthModule,
+      DashboardModule,
+      PdfGenerationModule
+    ],
   controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    }
-  ],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule { }

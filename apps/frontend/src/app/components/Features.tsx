@@ -13,8 +13,8 @@ const Features = () => {
     },
     {
       icon: Zap,
-      title: 'Rápido y eficiente',
-      description: 'Genera facturas en segundos con nuestra interfaz intuitiva y automatización inteligente.'
+      title: 'Autopilot para tus cobros',
+      description: 'Genera facturas pre-rellenadas en segundos con nuestro sistema Predictivo.'
     },
     {
       icon: Globe,
@@ -28,8 +28,8 @@ const Features = () => {
     },
     {
       icon: BarChart,
-      title: 'Dashboard de análisis',
-      description: 'Rastrear pagos, monitorear flujo de caja y obtener información valiosa sobre tu negocio.'
+      title: 'Control Total en Tiempo Real',
+      description: 'Monitorea qué clientes te deben, previsión de ingresos y estado de tus presupuestos.'
     },
     {
       icon: CreditCard,
@@ -52,10 +52,10 @@ const Features = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="border-border/50 bg-card/50 backdrop-blur-sm cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <Card key={index} className="border-border/50 bg-card/50 group backdrop-blur-sm cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 ring-1 ring-primary/20">
-                  <feature.icon className="h-6 w-6 text-primary" />
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 ring-1 ring-primary/20 group-hover:bg-primary">
+                  <feature.icon className="h-6 w-6 text-primary group-hover:text-white transition-colors" />
                 </div>
                 <CardTitle className="text-xl font-semibold text-foreground">
                   {feature.title}

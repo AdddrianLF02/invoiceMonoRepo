@@ -13,6 +13,7 @@ import InvoicesPanel from "@/app/components/panels/InvoicesPanel";
 import CustomersPanel from "@/app/components/panels/CustomersPanel";
 import CreateInvoicePanel from "@/app/components/panels/CreateInvoicePanel";
 import ProfilePanel from "@/app/components/panels/ProfilePanel";
+import Image from "next/image";
 
 
 interface DashboardShellProps {
@@ -23,9 +24,10 @@ interface DashboardShellProps {
 // -- Variants para la transición del content box ----
 // Definimos las animaciones de entrada/salida
 const panelVariants = {
-    initial: { opacity: 0, y: 20, scale: 0.98 },
-    animate: { opacity: 1, y: 0, scale: 1 },
-    exit: { opacity: 0, y: -20, scale: 0.98 }
+    initial: { opacity: 0, y: 15, filter: "blur(4px)" },
+    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    exit: { opacity: 0, y: -15, filter: "blur(4px)" }
+
 }
 
 export default function DashboardShell({ accessToken, userEmail }: DashboardShellProps) {
@@ -55,8 +57,8 @@ export default function DashboardShell({ accessToken, userEmail }: DashboardShel
                 <div className="max-w-5xl mx-auto px-4 sm:px-6">
                     <div className="flex justify-between items-center h-14">
                         <div className="flex items-center gap-2">
-                            <FileText className="h-6 w-6 text-primary" />
-                            <span className="text-lg font-semibold">InvoiceFlow</span>
+                            <Image src="./favicon.ico" width={40} height={40} alt="" />
+                            <span className="text-lg font-extrabold tracking-tight">InvoiceFlow</span>
                         </div>
                         <UserMenu />
                     </div>

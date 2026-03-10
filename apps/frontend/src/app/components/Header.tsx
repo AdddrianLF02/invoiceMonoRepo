@@ -4,6 +4,7 @@ import React from 'react';
 import { FileText, Menu } from 'lucide-react';
 import { Button } from './ui/button';
 import { NavLink } from '../types/navTypes';
+import Image from 'next/image';
 
 const Header = () => {
   const navLinks: NavLink[] = [
@@ -16,8 +17,8 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
-            <FileText className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">InvoiceFlow</span>
+            <Image src="/favicon.ico" width={40} height={40} className='object-cover' alt='' />
+            <span className="text-xl font-extrabold tracking-tight font-logo">InvoiceFlow</span>
           </div>
 
           <nav className="hidden md:flex items-center space-x-8">

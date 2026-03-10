@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Plus_Jakarta_Sans, Quicksand } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
+
+const quickSand = Quicksand({
+  variable: "--font-quick-sand",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"]
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -14,7 +21,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "InvoiceFlow",
-  description: "InvoiceFlow is a simple invoice generator that allows you to create invoices in a few simple steps.",
+  description: "Sistema operativo para tu flujo de caja.",
 };
 
 import Providers from "./providers";
@@ -28,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        className={`${jakarta.variable} ${quickSand.variable} antialiased`}>
         <Providers>
           {children}
           <Toaster richColors />

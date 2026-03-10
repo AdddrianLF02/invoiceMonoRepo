@@ -13,11 +13,10 @@ export class AuthGuard implements CanActivate {
         private jwtService: JwtService,
         private reflector: Reflector,
         private configService: ConfigService
-    ) {}
+    ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         // Verificar si la ruta es pública
-        
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
@@ -34,14 +33,14 @@ export class AuthGuard implements CanActivate {
             this.logger.warn('No se ha proporcionado un token en la solicitud');
             throw new UnauthorizedException('No se ha proporcionado un token');
         }
-        
+
 
         try {
-           
+
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: this.configService.get<string>('JWT_SECRET') || 'una-clave-secreta-muy-segura-en-desarrollo'
             });
-            
+
             request['user'] = payload;
             this.logger.debug('[AuthGuard] Token verified successfully, payload:', { sub: payload.sub, email: payload.email });
         } catch (error) {

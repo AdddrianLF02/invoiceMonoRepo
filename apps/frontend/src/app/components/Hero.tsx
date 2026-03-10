@@ -12,14 +12,13 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 tracking-tight">
-            Crea
-            <span className="bg-linear-to-r from-primary to-info bg-clip-text text-transparent px-2"> Facturas </span>
-            Profesionales
-            en Minutos
+            El Sistema Operativo para tu
+            <span className="bg-linear-to-r from-primary to-info bg-clip-text text-transparent px-2"> Flujo de Caja </span>
+
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Simplifica tu proceso de facturación con nuestro generador de facturas potente.
-            Crea, personaliza y envía facturas profesionales que te pagan más rápido.
+            Mucho más que facturas. Presupuestos, gestión de clientes y cobros automatizados en una única plataforma
+            diseñada para que tu negocio crezca más rápido.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -30,7 +29,7 @@ const Hero = () => {
                 window.location.href = '/register';
               }}
             >
-              Comienza Gratis
+              Crear mi primera factura
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
             </Button>
           </div>
